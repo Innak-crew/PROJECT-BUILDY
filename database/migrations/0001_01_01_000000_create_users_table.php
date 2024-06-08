@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('phone_number')->nullable();
             $table->enum('role', ['manager'])->default('manager');
             $table->timestamps();
-          });
+        });
 
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
@@ -44,7 +44,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('city');
             $table->timestamps();
-          });
+        });
 
         Schema::create('branch_addresses', function (Blueprint $table) {
             $table->id();
@@ -56,7 +56,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('postal_code');
             $table->timestamps();
-          });
+        });
 
         Schema::create('schedule', function (Blueprint $table) {
             $table->id();
@@ -73,7 +73,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Table to store notifications
         Schema::create('notifications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
@@ -102,7 +101,6 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->timestamps();
         });
-        
 
         Schema::create('customers', function (Blueprint $table) {
             $table->id();

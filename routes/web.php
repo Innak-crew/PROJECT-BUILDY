@@ -37,6 +37,11 @@ Route::middleware('auth')->group(function () {
         Route::controller(ManagerController::class)->group(function () {
             Route::get('/', "index")->name('manager.index');
             Route::get('/profile', "profile")->name('manager.profile');
+            Route::get('/invoice', "invoice")->name('manager.invoice');
+            Route::get('/reminder', "reminder")->name('manager.reminder');
+            Route::get('/reminder/list', "reminder_list")->name('manager.reminder.list');
+            Route::get('/reminder/{encodedId}/view', "reminder_view")->name('manager.reminder.view');
+            Route::get('/reminder/{encodedId}/edit', "reminder_edit")->name('manager.reminder.edit');
         });
 
         Route::controller(CustomerController::class)->group(function(){

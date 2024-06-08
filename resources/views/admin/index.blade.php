@@ -52,7 +52,7 @@
                             <label class="form-label">Schedule End Date</label>
                             <input id="schedule-end-date" name="end" type="datetime-local" class="form-control" />
                         </div>
-                        <div class="col-md-6 mt-4">
+                        <div class="col-md-6 mt-4"  id="visibilitySelection">
                             <label class="form-label">Schedule Visibility<span class="text-danger">*</span></label>
                             <select id="schedule-visibility" class="form-control" name="visibility">
                                 <option value="private">Private</option>
@@ -60,6 +60,11 @@
                                 <option value="admin">For Admins</option>
                                 <option value="manager">For Managers</option>
                             </select>
+                        </div>
+
+                        <div class="col-md-6 mt-4" id="visibilityInput" style="display:none">
+                        <label class="form-label">Schedule Visibility</label>
+                            <input id="schedule-visibility-input" class="form-control" disabled/>
                         </div>
 
                         <div class="col-md-6 mt-4">
@@ -127,6 +132,7 @@
     var schedulesData = {!! json_encode($pageData -> Schedules -> map(function ($schedule) {
         return [
             'id' => $schedule -> id,
+            'is_mine' => Auth::user()->id === $schedule->user_id,
             'title' => $schedule -> title,
             'description' => $schedule -> description,
             'start' => str_replace(' ', 'T', $schedule -> start),
@@ -134,9 +140,12 @@
             'end' => $schedule -> end !== null ? str_replace(' ', 'T', $schedule -> end) : null,
             'end_time' => $schedule -> end !== null ? $schedule -> end : null,
             'foreditable' => $schedule -> is_editable,
+          'visibility' => $schedule -> visibility,
             'extendedProps' => ['calendar' => $schedule -> level]
         ];
     }))!!};
+
+var storeURL = "{{route('schedule.store')}}";
     
 </script>
 

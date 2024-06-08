@@ -40,7 +40,7 @@
 
                     <li class="nav-small-cap">
                         <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                        <span class="hide-menu">Generated</span>
+                        <span class="hide-menu">GENERAL</span>
                     </li>
 
                     <li class="sidebar-item">
@@ -160,6 +160,9 @@
                                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="ti ti-bell-ringing"></i>
+                                        @if (!$displayReminder->isEmpty())
+                                        <div class="notification bg-primary rounded-circle"></div>
+                                        @endif
                                     <!-- <div class="notification bg-primary rounded-circle"></div> -->
                                 </a>
                                 <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up"

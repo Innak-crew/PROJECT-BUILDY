@@ -2,6 +2,12 @@
 @section('content')
 
 
+@push('style')
+@if (!$displayReminder->isEmpty())
+<link rel="stylesheet" href="/libs/sweetalert2/dist/sweetalert2.min.css">
+@endif
+@endpush
+
     <!--  Body Wrapper -->
     <div class="page-wrapper" id="main-wrapper" data-theme="blue_theme"  data-layout="vertical" data-sidebartype="full" data-sidebar-position="fixed" data-header-position="fixed">
       <!-- Sidebar Start -->
@@ -27,7 +33,7 @@
                   <span class="hide-menu">Home</span>
                 </li>
                 <li class="sidebar-item">
-                  <a class="sidebar-link @if ($title == 'Index') active @endif" href="#" aria-expanded="false">
+                  <a class="sidebar-link @if ($title == 'Index') active @endif" href="{{route('manager.index')}}" aria-expanded="false">
                     <span>
                       <i class="ti ti-aperture"></i>
                     </span>
@@ -53,6 +59,33 @@
                       <i class="ti ti-file-text"></i>
                     </span>
                     <span class="hide-menu">Invoices</span> </a>
+                </li>
+
+                <li class="sidebar-item">
+                    <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
+                        <span class="d-flex">
+                            <i class="ti ti-bell"></i>
+                        </span>
+                        <span class="hide-menu">Reminder</span>
+                    </a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{route('manager.reminder')}}" class="sidebar-link ">
+                                <div class="round-16 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-circle"></i>
+                                </div>
+                                <span class="hide-menu">Set Remainder</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('manager.reminder.list')}}" class="sidebar-link">
+                                <div class="round-16 d-flex align-items-center justify-content-center">
+                                    <i class="ti ti-circle"></i>
+                                </div>
+                                <span class="hide-menu">List Remainder</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 
 
@@ -208,6 +241,75 @@
 
 
 @push('script')
-  <script src="/libs/sweetalert2/dist/sweetalert2.min.js"></script>
-  <!-- {{dd($displayReminder->isEmpty())}} -->
-@push
+  @if (!$displayReminder->isEmpty())
+      <?php
+          $reminder = $displayReminder[0];
+          $reminderTime = strtotime($reminder->reminder_time);
+          $currentTime = time();
+          $timeDifference = $reminderTime > $currentTime ? $reminderTime - $currentTime : 0;
+      ?>
+      <script src="/libs/sweetalert2/dist/sweetalert2.min.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+        if ({{ $timeDifference * 1000 }} >= 0) { 
+          setTimeout(() => {
+            Swal.fire({
+              title: '<span class="text-warning">Reminder Alert!</span>',
+              html: `
+                <h4>{{ htmlspecialchars($reminder->title, ENT_QUOTES, 'UTF-8') }}</h4>
+                <p>{{ nl2br(htmlspecialchars($reminder->description, ENT_QUOTES, 'UTF-8')) }}</p>
+              `,
+              showCancelButton: true,
+              confirmButtonColor: "#DD6B55",
+              confirmButtonText: "Mark as Completed",
+              cancelButtonText: "Snooze",
+              allowOutsideClick: false 
+            }).then((result) => {
+              if (result.isConfirmed) {
+                completeReminder('{{base64_encode($reminder->id)}}');
+              }
+            }).catch(error => {
+              console.error('Error displaying the reminder:', error);
+            });
+          }, {{ $timeDifference * 1000 }});
+        }
+      });
+
+
+       
+      function completeReminder(id) {
+            fetch('{{route('reminder.is_completed')}}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
+                    },
+                    body: JSON.stringify({ id: id })
+                }).then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                      Swal.fire({
+                        title: 'Completed!',
+                        text: 'The reminder has been marked as completed.',
+                        icon: 'success',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'ok'
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          window.location.reload(); 
+                        }
+                      });
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'There was an error marking the reminder as completed.',
+                            'error'
+                        );
+                    }
+                }).catch(error => {
+                    console.error('Error marking the reminder as completed:', error);
+                });
+          }
+      </script>   
+  @endif
+@endpush

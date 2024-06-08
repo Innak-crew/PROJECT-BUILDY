@@ -43,7 +43,7 @@ class reminderController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'password' => 'nullable|string',
-            'reminder_time' => 'required|date_format:Y-m-d\TH:i|after:now',
+            'reminder_time' => 'required|date_format:Y-m-d\TH:i:s|after:now',
             'priority' => 'required|in:1,2,3',
         ]);
     

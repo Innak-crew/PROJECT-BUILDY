@@ -18,7 +18,11 @@ class CustomerController extends Controller
         $user = Auth::user();
         $userName = $user ? $user->name : 'Guest';
         $userId = $user ? $user->id : 'Guest';
-        // $totalPages = 1;
+        $reminder = $user->reminders()
+            ->where('is_completed', 0)
+            ->orderBy('priority', 'asc')
+            ->orderBy('reminder_time', 'asc')
+            ->get();
 
         if ($title === "Index") {
             $pageData->Schedules = $user->schedule()->get();
@@ -33,6 +37,7 @@ class CustomerController extends Controller
             'userName' => $userName,
             'user' => $user,
             'pageData' => $pageData,
+            'displayReminder' => $reminder
         ];
     }
 

@@ -25,11 +25,14 @@ document.addEventListener("DOMContentLoaded", function () {
   var getModalAddBtnEl = document.querySelector(".btn-add-event");
   var getModalUpdateBtnEl = document.querySelector(".btn-update-event");
   var getModalVisibilityEl = document.querySelector("#schedule-visibility");
+  var getModalvisibilitySelectionEl = document.getElementById('visibilitySelection');
+  var getModalvisibilityInputDivEl = document.getElementById('visibilityInput');
+  var getModalVisibilityInputEl = document.getElementById('schedule-visibility-input');
   var getModalForeditableEl = document.querySelector("#foreditable");
   var getModalIsEditableDivEl = document.querySelector(".is_editable");
   var getModalFormEl = document.querySelector("#myForm");
 
-  var storeURL = "{{route('schedule.store')}}";
+//   var storeURL = "{{route('schedule.store')}}";
 
   var calendarsEvents = {
       Danger: "danger",
@@ -89,9 +92,32 @@ document.addEventListener("DOMContentLoaded", function () {
       getModalEndDateEl.value = combineEndDate;
   };
 
+  function setDisable(is_true){
+    if(is_true){
+        getModalTitleEl.setAttribute("disabled",true);
+        getModalVisibilityEl.setAttribute("disabled",true);
+        getModalTitleEl.setAttribute("disabled",true);
+        getModalDescriptionEl.setAttribute("disabled",true);
+        getModalStartDateEl.setAttribute("disabled",true);
+        getModalEndDateEl.setAttribute("disabled",true);
+        getModalForeditableEl.setAttribute("disabled",true);
+    }else{
+        getModalTitleEl.removeAttribute("disabled");
+        getModalVisibilityEl.removeAttribute("disabled");
+        getModalTitleEl.removeAttribute("disabled");
+        getModalDescriptionEl.removeAttribute("disabled");
+        getModalStartDateEl.removeAttribute("disabled");
+        getModalEndDateEl.removeAttribute("disabled");
+        getModalForeditableEl.removeAttribute("disabled");
+    }
+  }
+
+  
+
   // Calender Event Function
   var calendarEventClick = function (info) {
       removeModelData();
+      
       var eventObj = info.event;
       if (eventObj.url) {
           window.open(eventObj.url);
@@ -117,10 +143,34 @@ document.addEventListener("DOMContentLoaded", function () {
           getModalEndDateEl.value = eventObj.extendedProps.end_time;
           if (eventObj.extendedProps.foreditable) {
               getModalForeditableEl.setAttribute("checked", eventObj.extendedProps.foreditable);
+              getModalUpdateBtnEl.style.display = "block";
+              setDisable(false);
+          }else{
+            if(eventObj.extendedProps.is_mine){
+                getModalUpdateBtnEl.style.display = "block";
+                setDisable(false);
+            }else{
+              getModalUpdateBtnEl.style.display = "none";
+              setDisable(true);
+            }
           }
 
+          if(!eventObj.extendedProps.is_mine){
+            if(eventObj.extendedProps.visibility === "private"){
+                getModalVisibilityEl.value = eventObj.extendedProps.visibility;
+                getModalvisibilitySelectionEl.style.display = "block";
+                getModalvisibilityInputDivEl.style.display = "none";
+            }else{
+                const visibility = eventObj.extendedProps.visibility.trim().toLowerCase();
+                getModalVisibilityInputEl.value = `${visibility[0].toUpperCase()}${visibility.slice(1)}`;
+                getModalvisibilitySelectionEl.style.display = "none";
+                getModalvisibilityInputDivEl.style.display = "block";
+            }
+        }else{
+            getModalVisibilityEl.value = eventObj.extendedProps.visibility;
+        }
+
           getModalAddBtnEl.style.display = "none";
-          getModalUpdateBtnEl.style.display = "block";
           myModal.show();
       }
   };
