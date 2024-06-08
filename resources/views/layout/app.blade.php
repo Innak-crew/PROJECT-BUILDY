@@ -27,6 +27,7 @@
       <img src="https://demos.adminmart.com/premium/bootstrap/modernize-bootstrap/package/dist/images/logos/favicon.ico" alt="loader" class="lds-ripple img-fluid" />
     </div> -->
 
+    
     @yield('content')
 
     <!-- Javascript -->
@@ -42,12 +43,13 @@
     <script src="{{ asset('js/sidebarmenu.js') }}"></script>
     <script src="{{ asset('js/custom.js') }}"></script>
     <script src="{{ asset('js/notify.js') }}"></script>
-
-
     @stack('script')
 
+    
+
+
      <!-- Display success message -->
-     @if (session('message'))
+    @if (session('message'))
         <script>
             new Notify({
                 status: "success",

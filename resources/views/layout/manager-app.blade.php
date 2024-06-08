@@ -21,76 +21,72 @@
 
           <!-- Sidebar navigation-->
           <nav class="sidebar-nav scroll-sidebar" data-simplebar>
-            <ul id="sidebarnav">
-              <li class="nav-small-cap">
-                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">Home</span>
-              </li>
-              <li class="sidebar-item">
-                <a class="sidebar-link active" href="#" aria-expanded="false">
-                  <span>
-                    <i class="ti ti-aperture"></i>
-                  </span>
-                  <span class="hide-menu">Dashboard</span>
-                </a>
-              </li>
-              
-              <li class="nav-small-cap">
-                <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                <span class="hide-menu">Generated</span>
-              </li>
-              <li class="sidebar-item">
-                <a class="sidebar-link" href="#" aria-expanded="false">
-                  <span>
-                    <i class="ti ti-file-text"></i>
-                  </span>
-                  <span class="hide-menu">Invoice</span>
-                </a>
-              </li>
+              <ul id="sidebarnav">
+                <li class="nav-small-cap">
+                  <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                  <span class="hide-menu">Home</span>
+                </li>
+                <li class="sidebar-item">
+                  <a class="sidebar-link @if ($title == 'Index') active @endif" href="#" aria-expanded="false">
+                    <span>
+                      <i class="ti ti-aperture"></i>
+                    </span>
+                    <span class="hide-menu">Dashboard</span>
+                  </a>
+                </li>
+
+                <li class="nav-small-cap">
+                  <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
+                  <span class="hide-menu">General</span>
+                </li>
+                <li class="sidebar-item">
+                  <a class="sidebar-link @if ($title == 'Profile') active @endif" href="{{route('manager.profile')}}" aria-expanded="false">
+                    <span>
+                      <i class="ti ti-user"></i>
+                    </span>
+                    <span class="hide-menu">Profile</span>
+                  </a>
+                </li>
+                <li class="sidebar-item">
+                  <a class="sidebar-link" href="#" aria-expanded="false">
+                    <span>
+                      <i class="ti ti-file-text"></i>
+                    </span>
+                    <span class="hide-menu">Invoices</span> </a>
+                </li>
+                
+
               <li class="sidebar-item">
                 <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
                   <span class="d-flex">
                     <i class="ti ti-user-plus"></i>
                   </span>
-                  <span class="hide-menu">Manager</span>
+                  <span class="hide-menu">Customer</span>
                 </a>
                 <ul aria-expanded="false" class="collapse first-level">
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="{{route('manager.customer.add')}}" class="sidebar-link ">
                       <div class="round-16 d-flex align-items-center justify-content-center">
                         <i class="ti ti-circle"></i>
                       </div>
-                      <span class="hide-menu">Add Manager</span>
+                      <span class="hide-menu">Add Customer</span>
                     </a>
                   </li>
                   <li class="sidebar-item">
-                    <a href="#" class="sidebar-link">
+                    <a href="{{route('manager.customer.list')}}" class="sidebar-link">
                       <div class="round-16 d-flex align-items-center justify-content-center">
                         <i class="ti ti-circle"></i>
                       </div>
-                      <span class="hide-menu">List Manager</span>
+                      <span class="hide-menu">List Customer</span>
                     </a>
                   </li>
                 </ul>
               </li>
-            </ul>
+              </ul>
           </nav>
 
 
-          <div class="fixed-profile p-3 bg-light-secondary rounded sidebar-ad mt-3">
-            <div class="hstack gap-3">
-              <div class="john-img">
-                <img src="/images/profile/user-1.jpg" class="rounded-circle" width="40" height="40" alt="">
-              </div>
-              <div class="john-title">
-                <h6 class="mb-0 fs-4 fw-semibold">Mathew</h6>
-                <span class="fs-2 text-dark">Designer</span>
-              </div>
-              <button class="border-0 bg-transparent text-primary ms-auto" tabindex="0" type="button" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout">
-                <i class="ti ti-power fs-6"></i>
-              </button>
-            </div>
-          </div>  
+          
           <!-- End Sidebar navigation -->
         </div>
         <!-- End Sidebar scroll-->
@@ -161,10 +157,10 @@
                         <div class="d-flex align-items-center py-9 mx-7 border-bottom">
                           <img src="/images/profile/user-1.jpg" class="rounded-circle" width="80" height="80" alt="" />
                           <div class="ms-3">
-                            <h5 class="mb-1 fs-3">dayanidi</h5>
+                            <h5 class="mb-1 fs-3">{{ $user->name}}</h5>
                             <span class="mb-1 d-block text-dark">Manager</span>
                             <p class="mb-0 d-flex text-dark align-items-center gap-2">
-                              <i class="ti ti-mail fs-4"></i> admin@example.com
+                              <i class="ti ti-mail fs-4"></i> {{ $user->email}}
                             </p>
                           </div>
                         </div>
@@ -186,6 +182,21 @@
         </header>
         <!--  Header End -->
         <div class="container-fluid">
+
+        <div class="card bg-white-info shadow-none position-relative overflow-hidden">
+            <div class="card-body pb-4 ">
+                <div class="row ">
+                    <div class="col order-md-1 order-2">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item text-muted"><a href="#">{{$sectionName}}</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">{{$title}}</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
                 @yield('managerContent')
         </div>
       </div>
@@ -194,3 +205,9 @@
     </div>
 
 @endsection
+
+
+@push('script')
+  <script src="/libs/sweetalert2/dist/sweetalert2.min.js"></script>
+  <!-- {{dd($displayReminder->isEmpty())}} -->
+@push

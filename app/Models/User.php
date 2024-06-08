@@ -48,7 +48,17 @@ class User extends Authenticatable
 
     public function schedule()
     {
-        return $this->hasMany(Schedule::class); // Specify the custom foreign key
+        return $this->hasMany(Schedule::class); 
+    }
+
+    public function customers()
+    {
+        return $this->hasMany(Customers::class); 
+    }
+
+    public function reminders()
+    {
+        return $this->hasMany(Reminders::class); 
     }
 
 }

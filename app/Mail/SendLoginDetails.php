@@ -9,19 +9,19 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SendMail extends Mailable
+class SendLoginDetails extends Mailable
 {
     use Queueable, SerializesModels;
-
-    protected $messageContent;
-
 
     /**
      * Create a new message instance.
      */
-    public function __construct($messageContent)
+    protected  $name, $username, $password;
+    public function __construct($name, $username, $password)
     {
-        $this->messageContent = $messageContent;
+        $this->name = $name;
+        $this->username = $username;
+        $this->password = $password;
     }
 
     /**
@@ -30,7 +30,7 @@ class SendMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Send Mail',
+            subject: 'Access Granted for '.config('app.name'),
         );
     }
 
@@ -40,8 +40,12 @@ class SendMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'mail.demo',
-            with: ['messageContent' => $this->messageContent],
+            view: 'mail.login-details',
+            with: [
+                'name' => $this->name,
+                'username' => $this->username,
+                'password' => $this->password,
+            ],
         );
     }
 
@@ -54,5 +58,4 @@ class SendMail extends Mailable
     {
         return [];
     }
-
 }

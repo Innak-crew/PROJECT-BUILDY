@@ -79,7 +79,13 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('type');
             $table->text('message');
+            $table->boolean('is_read')->default(false);
             $table->timestamp('read_at')->nullable();
+            $table->string('title')->nullable();
+            $table->json('data')->nullable();
+            $table->string('link')->nullable();
+            $table->string('icon')->nullable();
+            $table->string('attachment')->nullable();
             $table->timestamps();
         });
 
@@ -89,11 +95,18 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->timestamp('reminder_time');
+            $table->boolean('is_completed')->default(false);  
+            $table->integer('priority')->nullable();          
+            $table->string('category')->nullable();
+            $table->string('repeat')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
+        
 
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
