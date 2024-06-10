@@ -39,7 +39,7 @@ class ManagerController extends Controller
             $pageData->Schedules = $publicSchedules->merge($userSchedules);
             $pageData->Schedules = $pageData->Schedules->merge($managerSchedules);
         }else if ($title == "List Reminder"){
-            $pageData->Reminders = $user->reminders()->orderBy('created_at', 'desc')->get();
+            $pageData->reminders = $user->reminders()->orderBy('created_at', 'desc')->get();
         }
        
         return [

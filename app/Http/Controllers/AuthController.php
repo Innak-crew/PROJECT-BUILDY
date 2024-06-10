@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,12 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        // Log the logout action
+        Log::create([
+            'message' => 'User ' . Auth::user()->email . ' logged out.',
+            'level' => 'info'
+        ]);
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -38,6 +45,10 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+            Log::create([
+                'message' => 'User ' . Auth::user()->email . ' logged in.',
+                'level' => 'info'
+            ]);
 
             // Redirect based on user role
             if (Auth::user()->role == 'admin') {
@@ -47,13 +58,34 @@ class AuthController extends Controller
             }
         }
 
-        // Authentication failed - check if it's due to an incorrect password
+        // Authentication failed
         $user = User::where('email', $request->email)->first();
-        if ($user && !Hash::check($request->password, $user->password)) {
+        if ($user) {
+            // Incorrect password
+            if (!Hash::check($request->password, $user->password)) {
+                Log::create([
+                    'message' => 'Failed login attempt with email: ' . $request->email . ' due to incorrect password.',
+                    'level' => 'warning'
+                ]);
+                return back()->withErrors([
+                    'password' => 'The provided password is incorrect.',
+                ])->withInput();
+            }
+        } else {
+            // Email not found
+            Log::create([
+                'message' => 'Failed login attempt with non-existent email: ' . $request->email,
+                'level' => 'warning'
+            ]);
             return back()->withErrors([
-                'password' => 'The provided password is incorrect.',
+                'email' => 'The provided credentials do not match our records.',
             ])->withInput();
         }
+
+        Log::create([
+            'message' => 'Failed login attempt with email: ' . $request->email,
+            'level' => 'warning'
+        ]);
     
         // Authentication failed due to incorrect credentials
         return back()->withErrors([
