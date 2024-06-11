@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth')->group(function () {
+    
     Route::get('/', function () { 
         $role = Auth::user()->role;
         if($role == "admin"){
@@ -30,6 +31,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/reminder/list', "reminder_list")->name('admin.reminder.list');
             Route::get('/reminder/{encodedId}/view', "reminder_view")->name('admin.reminder.view');
             Route::get('/reminder/{encodedId}/edit', "reminder_edit")->name('admin.reminder.edit');
+        });
+
+        
+
+        Route::controller(CustomerController::class)->group(function(){
+            Route::get('/customer/add', "admin_add")->name('admin.customer.add');
+            Route::get('/customer/list', "admin_list")->name('admin.customer.list');
+            Route::get('/customer/{encodedId}/view', "admin_view")->name('admin.customer.view');
+            Route::get('/customer/list/all', "admin_list_all")->name('admin.customer.list-all');
+            Route::get('/customer/overall/{encodedId}/view/', "admin_view_all")->name('admin.customer.all.view');
+            Route::get('/customer/{encodedId}/edit', "admin_edit")->name('admin.customer.edit');
         });
     });
 
@@ -57,7 +69,8 @@ Route::middleware('auth')->group(function () {
     Route::controller(CustomerController::class)->group(function(){
         Route::post('/add-customer', "store")->name('customer.store');
         Route::post('/customer/{encodedId}/update', "update")->name('customer.update');
-        Route::delete('/customer/{encodedId}/destroy', "destroy")->name('customer.destroy');
+        Route::post('/add-customer', "store")->name('customer.store');
+        // Route::delete('/getAllCustomersName/{encodedUserId}/', "get")->name('customer.name.getbyusername');
     });
 
     Route::controller(ScheduleController::class)->group(function () {

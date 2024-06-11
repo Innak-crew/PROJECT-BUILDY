@@ -95,21 +95,21 @@ $(".boxed-width").click(function () {
 });
 
 /*Dark/Light theme*/
-$(".light-logo").hide();
-$(".dark-theme").click(function () {
-  $("nav.navbar-light").addClass("navbar-dark");
-  $(".dark-theme i").addClass("text-primary");
-  $(".light-theme i").removeClass("text-primary");
-  $(".light-logo").show();
-  $(".dark-logo").hide();
-});
-$(".light-theme").click(function () {
-  $("nav.navbar-light").removeClass("navbar-dark");
-  $(".dark-theme i").removeClass("text-primary");
-  $(".light-theme i").addClass("text-primary");
-  $(".light-logo").hide();
-  $(".dark-logo").show();
-});
+// $(".light-logo").hide();
+// $(".dark-theme").click(function () {
+//   $("nav.navbar-light").addClass("navbar-dark");
+//   $(".dark-theme i").addClass("text-primary");
+//   $(".light-theme i").removeClass("text-primary");
+//   $(".light-logo").show();
+//   $(".dark-logo").hide();
+// });
+// $(".light-theme").click(function () {
+//   $("nav.navbar-light").removeClass("navbar-dark");
+//   $(".dark-theme i").removeClass("text-primary");
+//   $(".light-theme i").addClass("text-primary");
+//   $(".light-logo").hide();
+//   $(".dark-logo").show();
+// });
 
 /*Card border/shadow*/
 $(".cardborder").click(function () {

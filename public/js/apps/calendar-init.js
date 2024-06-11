@@ -156,6 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }
 
           if(!eventObj.extendedProps.is_mine){
+            console.log(eventObj.extendedProps.visibility);
             if(eventObj.extendedProps.visibility === "private"){
                 getModalVisibilityEl.value = eventObj.extendedProps.visibility;
                 getModalvisibilitySelectionEl.style.display = "block";
@@ -168,6 +169,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }else{
             getModalVisibilityEl.value = eventObj.extendedProps.visibility;
+            getModalvisibilitySelectionEl.style.display = "block";
+            getModalvisibilityInputDivEl.style.display = "none";
         }
 
           getModalAddBtnEl.style.display = "none";

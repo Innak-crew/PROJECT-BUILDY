@@ -10,8 +10,8 @@
               <div class="card mb-0">
                 <div class="card-body">
                   <a href="/" class="text-nowrap logo-img text-center d-block mb-5 w-100">
-                    <!-- <img src="" width="180" alt=""> -->
-                    <h1>Project Buildy</h1>
+                  <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="100" alt="" />
+                    <h1 class="card-title">Smart Construction And Interiors</h1>
                   </a>
 
                   <form action="{{route('login.post')}}" method="post">

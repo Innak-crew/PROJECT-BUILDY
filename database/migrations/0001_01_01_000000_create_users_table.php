@@ -102,55 +102,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('customers', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->text('address')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('projects', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('customer_id');
-            $table->enum('status', ['ongoing', 'completed'])->default('ongoing');
-            $table->timestamp('start_date');
-            $table->timestamp('end_date')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('invoices', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('project_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('customer_id');
-            $table->string('invoice_number')->unique();
-            $table->decimal('total_amount', 10, 2);
-            $table->decimal('advance_pay_amount', 10, 2);
-            $table->decimal('balance_amount', 10, 2);
-            $table->enum('payment_status', ['pending', 'paid', 'partially_paid', 'late', 'overdue'])->default('pending');
-            $table->enum('payment_method', ['cash', 'credit_card', 'bank_transfer', 'paypal' , 'UPI', 'other'])->nullable();
-            $table->text('payment_history')->nullable();
-            $table->timestamp('created_date')->nullable();
-            $table->timestamp('due_date')->nullable();
-            $table->timestamps();
-        });
-
-        Schema::create('invoice_items', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('invoice_id');
-            $table->string('description');
-            $table->decimal('unit_price', 10, 2);
-            $table->integer('quantity');
-            $table->decimal('total', 10, 2);
-            $table->timestamps();
-        });
-
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();
@@ -173,10 +124,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice_items');
-        Schema::dropIfExists('invoices');
-        Schema::dropIfExists('projects');
-        Schema::dropIfExists('customers');
         Schema::dropIfExists('reminders');
         Schema::dropIfExists('notifications');
         Schema::dropIfExists('schedule');

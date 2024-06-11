@@ -53,19 +53,18 @@
         <div class="w-75 w-xs-100 chat-container">
             <div class="invoice-inner-part h-100">
                 <div class="invoiceing-box">
-                    <div class="invoice-header d-flex align-items-center border-bottom p-3">
-                        <h4 class="font-medium text-uppercase mb-0">Invoice</h4>
-                        <div class="ms-auto">
-                            <h4 class="invoice-number">#127</h4>
-                        </div>
-                    </div>
                     <div class="p-3 " id="custom-invoice">
                         <div class="invoice-123 show" id="printableArea">
-                            <header class="invoice-header">
+                            <div class="invoice-header d-flex align-items-center border-bottom ">
+                            <h4 class="font-medium text-uppercase mb-0">Invoice</h4>
+                            <div class="ms-auto">
+                                <h4 class="invoice-number">#127</h4>
+                            </div>
+                        </div>
+                            <header class="invoice-header pt-3">
                                 <div class="row">
                                     <div class="col-md-6 company-details">
-                                        <img src="https://innak-crew.github.io/innak-logo/rec/Innak-Transprent.png" alt="Company Logo"
-                                            class="img-fluid mb-2" style="max-width: 100px; height: auto;"/>
+                                        <!-- <img src="https://innak-crew.github.io/innak-logo/rec/Innak-Transprent.png" alt="Company Logo" class="img-fluid mb-2" style="max-width: 100px; height: auto;"/> -->
                                         <h6>&nbsp;From,</h6>
                                         <h6 class="fw-bold">&nbsp;ABC Construction Company</h6>
                                         <p class="ms-1">
@@ -96,7 +95,7 @@
                                 </div>
                             </header>
                             <main class="invoice-body">
-                                <div class="table-responsive mt-5">
+                                <div class="table-responsive mt-2">
                                     <table class="table table-hover">
                                         <thead>
                                             <tr>
@@ -130,13 +129,6 @@
                                                 <td class="text-end">₹400,000</td>
                                             </tr>
                                             <tr>
-                                                <td class="text-center">1.3</td>
-                                                <td>Installation of New Flooring (Living Room & Hallway)</td>
-                                                <td class="text-end">500 sq ft</td>
-                                                <td class="text-end">₹500/sq ft</td>
-                                                <td class="text-end">₹250,000</td>
-                                            </tr>
-                                            <tr>
                                                 <td class="text-center"><b>2</b></td>
                                                 <td><b>Exterior</b></td>
                                                 <td class="text-end"></td>
@@ -164,10 +156,10 @@
                                     <div class="col-md-6">
                                     </div>
                                     <div class="col-md-6 invoice-summary text-end">
-                                        <p>Sub - Total amount: ₹4,600,000</p>
-                                        <p>Tax (8%)	 : ₹828,000</p>
+                                        <p>Sub - Total amount: ₹3,370,000</p>
+                                        <p>Tax (8%)	 : ₹269,600</p>
                                         <hr />
-                                        <h3><b>Total :</b> 	₹5,428,000</h3>
+                                        <h3><b>Total :</b> 	₹3,639,600</h3>
                                     </div>
                                 </div>
                             </main>

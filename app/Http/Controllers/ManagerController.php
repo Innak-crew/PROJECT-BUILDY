@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customers;
 use App\Models\Schedule;
 use App\Models\User;
 use Exception;
@@ -42,6 +43,7 @@ class ManagerController extends Controller
             $pageData->reminders = $user->reminders()->orderBy('created_at', 'desc')->get();
         }
        
+        // dd($pageData->reminders);
         return [
             'title' => $title,
             'sectionName' => $sectionName,

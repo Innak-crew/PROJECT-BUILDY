@@ -13,9 +13,8 @@
         <div>
             <div class="brand-logo d-flex align-items-center justify-content-between">
                 <a href="#" class="text-nowrap logo-img">
-                    <!-- <img src="" class="dark-logo" width="180" alt="" />
-              <img src="" class="light-logo"  width="180" alt="" /> -->
-                    <h1>Buildy</h1>
+                <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="100" alt="" />
+                    <!-- <h1>Buildy</h1> -->
                 </a>
                 <div class="close-btn d-lg-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                     <i class="ti ti-x fs-8 text-muted"></i>
@@ -105,6 +104,36 @@
                   </li> -->
                         </ul>
                     </li>
+
+                    
+
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
+                        <span class="d-flex">
+                            <i class="ti ti-user-plus"></i>
+                        </span>
+                        <span class="hide-menu">Customer</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.customer.add')}}" class="sidebar-link ">
+                            <div class="round-16 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-circle"></i>
+                            </div>
+                            <span class="hide-menu">Add Customer</span>
+                            </a>
+                        </li>
+                        <li class="sidebar-item">
+                            <a href="{{route('admin.customer.list')}}" class="sidebar-link">
+                            <div class="round-16 d-flex align-items-center justify-content-center">
+                                <i class="ti ti-circle"></i>
+                            </div>
+                            <span class="hide-menu">List Customer</span>
+                            </a>
+                        </li>
+                        </ul>
+                    </li>
+
                 </ul>
             </nav>
 
@@ -140,9 +169,8 @@
                 </ul>
 
                 <div class="d-block d-lg-none">
-                    <!-- <img src="https://demos.adminmart.com/premium/bootstrap/modernize-bootstrap/package/dist/images/logos/dark-logo.svg" class="dark-logo" width="180" alt="" />
-              <img src="https://demos.adminmart.com/premium/bootstrap/modernize-bootstrap/package/dist/images/logos/light-logo.svg" class="light-logo"  width="180" alt="" /> -->
-                    <h1>Buildy</h1>
+                <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="50" alt="" />
+                    <!-- <h1>Buildy</h1> -->
                 </div>
 
                 <button class="navbar-toggler p-0 border-0" type="button" data-bs-toggle="collapse"
@@ -238,7 +266,11 @@
                 </div>
             </div>
 
+           
+
             @yield('adminContent')
+
+
 
         </div>
     </div>

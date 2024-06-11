@@ -61,4 +61,12 @@ class User extends Authenticatable
         return $this->hasMany(Reminders::class); 
     }
 
+    
+
+    public function getUser()
+    {
+        return $this->belongsTo(Customers::class);
+    }
+
+
 }

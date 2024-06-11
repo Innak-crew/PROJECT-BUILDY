@@ -16,9 +16,8 @@
         <div>
           <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="#" class="text-nowrap logo-img">
-              <!-- <img src="" class="dark-logo" width="180" alt="" />
-              <img src="" class="light-logo"  width="180" alt="" /> -->
-              <h1>Buildy</h1>
+              <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="100" alt="" />
+              <!-- <h1>SC</h1> -->
             </a>
             <div class="close-btn d-lg-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
               <i class="ti ti-x fs-8 text-muted"></i>
@@ -54,7 +53,7 @@
                   </a>
                 </li>
                 <li class="sidebar-item">
-                  <a class="sidebar-link" href="#" aria-expanded="false">
+                  <a class="sidebar-link" href="{{route('manager.invoice')}}" aria-expanded="false">
                     <span>
                       <i class="ti ti-file-text"></i>
                     </span>
@@ -139,9 +138,8 @@
             </ul>
 
             <div class="d-block d-lg-none">
-              <!-- <img src="https://demos.adminmart.com/premium/bootstrap/modernize-bootstrap/package/dist/images/logos/dark-logo.svg" class="dark-logo" width="180" alt="" />
-              <img src="https://demos.adminmart.com/premium/bootstrap/modernize-bootstrap/package/dist/images/logos/light-logo.svg" class="light-logo"  width="180" alt="" /> -->
-              <h1>Buildy</h1>
+              <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="50" alt="" />
+              <!-- <h1>Smart Contruction</h1> -->
             </div>
 
             <button class="navbar-toggler p-0 border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

@@ -23,4 +23,9 @@ class Customers extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getUser()
+    {
+        return $this->hasMany(User::class); 
+    }
 }

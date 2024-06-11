@@ -46,6 +46,17 @@
                 </div>
             </div>
 
+            
+
+            <div class="d-flex justify-content-end mt-3">
+            <a href="{{route('manager.customer.edit',['encodedId' => base64_encode($pageData->id)])}}" type="submit" class="btn btn-info font-medium rounded-pill px-4">
+              <div class="d-flex align-items-center">
+                <i class="ti ti-pencil me-2 fs-4"></i>
+                Edit
+              </div>
+            </a>
+          </div>
+
           </div>
 
         </form>

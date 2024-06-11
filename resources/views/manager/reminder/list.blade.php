@@ -15,7 +15,7 @@
     <div class="card-body p-4">
         <div class="table-responsive rounded-2 py-5 mb-4">
             <table
-                class="table border text-nowrap customize-table mb-0 align-middle @if ($pageData->Reminders && count($pageData->Reminders) != 0) datatable-select-inputs @endif">
+                class="table border text-nowrap customize-table mb-0 align-middle @if ($pageData->reminders && count($pageData->reminders) != 0) datatable-select-inputs @endif">
                 <thead class="text-dark fs-4">
                     <tr>
                         <th>
@@ -39,24 +39,24 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if ($pageData->Reminders && count($pageData->Reminders) != 0)
-                    @for ($i = 0; $i < count($pageData->Reminders); $i++)
+                    @if ($pageData->reminders && count($pageData->reminders) != 0)
+                    @for ($i = 0; $i < count($pageData->reminders); $i++)
                         <tr>
                             <td>
-                                <p class="mb-0 fw-normal fs-4">{{ $pageData->Reminders[$i]->title }}</p>
+                                <p class="mb-0 fw-normal fs-4">{{ $pageData->reminders[$i]->title }}</p>
                             </td>
                             <td>
-                                <p class="mb-0 fw-normal fs-4">{{ \Carbon\Carbon::parse($pageData->Reminders[$i]->reminder_time)->format('h:i A \o\n jS F Y') }}</p>
+                                <p class="mb-0 fw-normal fs-4">{{ \Carbon\Carbon::parse($pageData->reminders[$i]->reminder_time)->format('h:i A \o\n jS F Y') }}</p>
                             </td>
                             <td>
-                                <p class="mb-0 fw-normal fs-4">{{ $pageData->Reminders[$i]->priority }}</p>
+                                <p class="mb-0 fw-normal fs-4">{{ $pageData->reminders[$i]->priority }}</p>
                             </td>
                             <td>
-                                <p class="mb-0 fw-normal fs-4">{{ \Carbon\Carbon::parse($pageData->Reminders[$i]->created_at)->diffForHumans() }}</p>
+                                <p class="mb-0 fw-normal fs-4">{{ \Carbon\Carbon::parse($pageData->reminders[$i]->created_at)->diffForHumans() }}</p>
                             </td>
                             <td>
                                 <p class="mb-0 fw-normal fs-4">
-                                    @if ($pageData->Reminders[$i]->is_completed)
+                                    @if ($pageData->reminders[$i]->is_completed)
                                         <span class="mb-1 badge font-medium bg-light-primary text-success">Completed</span>
                                     @else
                                         <span class="mb-1 badge font-medium bg-light-primary text-primary">Pending</span>
@@ -64,7 +64,7 @@
                                 </p>
                             </td>
                             <td class="">
-                                <a href="{{route('manager.reminder.view',['encodedId' => base64_encode($pageData->Reminders[$i]->id)])}}"
+                                <a href="{{route('manager.reminder.view',['encodedId' => base64_encode($pageData->reminders[$i]->id)])}}"
                                     class="text-success"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                         stroke-linecap="round" stroke-linejoin="round"
@@ -74,7 +74,7 @@
                                         <path
                                             d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
                                     </svg></a>
-                                <a href="{{route('manager.reminder.edit',['encodedId' => base64_encode($pageData->Reminders[$i]->id)])}}"
+                                <a href="{{route('manager.reminder.edit',['encodedId' => base64_encode($pageData->reminders[$i]->id)])}}"
                                     class="text-primary mx-2"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                         height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -86,7 +86,7 @@
                                         <path d="M16 5l3 3" />
                                     </svg></a>
                                 <form
-                                    action="{{route('reminder.destroy', ['encodedId' => base64_encode($pageData->Reminders[$i]->id)]) }}"
+                                    action="{{route('reminder.destroy', ['encodedId' => base64_encode($pageData->reminders[$i]->id)]) }}"
                                     method="post" class="delete-form" style="display:inline;">
                                     @csrf
                                     @method('DELETE')
@@ -111,7 +111,7 @@
                         @else
                         <tr>
                             <td>
-                                <p class="mb-0 fw-normal fs-4">No Reminders Found</p>
+                                <p class="mb-0 fw-normal fs-4">No reminders Found</p>
                             </td>
                         </tr>
                         @endif
