@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::controller(reminderController::class)->group(function () {
         Route::post('/reminder/store', "store")->name('reminder.store');
         Route::post('/reminder/{encodedId}/update', "update")->name('reminder.update');
-        Route::post('/reminder/{encodedId}/destroy', "destroy")->name('reminder.destroy');
+        Route::delete('/reminder/{encodedId}/destroy', "destroy")->name('reminder.destroy');
         Route::post('/reminder/is_completed', "is_completed")->name('reminder.is_completed');
     });
 
