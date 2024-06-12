@@ -73,7 +73,7 @@ class reminderController extends Controller
           }
     }
 
-    public function delete($encodedId)
+    public function destroy($encodedId)
     {
 
         $decodedId = base64_decode($encodedId); 
