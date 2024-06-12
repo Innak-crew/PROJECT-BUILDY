@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/add-customer', "store")->name('customer.store');
         Route::post('/customer/{encodedId}/update', "update")->name('customer.update');
         Route::post('/add-customer', "store")->name('customer.store');
+        Route::delete('/customer/{encodedId}/destroy', "destroy")->name('customer.destroy');
         // Route::delete('/getAllCustomersName/{encodedUserId}/', "get")->name('customer.name.getbyusername');
     });
 
