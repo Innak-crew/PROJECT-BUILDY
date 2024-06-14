@@ -16,7 +16,6 @@ class Categories extends Model
         'description',
         'parent_id',
         'type',
-        'dimensions',
     ];
 }
  

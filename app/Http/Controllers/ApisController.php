@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categories;
 use App\Models\Customers;
 use App\Models\Products;
 use Illuminate\Http\Request;
@@ -53,6 +54,14 @@ class ApisController extends Controller
             ->orWhere('phone', 'LIKE', '%' . $searchTerm . '%') 
             ->orWhere('address', 'LIKE', '%' . $searchTerm . '%') 
             ->get();
+        }else if ($name == "categories") {
+            $returnData = Categories::whereNull('parent_id')
+                ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->get();
+        } else if ($name == "subcategories") {
+            $returnData = Categories::whereNotNull('parent_id')
+                ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->get();
         }
 
         return response()->json($returnData);

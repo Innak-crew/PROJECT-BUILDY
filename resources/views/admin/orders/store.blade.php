@@ -42,7 +42,7 @@
 
                 <div class="col-md-6 mb-4">
                         <label for="name">Order Name *</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" placeholder="Enter Order name here" required/>
+                        <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control @error('name') is-invalid @enderror" placeholder="" required/>
                         @error('name')
                             <div class="invalid-feedback">
                                 <p class="error">{{ $message }}</p>
@@ -52,7 +52,7 @@
 
                 <div class="col-md-6 mb-4">
                     <label for="description">Order Description</label>
-                    <input type="text" name="description" id="description" value="{{ old('description') }}" class="form-control @error('description') is-invalid @enderror" placeholder="Enter description here" />
+                    <input type="text" name="description" id="description" value="{{ old('description') }}" class="form-control typeahead @error('description') is-invalid @enderror" placeholder="" />
                     @error('description')
                         <div class="invalid-feedback">
                             <p class="error">{{ $message }}</p>
@@ -73,7 +73,7 @@
 
                 <div class="col-md-6 mb-4">
                     <label for="location">Order location *</label>
-                    <input type="text" name="location" id="location" value="{{ old('location') }}" class="form-control @error('location') is-invalid @enderror" placeholder="Enter Site location details here" />
+                    <input type="text" name="location" id="location" value="{{ old('location') }}" class="form-control @error('location') is-invalid @enderror" placeholder="" />
                     @error('location')
                         <div class="invalid-feedback">
                             <p class="error">{{ $message }}</p>
@@ -108,7 +108,7 @@
 
                 <div class="col-md-6 mb-4">
                     <label for="estimated_cost">Estimated Cost</label>
-                    <input type="number" step="0.01" id="estimated_cost" name="estimated_cost" value="{{ old('estimated_cost') }}" class="form-control @error('estimated_cost') is-invalid @enderror" placeholder="Enter estimated cost value">
+                    <input type="number" step="0.01" id="estimated_cost" name="estimated_cost" value="{{ old('estimated_cost') }}" class="form-control @error('estimated_cost') is-invalid @enderror" placeholder="">
                     @error('estimated_cost')
                         <div class="invalid-feedback">
                             <p class="error">{{ $message }}</p>
@@ -174,12 +174,12 @@ function order_item_container() {
     divtest.innerHTML = `
         <div class="col-12 col-md-3 col-lg-2 mb-4 my-auto">
             <label for="category">Item Category</label>
-            <input type="text" name="category[]" id="category${room}" class="form-control" placeholder="Enter category here" required/>
+            <input type="text" name="category[]" id="category${room}" class="form-control " placeholder="Enter category here" required/>
         </div>
 
         <div class="col-12 col-md-3 col-lg-3 mb-4 my-auto">
             <label for="sub-category">Item Sub Category</label>
-            <input type="text" name="sub_category[]" id="sub-category${room}" class="form-control" placeholder="Enter sub-category here" required/>
+            <input type="text" name="sub_category[]" id="sub-category${room}" class="form-control typeahead" placeholder="Enter sub-category here" required/>
         </div>
 
         <div class="col-12 col-md-6 col-lg-4 mb-4 my-auto">
@@ -205,6 +205,8 @@ function order_item_container() {
     `;
     objTo.appendChild(divtest);
     refreshProduct(`#order_item${room}`);
+    categories(`#category${room}`);
+    subcategories(`#sub-category${room}`);
 }
 document.getElementById("order-item-container").addEventListener("click", function(e) {
     if (e.target && e.target.classList.contains("remove-field")) {
@@ -334,6 +336,33 @@ function refreshProduct(selector = ".Order-product") {
             return customer.id;
         }
     }
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+
+<script>
+
+    function categories(selector = "#categories") {
+        $(selector).typeahead({
+            source: function (query, process) {
+                return $.get('/api/search/{{ base64_encode($userId) }}/categories/' + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
+    }
+
+    function subcategories(selector = "#subcategories") {
+        $(selector).typeahead({
+            source: function (query, process) {
+                return $.get('/api/search/{{ base64_encode($userId) }}/subcategories/' + query, function (data) {
+                    return process(data);
+                });
+            }
+        });
+    }
+
 
 </script>
 
