@@ -13,7 +13,7 @@
         <div>
             <div class="brand-logo d-flex align-items-center justify-content-between">
                 <a href="#" class="text-nowrap logo-img">
-                <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="100" alt="" />
+                <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="50" alt="" />
                     <!-- <h1>Buildy</h1> -->
                 </a>
                 <div class="close-btn d-lg-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -41,15 +41,52 @@
                         <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
                         <span class="hide-menu">GENERAL</span>
                     </li>
+                    
 
                     <li class="sidebar-item">
+                        <a class="sidebar-link" href="{{route('admin.quantity-units')}}" aria-expanded="false">
+                            <span>
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-chart-dots-3"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 7m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M16 15m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M6 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M9 17l5 -1.5" /><path d="M6.5 8.5l7.81 5.37" /><path d="M7 7l8 -1" /></svg>
+                            </span>
+                            <span class="hide-menu">Quantity Units</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
+                            <span class="d-flex">
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="1.5"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-shopping-cart"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 19m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M17 17h-11v-14h-2" /><path d="M6 5l14 1l-1 7h-13" /></svg>
+                            </span>
+                            <span class="hide-menu">Product</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{route('admin.new.product')}}" class="sidebar-link ">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Add new</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{route('admin.list.product')}}" class="sidebar-link">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">view all</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- <li class="sidebar-item">
                         <a class="sidebar-link" href="#" aria-expanded="false">
                             <span>
                                 <i class="ti ti-file-text"></i>
                             </span>
                             <span class="hide-menu">Invoice</span>
                         </a>
-                    </li>
+                    </li> -->
 
                     <li class="sidebar-item">
                         <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
@@ -252,7 +289,7 @@
         <div class="container-fluid">
 
             <div class="card bg-white-info shadow-none position-relative overflow-hidden">
-                <div class="card-body pb-4 ">
+                <!-- <div class="card-body"> -->
                     <div class="row ">
                         <div class="col order-md-1 order-2">
                             <nav aria-label="breadcrumb">
@@ -263,7 +300,6 @@
                             </nav>
                         </div>
                     </div>
-                </div>
             </div>
 
            

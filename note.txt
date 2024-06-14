@@ -8,3 +8,6 @@ $test = "9524";
 
 dd(convertNumber($test));?>
 ===================================
+
+order to get orderitems 
+order to get customer details

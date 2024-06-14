@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       customButtons: {
           addEventButton: {
-              text: "Add Event",
+              text: "Add Schedule",
               click: calendarAddEvent,
           }
       },

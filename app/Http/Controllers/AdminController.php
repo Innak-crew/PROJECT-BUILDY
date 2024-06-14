@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SendLoginDetails;
+use App\Models\QuantityUnits;
 use App\Models\User;
 use DateTime;
 use Exception;
@@ -65,6 +66,12 @@ class AdminController extends Controller
             $pageData->Schedules = $user->schedule()->get();
         }else if ($title == "List Reminder"){
             $pageData->Reminders = $user->reminders()->orderBy('created_at', 'desc')->get();
+        }else if ($title == "Quantity Units"){
+            $pageData->QuantityUnits = QuantityUnits::all();
+        }else if ($title == "New Product"){
+            $pageData->QuantityUnits = QuantityUnits::all();
+        }else if ($title == "List Product"){
+            $pageData->Products = $user->products()->get();
         }
        
         return [
@@ -82,6 +89,88 @@ class AdminController extends Controller
     {
         $data = $this->getUserData('Dashboard', 'Index');
         return view('admin.index', $data);
+    }
+
+    public function QuantityUnits()
+    {
+        $data = $this->getUserData('General', 'Quantity Units');
+        return view('admin.quantity-units.unit', $data);
+    }
+
+    public function QuantityUnitsAdd()
+    {
+        $data = $this->getUserData('General', 'Quantity Units');
+        return view('admin.quantity-units.add', $data);
+    }
+
+    public function QuantityUnitsEdit(string $encodedId)
+    {
+        $decodedId = base64_decode($encodedId); 
+        $pageData = new stdClass();
+        try {
+            $pageData->QuantityUnits = QuantityUnits::all();
+            $pageData->ChangedQuantityUnit = QuantityUnits::findOrFail($decodedId);
+            try {
+                $data = $this->getUserData('General', 'Quantity Units', $pageData);
+              } catch (Exception $e) {
+                return abort(500, 'An error occurred while processing your request.');
+              }
+            return view('admin.quantity-units.edit', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Quantity Unit not found'); 
+        }
+    }
+
+    public function newProduct()
+    {
+        $data = $this->getUserData('Products', 'New Product');
+        return view('admin.product.add', $data);
+    }
+
+    public function listProduct()
+    {
+        $data = $this->getUserData('Products', 'List Product');
+        return view('admin.product.list', $data);
+    }
+
+    public function viewProduct(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId); 
+        try {
+            $product = Auth::user()->products()->findOrFail($decodedId);
+            $data = $this->getUserData('Products', 'View Product', $product);
+            $user_id = Auth::id();
+            if($user_id != $product->user_id){
+                abort(403, 'You can only view product you created.');
+            }
+            return view('admin.product.view', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Customer not found'); 
+        }
+    }
+
+    public function editProduct(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId); 
+        try {
+            $pageData = new stdClass();
+            $pageData->product = Auth::user()->products()->findOrFail($decodedId);
+            $pageData->QuantityUnits = QuantityUnits::all();
+            $data = $this->getUserData('Products', 'Edit Product', $pageData);
+            $user_id = Auth::id();
+            if($user_id != $pageData->product->user_id){
+                abort(403, 'You can only edit product you created.');
+            }
+            return view('admin.product.edit', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Customer not found'); 
+        }
+    }
+
+    public function newOrder()
+    {
+        $data = $this->getUserData('Orders', 'New Order');
+        return view('admin.orders.store', $data);
     }
 
     public function add_user()

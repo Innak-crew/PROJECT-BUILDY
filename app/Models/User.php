@@ -51,6 +51,11 @@ class User extends Authenticatable
         return $this->hasMany(Schedule::class); 
     }
 
+    public function products()
+    {
+        return $this->hasMany(Products::class); 
+    }
+
     public function customers()
     {
         return $this->hasMany(Customers::class); 
@@ -60,8 +65,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reminders::class); 
     }
-
-    
 
     public function getUser()
     {

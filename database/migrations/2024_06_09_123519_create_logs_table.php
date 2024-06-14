@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('message');
             $table->string('level');
+            $table->string('type')->nullable();
             $table->timestamps();
         });
     }

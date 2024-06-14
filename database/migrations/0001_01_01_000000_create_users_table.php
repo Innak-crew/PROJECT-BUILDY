@@ -63,6 +63,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->timestamp('start');
             $table->timestamp('end')->nullable();
             $table->string('level')->nullable();
@@ -99,6 +100,7 @@ return new class extends Migration
             $table->string('category')->nullable();
             $table->string('repeat')->nullable();
             $table->text('notes')->nullable();
+            $table->enum('visibility', ['public', 'private', 'admin', 'manager'])->default('private');
             $table->timestamps();
         });
 
@@ -115,6 +117,16 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('permissions'); 
+            $table->timestamps();
+        });
+
+        Schema::create('customers', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id')->index();
+            $table->string('name');
+            $table->string('email')->unique()->nullable();
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
             $table->timestamps();
         });
     }
@@ -134,6 +146,7 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('users');
+        Schema::dropIfExists('customers');
     }
     
 };

@@ -12,6 +12,6 @@ class Log extends Model
      protected $table = 'logs';
 
      protected $fillable = [
-         'message', 'level', 'created_at'
+         'message', 'level', 'type', 'created_at'
      ];
 }
