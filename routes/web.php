@@ -115,8 +115,8 @@ Route::middleware('auth')->group(function () {
     
     Route::prefix('/api')->group( function () {
         Route::controller(ApisController::class)->group(function () {
-            Route::get('/{action}/{name}/{searchTerm}', "index")->name('api.index');
             Route::get('/search/{encodedUserID}/{name}/{searchTerm}', "Search")->name('api.search');
+            Route::get('/{action}/{encodedUserID}/{name}/{searchTerm}', "index")->name('api.index');
         });
     });
 

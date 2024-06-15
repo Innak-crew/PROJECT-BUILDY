@@ -44,6 +44,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('city');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
 
         Schema::create('branch_addresses', function (Blueprint $table) {
@@ -56,6 +57,9 @@ return new class extends Migration
             $table->string('state');
             $table->string('postal_code');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+
         });
 
         Schema::create('schedule', function (Blueprint $table) {
@@ -72,6 +76,8 @@ return new class extends Migration
             $table->boolean('is_editable')->default(true);
             $table->unsignedBigInteger('updater_admin_or_manager_id')->nullable(); 
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
 
         Schema::create('notifications', function (Blueprint $table) {
@@ -87,6 +93,9 @@ return new class extends Migration
             $table->string('icon')->nullable();
             $table->string('attachment')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+
         });
 
         Schema::create('reminders', function (Blueprint $table) {
@@ -102,6 +111,9 @@ return new class extends Migration
             $table->text('notes')->nullable();
             $table->enum('visibility', ['public', 'private', 'admin', 'manager'])->default('private');
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+
         });
 
         Schema::create('sessions', function (Blueprint $table) {
@@ -128,6 +140,8 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->text('address')->nullable();
             $table->timestamps();
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
@@ -136,17 +150,17 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('roles');
+        Schema::dropIfExists('sessions');
         Schema::dropIfExists('reminders');
         Schema::dropIfExists('notifications');
         Schema::dropIfExists('schedule');
         Schema::dropIfExists('branch_addresses');
         Schema::dropIfExists('locations');
         Schema::dropIfExists('managers');
-        Schema::dropIfExists('roles');
-        Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('users');
         Schema::dropIfExists('customers');
+        Schema::dropIfExists('users');
     }
     
 };

@@ -29,8 +29,9 @@ return new class extends Migration
             $table->unsignedBigInteger('unit_id')->index();
             $table->decimal('rate_per', 10, 2);
             $table->timestamps();
-            $table->foreign('unit_id')->references('id')->on('quantity_units');
-            $table->foreign('user_id')->references('id')->on('users');
+
+            $table->foreign('unit_id')->references('id')->on('quantity_units')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
 
         Schema::create('categories', function (Blueprint $table) {
@@ -40,8 +41,8 @@ return new class extends Migration
             $table->unsignedBigInteger('parent_id')->index()->nullable();
             $table->enum('type', ['Interior', 'Exterior', 'Both'])->default('Interior');
             $table->timestamps();
-        
-            $table->foreign('parent_id')->references('id')->on('categories');
+
+            $table->foreign('parent_id')->references('id')->on('categories')->cascadeOnDelete();
         });
 
         Schema::create('orders', function (Blueprint $table) {
@@ -58,9 +59,9 @@ return new class extends Migration
             $table->decimal('estimated_cost', 10, 2)->nullable();
             $table->decimal('deposit_received', 10, 2)->nullable();
             $table->timestamps();
-        
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('customer_id')->references('id')->on('users');
+
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('customer_id')->references('id')->on('customers')->cascadeOnDelete();
         });
 
         Schema::create('order_items', function (Blueprint $table) {
@@ -68,17 +69,15 @@ return new class extends Migration
             $table->unsignedBigInteger('order_id')->index();
             $table->unsignedBigInteger('category_id')->index();
             $table->unsignedBigInteger('product_id')->index();
-            $table->string('unit')->nullable();
             $table->decimal('quantity', 10, 2);
-            $table->decimal('unit_price', 10, 2);
             $table->decimal('discount_amount', 10, 2)->default(0.00);
             $table->decimal('discount_percentage', 5, 2)->default(0.00);
             $table->decimal('total', 10, 2);
             $table->timestamps();
-        
-            $table->foreign('order_id')->references('id')->on('orders');
-            $table->foreign('category_id')->references('id')->on('categories');
-            $table->foreign('product_id')->references('id')->on('products');
+
+            $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
+            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
         });
 
         Schema::create('invoices', function (Blueprint $table) {
@@ -100,10 +99,10 @@ return new class extends Migration
             $table->timestamp('created_date')->nullable();
             $table->timestamp('due_date')->nullable();
             $table->timestamps();
-        
-            $table->foreign('order_id')->references('id')->on('orders');
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('customer_id')->references('id')->on('customers');
+
+            $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('customer_id')->references('id')->on('customers')->cascadeOnDelete();
         });
 
     }
@@ -113,11 +112,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quantity_units');
-        Schema::dropIfExists('products');
-        Schema::dropIfExists('categorys');
-        Schema::dropIfExists('order_items');
         Schema::dropIfExists('invoices');
+        Schema::dropIfExists('order_items');
         Schema::dropIfExists('orders');
+        Schema::dropIfExists('categories');
+        Schema::dropIfExists('products');
+        Schema::dropIfExists('quantity_units');
     }
 };

@@ -9,33 +9,32 @@ use Illuminate\Http\Request;
 
 class ApisController extends Controller
 {
-    public function index( string $action, string $name, string $searchTerm){
+    public function index( string $action, string $encodedUserID, string $name, string $searchTerm){
         $returnData = [];
 
-        if($action == "get"){
-            if($name == "customer"){
-                if($searchTerm == "all"){
-                    $returnData = Customers::all();
-                }
-                else if($searchTerm == "name"){
-                    $returnData = Customers::where('name', 'LIKE', '%'. $searchTerm . '%')->get();
-                }
-            }
-        }else if($action == "search"){
-            if($name == "customer"){
-                if($searchTerm != null){
-                    $returnData = Customers::where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('email', 'LIKE', '%' . $searchTerm . '%') 
-                ->orWhere('phone', 'LIKE', '%' . $searchTerm . '%') 
-                ->orWhere('address', 'LIKE', '%' . $searchTerm . '%') 
-                ->get();
-                }
-            }else if ($name == "products"){
+        $decodedUserId = base64_decode($encodedUserID);
 
+        if($action == "get"){
+            if($name == "customer-by-id"){
+                
+                $customerId = base64_decode($searchTerm);
+                $customer = Customers::where('id', $customerId)
+                ->where('user_id', $decodedUserId)
+                ->first();
+                if ($customer) {
+                    return response()->json([
+                        'id' => $customer->id,
+                        'name' => $customer->name,
+                    ]);
+                } else {
+                    return response()->json([
+                        'error' => 'Customer not found.'
+                    ], 404);
+                }
             }
         }
 
-        return response()->json($returnData);
+        return response()->json([]);
     }
 
     public function Search( string $encodedUserID, string $name, string $searchTerm){
