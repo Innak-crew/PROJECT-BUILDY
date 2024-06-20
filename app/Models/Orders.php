@@ -24,5 +24,33 @@ class Orders extends Model
         'estimated_cost',
         'deposit_received',
     ];
+    
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItems::class, 'order_id', 'id');
+    }
+    
+    public function followup()
+    {
+        return $this->hasMany(Schedule::class, 'order_id', 'id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class,"user_id");
+    }
+
+    public function Customer(){
+        return $this->belongsTo(Customers::class,"customer_id");
+    }
+
+    public function invoice(){
+        return $this->hasMany(Invoices::class,"order_id", 'id');
+    }
+
+    public function paymentHistory(){
+        return $this->hasMany(PaymentHistory::class,"order_id", 'id');
+    }
+
 }
  

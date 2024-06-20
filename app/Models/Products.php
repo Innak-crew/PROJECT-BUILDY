@@ -33,4 +33,9 @@ class Products extends Model
         return $this->belongsTo(QuantityUnits::class)->first();
     }
 
+    public function catagories()
+    {
+        return $this->belongsTo(Categories::class)->first();
+    }
+
 }

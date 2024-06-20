@@ -12,7 +12,7 @@
     <!-- Theme Style -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/notify.css') }}">
-
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/icons/themify-icons/themify-icons.css') }}">
 
     @stack('style')
     <!-- Favicon and Touch Icons  -->
@@ -23,9 +23,9 @@
 <body class="body">
     
     <!-- Preloader -->
-    <!-- <div class="preloader">
-      <img src="https://demos.adminmart.com/premium/bootstrap/modernize-bootstrap/package/dist/images/logos/favicon.ico" alt="loader" class="lds-ripple img-fluid" />
-    </div> -->
+    <div class="preloader">
+      <img src="{{ asset('images\logo\logo-2.png') }}" alt="loader" class="lds-ripple img-fluid" />
+    </div>
 
     
     @yield('content')

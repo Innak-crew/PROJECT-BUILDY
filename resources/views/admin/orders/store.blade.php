@@ -34,6 +34,11 @@
 
     <div class="card-body p-4">
         <div class="row">
+        @if (session('message'))
+            <div class="alert alert-success">
+                {{ session('message') }}
+            </div>
+        @endif
 
             <form action="{{ route('order.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -111,7 +116,7 @@
                         <input type="date" class="form-control" name="order_ending_date"/>
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <!-- <div class="col-md-6 mb-4">
                         <label for="estimated_cost">Estimated Cost</label>
                         <input type="number" step="0.01" id="estimated_cost" name="estimated_cost"
                             value="{{ old('estimated_cost') }}"
@@ -121,12 +126,12 @@
                             <p class="error">{{ $message }}</p>
                         </div>
                         @enderror
-                    </div>
+                    </div> -->
 
                     <div class="row my-1">
                         <div class="col-md-12">
                             <div class=" py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="card-title fw-semibold mb-0 lh-sm">Follow Back</h5>
+                                <h5 class="card-title fw-semibold mb-0 lh-sm">Follow Up</h5>
                                 <button onclick="follow_container();"
                                     class="btn btn-success font-weight-medium waves-effect waves-light rounded-pill py-auto px-2" type="button">
                                     <i class="ti ti-circle-plus fs-5 my-auto"></i>
@@ -157,6 +162,121 @@
                         <hr>
                     </div>
                 </div>
+
+                <!-- Invoice -->
+                <div class="row my-1">
+                    <div class="col-md-12">
+                        <div class=" py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title fw-semibold mb-0 lh-sm">Invoice</h5>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row">
+                <div class="col-md-6 mb-4">
+                    <label class="control-label">Creating Date *</label>
+                    <input type="date" class="form-control" name="created_date" value="{{old('created_date')}}" required/>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label class="control-label">Due Date *</label>
+                    <input type="date" class="form-control" name="due_date" value="{{old('due_date')}}"/>
+                </div>
+                </div>
+
+                <!-- Payment Details -->
+                <div class="row my-1">
+                    <div class="col-md-12">
+                        <div class=" py-3 d-flex justify-content-between align-items-center">
+                            <h5 class="card-title fw-semibold mb-0 lh-sm">Payments Details</h5>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-4 mb-4">
+                        <label for="discount_percentage">Discount Percentage</label>
+                        <input type="number" step="0.01" name="discount_percentage" id="discount_percentage" value="{{ old('discount_percentage') }}" 
+                            class="form-control @error('discount_percentage') is-invalid @enderror" placeholder="" />
+                        @error('discount_percentage')
+                            <div class="invalid-feedback">
+                                <p class="error">{{ $message }}</p>
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label for="advance_pay_amount">Advance Payment</label>
+                        <input type="number" step="0.01" name="advance_pay_amount" id="advance_pay_amount" value="{{ old('advance_pay_amount') }}" 
+                            class="form-control @error('advance_pay_amount') is-invalid @enderror" placeholder="" />
+                        @error('advance_pay_amount')
+                            <div class="invalid-feedback">
+                                <p class="error">{{ $message }}</p>
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <label for="payment_status">Payment Status *</label>
+                        <select class="form-select mr-sm-2 @error('payment_status') is-invalid @enderror" id="payment_status" name="payment_status" required>
+                            <option value="" disabled selected >Select--</option>
+                            <option value="pending" @if(old('payment_status') == 'pending') selected @endif>Pending</option>
+                            <option value="paid" @if(old('payment_status') == 'paid') selected @endif>Paid</option>
+                            <option value="partially_paid" @if(old('payment_status') == 'partially_paid') selected @endif>Partially Paid</option>
+                            <option value="late" @if(old('payment_status') == 'late') selected @endif>Late</option>
+                            <option value="overdue" @if(old('payment_status') == 'overdue') selected @endif>Overdue</option>
+                        </select>
+                        @error('payment_status')
+                            <div class="invalid-feedback">
+                                <p class="error">{{ $message }}</p>
+                            </div>
+                        @enderror
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <div class="row my-1">
+                            <div class="col-md-12">
+                                <div class=" py-3 d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title fw-semibold mb-0 lh-sm">Payment History</h5>
+                                    <button onclick="payment_history_container();" class="btn btn-success d-flex justify-content-center align-items-center rounded-circle p-0" type="button" style="width: 40px; height: 40px;">
+                                        <i class="ti ti-circle-plus fs-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div id="payment-history"></div>
+                    </div>
+
+                    <div class="col-lg-6 mb-4">
+                        <label for="terms_and_conditions">Terms and Conditions</label>
+                        <textarea name="terms_and_conditions" id="terms_and_conditions" class="form-control @error('terms_and_conditions') is-invalid @enderror" placeholder="">{{ old('terms_and_conditions', "1. In case of changes in design rate will be changed\r\n2.Extra works causes extra charges.") }}</textarea>
+                        @error('terms_and_conditions')
+                            <div class="invalid-feedback">
+                                <p class="error">{{ $message }}</p>
+                            </div>
+                        @enderror
+                    </div>
+
+                </div>
+                </div>
+
+                @if ($errors->any())
+                <div class="alert alert-danger mt-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
 
                 <div class="row mt-3">
                     <div class="col-md-12">
@@ -207,7 +327,7 @@ function follow_container() {
 
             <div class="col-sm-1 my-auto">
                 <div class="form-group">
-                    <button class="btn btn-danger remove-field rounded-pill py-2 px-2" type="button" data-room="${roomID}">
+                    <button class="btn btn-danger remove-field rounded-pill py-2 px-2" type="button" data-room="${roomID}" onclick="remove_follow_container(${roomID})">
                         <i class="ti ti-minus"></i>
                     </button>
                 </div>
@@ -258,27 +378,29 @@ function follow_container() {
 
         <div class="col-sm-1 my-auto">
             <div class="form-group">
-                <button class="btn btn-danger remove-field rounded-pill py-2 px-2" type="button" data-room="${room}">
+                <button class="btn btn-danger remove-field rounded-pill py-2 px-2" type="button" data-room="${room}" onclick="remove_order_item_container(${room})">
                     <i class="ti ti-minus"></i>
                 </button>
             </div>
         </div>
 
-        <hr>
+        <hr class="mt-4 mt-md-0">
         `;
         objTo.appendChild(divtest);
-        // refreshProduct(`#order_item${room}`);
-        // categories(`#category${room}`);
-        // subcategories(`#sub-category${room}`);
         refreshSerach(room);
     }
 
-    document.getElementById("order-item-container").addEventListener("click", function (e) {
-        if (e.target && e.target.classList.contains("remove-field")) {
-            var rid = e.target.getAttribute("data-room");
-            document.querySelector(`.removeclass${rid}`).remove();
-        }
-    });
+
+    function remove_follow_container(rid){
+        document.querySelector(`.remove-follow-class${rid}`).remove();
+    }    
+
+    function remove_order_item_container(rid){
+        document.querySelector(`.removeclass${rid}`).remove();
+    }
+
+ 
+
 
     function refreshSerach (rid = 2){
 
@@ -451,6 +573,55 @@ function follow_container() {
     }
 
 
+    var phID = 1;
+    function payment_history_container() {
+    phID++;
+        var objTo = document.getElementById("payment-history");
+        var divtest = document.createElement("div");
+        divtest.setAttribute("class", `row remove-payment-history-class${phID}`);
+        divtest.innerHTML = `
+            <div class="col-md-3 col-12">
+                <label for="payment_history">Paid Amount *</label>
+                <input type="number" step="0.01" name="paid_amount[]" id="paid_amount" value="" 
+                    class="form-control @error('paid_amount') is-invalid @enderror" placeholder="" required/>
+            </div>
+
+            <div class="col-md-4 col-12">
+                <label for="payment_date">Payment Date *</label>
+                <input type="date" name="payment_date[]" id="payment_date" value="" 
+                    class="form-control @error('payment_date') is-invalid @enderror" placeholder="" required/>
+            </div>
+
+            <div class="col-md-4 col-12 mb-4">
+                <label for="payment_method">Payment Method *</label>
+                <select class="form-select mr-sm-2 @error('payment_method') is-invalid @enderror" id="payment_method" name="payment_method[]" required>
+                    <option value="" disabled selected>Select-- </option>
+                    <option value="cash" @if(old('payment_method') == 'cash') selected @endif>Cash</option>
+                    <option value="credit_card" @if(old('payment_method') == 'credit_card') selected @endif>Credit Card</option>
+                    <option value="bank_transfer" @if(old('payment_method') == 'bank_transfer') selected @endif>Bank Transfer</option>
+                    <option value="paypal" @if(old('payment_method') == 'paypal') selected @endif>Paypal</option>
+                    <option value="UPI" @if(old('payment_method') == 'UPI') selected @endif>UPI</option>
+                    <option value="other" @if(old('payment_method') == 'other') selected @endif>Other</option>
+                </select>
+            </div>
+
+            <div class="col-md-1 my-auto d-flex justify-content-center align-items-center">
+                <div class="form-group">
+                    <button class="btn btn-danger d-flex justify-content-center align-items-center rounded-circle p-0 remove-field" type="button" data-room="${phID}"  onclick="remove_payment_container(${phID})" style="width: 40px; height: 40px;">
+                        <i class="ti ti-minus fs-5"></i>
+                    </button>
+                </div>
+            </div>
+
+            <hr>
+        `;
+        objTo.appendChild(divtest);
+    }
+
+
+    function remove_payment_container(rid){
+        document.querySelector(`.remove-payment-history-class${rid}`).remove();
+    }
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>

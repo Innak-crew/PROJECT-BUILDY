@@ -31,6 +31,21 @@ class ApisController extends Controller
                         'error' => 'Customer not found.'
                     ], 404);
                 }
+            }else if ($name == "category-by-id") {
+                $categoryId = base64_decode($searchTerm);
+                $category = Categories::where('id', $categoryId)
+                ->first();
+                if ($category) {
+                    return response()->json([
+                        'id' => $category->id,
+                        'name' => $category->name,
+                    ]);
+                } else {
+                    return response()->json([
+                        'error' => 'Category not found.'
+                    ], 404);
+                }
+
             }
         }
 

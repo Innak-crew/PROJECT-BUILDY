@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ApisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DesignsController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
@@ -43,6 +44,17 @@ Route::middleware('auth')->group(function () {
             Route::get('/reminder/{encodedId}/view', "reminder_view")->name('admin.reminder.view');
             Route::get('/reminder/{encodedId}/edit', "reminder_edit")->name('admin.reminder.edit');
             Route::get('/new/order', "newOrder")->name('admin.new.order');
+            Route::get('/list/order', "listOrder")->name('admin.list.order');
+            Route::get('/view/{encodedId}/order', "viewOrder")->name('admin.view.order');
+            Route::get('/edit/{encodedId}/order', "editOrder")->name('admin.edit.order');
+            Route::get('/invoice', "invoiceShow")->name('admin.invoice');
+            Route::get('/gallery', "Gallery")->name('admin.gallery');
+            // Design
+            Route::get('/new/design', "newDesign")->name('admin.new.design');
+            Route::get('/list/design', "listDesign")->name('admin.list.design');
+            Route::get('/view/{encodedId}/design', "viewDesign")->name('admin.view.design');
+            Route::get('/edit/{encodedId}/design', "editDesign")->name('admin.edit.design');
+
         });
 
         
@@ -109,8 +121,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/reminder/is_completed', "is_completed")->name('reminder.is_completed');
     });
 
+    Route::controller(DesignsController::class)->group(function () {
+        Route::post('/design/store', "store")->name('design.store');
+        Route::post('/design/{encodedId}/update', "update")->name('design.update');
+        Route::delete('/design/{encodedId}/destroy', "destroy")->name('design.destroy');
+    });
+
     Route::controller(OrdersController::class)->group(function () {
         Route::post('/order/store', "store")->name('order.store');
+        Route::post('/order/{encodedId}/update', "update")->name('order.update');
+        Route::delete('/order/{encodedId}/destroy', "destroy")->name('order.destroy');
     });
     
     Route::prefix('/api')->group( function () {

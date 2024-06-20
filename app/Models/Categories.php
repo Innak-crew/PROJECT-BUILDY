@@ -17,5 +17,19 @@ class Categories extends Model
         'parent_id',
         'type',
     ];
+
+    public function orderItems(){
+        return $this->hasMany(OrderItems::class);
+    }
+
+    public function parentCategory()
+    {
+        return $this->belongsTo(Categories::class, 'parent_id');
+    }
+
+    public function subCategories()
+    {
+        return $this->hasMany(Categories::class, 'parent_id');
+    }
 }
  

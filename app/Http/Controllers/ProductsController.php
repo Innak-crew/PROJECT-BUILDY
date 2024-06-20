@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ProductsController extends Controller
@@ -79,7 +80,7 @@ class ProductsController extends Controller
         }
     
         try {
-            $imagepath = null;
+            $imagePath = null;
     
             if ($request->hasFile('image')) {
                 $timestamp = now()->format('YmdHis');
@@ -88,7 +89,14 @@ class ProductsController extends Controller
                 $extension = $request->file('image')->getClientOriginalExtension();
                 $imageName = $timestamp . '_' . $sanitizedFileName . '.' . $extension;
                 $path = $request->file('image')->storeAs('products', $imageName, 'public');
-                $imagepath = "/storage/" . $path;
+                $imagePath = "/storage/" . $path;
+
+
+                // Delete the old image if it exists
+                $product = Products::findOrFail($decodedId);
+                if ($product->image_url && Storage::disk('public')->exists(str_replace('/storage/', '', $product->image_url))) {
+                    Storage::disk('public')->delete(str_replace('/storage/', '', $product->image_url));
+                }
             }
     
             $products = Products::find($decodedId);
@@ -97,8 +105,8 @@ class ProductsController extends Controller
             $products->dimensions = $request->dimensions;
             $products->unit_id = $request->unit_id;
             $products->rate_per = $request->rate_per;
-            if($imagepath != null){
-                $products->image_url = $imagepath; 
+            if($imagePath != null){
+                $products->image_url = $imagePath; 
             }
             $products->save();
     
@@ -109,15 +117,24 @@ class ProductsController extends Controller
         }
     }
     
-    public function destroy(string $encodedId) 
-    {
-        $decodedId = base64_decode($encodedId); 
+    public function destroy(string $encodedId) {
+        $decodedId = base64_decode($encodedId);
+    
         try {
-            $products = Products::findOrFail($decodedId);
-            $products->delete();
-            return  back()->with('message', 'Product deteled successfully.');
+            $product = Products::findOrFail($decodedId);
+    
+            // Delete the image from storage if it exists
+            if ($product->image_url && Storage::disk('public')->exists(str_replace('/storage/', '', $product->image_url))) {
+                Storage::disk('public')->delete(str_replace('/storage/', '', $product->image_url));
+            }
+    
+            $product->delete();
+    
+            return back()->with('message', 'Product deleted successfully.');
         } catch (ModelNotFoundException $e) {
-            return abort(404, 'Product not found'); 
+            return abort(404, 'Product not found');
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Failed to delete product: ' . $e->getMessage()]);
         }
     }
 }

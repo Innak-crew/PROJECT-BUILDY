@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SendLoginDetails;
+use App\Models\Designs;
+use App\Models\Orders;
 use App\Models\QuantityUnits;
 use App\Models\User;
 use DateTime;
@@ -72,7 +74,16 @@ class AdminController extends Controller
             $pageData->QuantityUnits = QuantityUnits::all();
         }else if ($title == "List Product"){
             $pageData->Products = $user->products()->get();
+        }else if ($title == "List Orders"){
+            $pageData->Orders = Orders::with('orderItems')->get();
+        }else if ($title == "Invoice"){
+            $pageData = Orders::orderByDesc('created_at')->with('orderItems')->get();
+        }else if ($title == "New Design"){
+            $pageData->QuantityUnits = QuantityUnits::all();
+        }else if ($title == "Gallery" || $title == "List Designs"){
+            $pageData = Designs::all();
         }
+       
        
         return [
             'title' => $title,
@@ -173,6 +184,44 @@ class AdminController extends Controller
         return view('admin.orders.store', $data);
     }
 
+    public function listOrder()
+    {
+        $data = $this->getUserData('Orders', 'List Orders');
+        return view('admin.orders.list', $data);
+    }
+
+    public function viewOrder(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId);
+
+        try {
+            $order = Orders::findOrFail($decodedId);
+            $data = $this->getUserData('Orders', 'View Order', $order);
+            return view('admin.orders.view', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Order not found'); 
+        }
+    }
+
+    public function editOrder(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId);
+
+        try {
+            $order = Orders::findOrFail($decodedId);
+            $data = $this->getUserData('Orders', 'Edit Order', $order);
+            return view('admin.orders.update', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Order not found'); 
+        }
+    }
+
+    public function invoiceShow()
+    {
+        $data = $this->getUserData('Invoice', 'Invoice');
+        return view('admin.invoice.index', $data);
+    }
+
     public function add_user()
     {
         $data = $this->getUserData('Users', 'Add User');
@@ -258,6 +307,54 @@ class AdminController extends Controller
             return view('admin.reminder.edit', $data);
         } catch (ModelNotFoundException $e) {
             return abort(404, 'Customer not found'); 
+        }
+    }
+
+    public function Gallery()
+    {
+        $data = $this->getUserData('General', 'Gallery');
+        return view('admin.gallery', $data);
+    }
+
+    public function newDesign()
+    {
+        $data = $this->getUserData('Designs', 'New Design');
+        return view('admin.design.add', $data);
+    }
+
+    public function listDesign()
+    {
+        $data = $this->getUserData('Designs', 'List Designs');
+        return view('admin.design.list', $data);
+    }
+
+    public function viewDesign(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId);
+
+        try {
+            $pageData = new stdClass();
+            $pageData->design = Designs::findOrFail($decodedId);
+            $pageData->QuantityUnits = QuantityUnits::all();
+            $data = $this->getUserData('Designs', 'View Design', $pageData);
+            return view('admin.design.view', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Order not found'); 
+        }
+    }
+
+    public function editDesign(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId);
+
+        try {
+            $pageData = new stdClass();
+            $pageData->design = Designs::findOrFail($decodedId);
+            $pageData->QuantityUnits = QuantityUnits::all();
+            $data = $this->getUserData('Designs', 'Edit Design', $pageData);
+            return view('admin.design.edit', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Order not found'); 
         }
     }
 

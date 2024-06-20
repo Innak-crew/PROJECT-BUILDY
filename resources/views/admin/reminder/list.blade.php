@@ -11,7 +11,7 @@
 
 <div class="card w-100 position-relative overflow-hidden">
     <div class="px-4 py-3 border-bottom">
-        <h5 class="card-title fw-semibold mb-0 lh-sm">{{$title}}</h5>
+        <h5 class="card-title fw-semibold mb-0 lh-sm"> <a href="{{url()->previous()}}"><span class="th-arrow-left"></span></a> {{$title}}</h5>
     </div>
     <div class="card-body p-4">
         <div class="table-responsive rounded-2 py-5 mb-4">

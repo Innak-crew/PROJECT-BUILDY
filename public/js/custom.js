@@ -4,7 +4,7 @@ $(function () {
   // Feather Icon Init Js
   // feather.replace();
 
-  // $(".preloader").fadeOut();
+  $(".preloader").fadeOut();
 
   // =================================
   // Tooltip
@@ -63,13 +63,13 @@ $(function () {
   });
 
   // fixed header
-  $(window).scroll(function () {
-    if ($(window).scrollTop() >= 60) {
-      $(".app-header").addClass("fixed-header");
-    } else {
-      $(".app-header").removeClass("fixed-header");
-    }
-  });
+  // $(window).scroll(function () {
+  //   if ($(window).scrollTop() >= 60) {
+  //     $(".app-header").addClass("fixed-header");
+  //   } else {
+  //     $(".app-header").removeClass("fixed-header");
+  //   }
+  // });
 
   // Checkout
   $(function () {
