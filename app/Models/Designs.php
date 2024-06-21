@@ -14,7 +14,9 @@ class Designs extends Model
     protected $fillable = [
         'user_id',
         'name',
+        'description',
         'category_id',
+        'category_key_id',
         'image_url',
         'product_id',
         'type',
@@ -34,5 +36,10 @@ class Designs extends Model
     public function product()
     {
         return $this->belongsTo(Products::class, 'product_id');
+    }
+
+    public function categoryKey()
+    {
+        return $this->belongsTo(CategoryKey::class);
     }
 }

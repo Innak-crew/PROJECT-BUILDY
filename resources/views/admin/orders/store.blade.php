@@ -451,14 +451,13 @@ function follow_container() {
     }
 
 
-  var quantityData = <?= json_encode($pageData->QuantityUnits->map(function ($QuantityUnit) {
-    return [
-      'id' => $QuantityUnit->id,
-      'name' => $QuantityUnit->name,
-      'description' => $QuantityUnit->description,
-    ];
-  })) ?>;
-
+    var quantityData = <?= json_encode($pageData->QuantityUnits->map(function ($QuantityUnit) {
+        return [
+        'id' => $QuantityUnit->id,
+        'name' => $QuantityUnit->name,
+        'description' => $QuantityUnit->description,
+        ];
+    })) ?>;
 
 
 
@@ -510,6 +509,17 @@ function follow_container() {
                 $(`#sub_total${rid}`).val(subtotal.toFixed(2)); 
             } else {
                 alert('Invalid quantity input');
+            }
+        });
+
+        $(`#order_item_quantity${rid}`).on('input', (e) => {
+            var rate_per = $(`#rate_per${rid}`).val();
+            var quantity = parseFloat(e.target.value);
+            if (!isNaN(rate_per)) {
+                var subtotal = quantity * rate_per;
+                $(`#sub_total${rid}`).val(subtotal.toFixed(2)); 
+            } else {
+                alert('Invalid input');
             }
         });
 
@@ -588,7 +598,7 @@ function follow_container() {
     });
 
     $(document).ready(function() {
-    const userId = '{{ base64_encode($userId) }}';
+        const userId = '{{ base64_encode($userId) }}';
         const oldCustomerId = '{{ base64_encode(old('customer',0))}}';
 
         if (oldCustomerId !== 'MA==') { 
@@ -607,16 +617,16 @@ function follow_container() {
     }
 
     function handleCustomerDataSuccess(data) {
-    if (data && data.id) {
-        const option = new Option(data.name, data.id, true, true);
-        const $customerDetails = $('.customer-details');
-        $customerDetails.append(option).trigger('change');
-        $customerDetails.trigger({
-            type: 'select2:select',
-            params: { data: data }
-        });
+        if (data && data.id) {
+            const option = new Option(data.name, data.id, true, true);
+            const $customerDetails = $('.customer-details');
+            $customerDetails.append(option).trigger('change');
+            $customerDetails.trigger({
+                type: 'select2:select',
+                params: { data: data }
+            });
+        }
     }
-}
 
     function handleAjaxError(xhr, status, error) {
         console.error('AJAX request failed:', status, error);

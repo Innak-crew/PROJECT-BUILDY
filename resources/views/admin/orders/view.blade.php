@@ -48,7 +48,6 @@
 </style>
 @endpush
 
-
 <section class="h-100">
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col-lg-11 col-xl-10  col-12">
@@ -56,12 +55,12 @@
                     <div class="card-header px-lg-4 pb-3 invoice-header">
                         <div class="d-flex justify-content-center pt-2">
                             <h5
-                                class="mb-1 badge @if($pageData->status == 'ongoing') bg-light-info text-info @elseif($pageData->status == 'cancelled') bg-light-danger text-danger @else bg-light-success text-success  @endif">
+                                class="mb-1 badge @if($pageData->status == 'ongoing') bg-light-info text-info @elseif($pageData->status == 'cancelled') bg-light-danger text-danger @elseif($pageData->status == 'follow-up') bg-light-warning text-warning @else bg-light-success text-success  @endif">
                                 {{ ucfirst($pageData->status) }} Order</h5>
                         </div>
                         <div class="d-flex justify-content-between pt-2">
                             <h5 class=" mb-0">Order Details</h5>
-                            <h5 class=" mb-0">#ORD-000007</h5>
+                            <h5 class=" mb-0">#ODR-{{ str_pad($pageData->id ,5,'0',STR_PAD_LEFT) }}</h5>
                         </div>
                     </div>
                     <div class="card-body invoice-body">
@@ -118,6 +117,12 @@
                                     <p class="lead fw-normal mb-0">Rate per Unit</p>
                                   </th>
                                   <th>
+                                    <p class="lead fw-normal mb-0">Sub Total</p>
+                                  </th>
+                                  <th>
+                                    <p class="lead fw-normal mb-0">DISC({{$pageData->invoice()->first()->discount_percentage}}%)</p>
+                                  </th>
+                                  <th>
                                     <p class="lead fw-normal mb-0">Total</p>
                                   </th>
                                 </tr>
@@ -129,28 +134,33 @@
                                 <tr>
                                   <td>
                                     <div class="d-flex align-items-center">
-                                      <img src="{{$orderItem->product()->first()->image_url}}" class="" alt="..." width="56" height="56">
+                                      <img src="{{$orderItem->design->image_url}}" class="" alt="..." width="56" height="56">
                                       <div class="ms-3">
                                         <h6 class="lead fw-semibold mb-0 fs-4">
-                                          {{$orderItem->catagories()->first()->name}}
-                                          ({{$orderItem->product()->first()->type}})
+                                          {{$orderItem->catagories->name}}
+                                          ({{$orderItem->design->type}})
                                         </h6>
-                                        <p class="text-muted mb-0">{{ucwords(strtolower($orderItem->product->name))}}</p>
+                                        <p class="text-muted mb-0">{{ucwords(strtolower($orderItem->design->name))}}</p>
                                       </div>
                                     </div>
                                   </td>
                                   <td>
-                                    <p class="text-muted mb-0 fs-4">{{ rtrim(rtrim(number_format($orderItem->quantity, 2), '0'), '.') }} ({{$orderItem->product()->first()->unit()->first()->name}})</p>
+                                    <p class="text-muted mb-0 fs-4">{{ rtrim(rtrim(number_format($orderItem->quantity, 2), '0'), '.') }} ({{$orderItem->design->unit()->first()->name}})</p>
                                   </td>
                                   <td>
-                                    <p class="text-muted mb-0 fs-4">₹ {{ rtrim(rtrim(number_format($orderItem->product()->first()->rate_per, 2), '0'), '.') }} </p>
-                                    <!-- <p class="text-muted mb-0 fs-4">₹ {{ rtrim(rtrim(number_format( $orderItem->total / $orderItem->quantity , 2), '0'), '.') }} </p>  -->
+                                    <p class="text-muted mb-0 fs-4">₹ {{ rtrim(rtrim(number_format($orderItem->rate_per, 2), '0'), '.') }} </p>
                                   </td>
                                   <td>
-                                    <p class="text-muted mb-0 fs-4">₹ {{$orderItem->total}}</p>
+                                    <p class="text-muted mb-0 fs-4">₹ {{ rtrim(rtrim(number_format($orderItem->sub_total, 2), '0'), '.')}}</p>
+                                  </td>
+                                  <td>
+                                    <p class="text-muted mb-0 fs-4">₹ {{ rtrim(rtrim(number_format($orderItem->sub_total * ($pageData->invoice()->first()->discount_percentage / 100), 2), '0'), '.')}}</p>
+                                  </td>
+                                  <td>
+                                    <p class="text-muted mb-0 fs-4">₹ {{ rtrim(rtrim(number_format($orderItem->total, 2), '0'), '.')}}</p>
                                   </td>
                                 </tr>
-                                <?php $sub_total += $orderItem->total; ?>
+                                <?php $sub_total += $orderItem->sub_total; ?>
                                 @endforeach
                                 @else
                                 <tr>

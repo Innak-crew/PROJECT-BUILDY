@@ -15,11 +15,12 @@ class OrderItems extends Model
     protected $fillable = [
         'order_id',
         'category_id',
-        'product_id',
-        'unit',
+        'design_id',
         'quantity',
+        'rate_per',
         'discount_amount',
         'discount_percentage',
+        'sub_total',
         'total',
     ];
 
@@ -34,8 +35,8 @@ class OrderItems extends Model
         return $this->belongsTo(Categories::class, 'category_id');
     }
 
-    public function product(){
-        return $this->belongsTo(Products::class, 'product_id');
+    public function design(){
+        return $this->belongsTo(Designs::class, 'design_id');
     }
 
 

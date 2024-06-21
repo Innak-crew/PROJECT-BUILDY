@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Designs;
 use App\Models\RateHistory;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -10,7 +11,6 @@ use App\Models\Invoices;
 use App\Models\OrderItems;
 use App\Models\Orders;
 use App\Models\PaymentHistory;
-use App\Models\Products;
 use App\Models\Reminders;
 use App\Models\Schedule;
 use Carbon\Carbon;
@@ -45,8 +45,16 @@ class OrdersController extends Controller
             'category.*' => 'string|max:255',
             'sub_category' => 'nullable|array',
             'sub_category.*' => 'string|max:255',
-            'order_item' => 'nullable|array',
-            'order_item.*' => 'integer|exists:products,id',
+
+            'design' => 'nullable|array',
+            'design.*' => 'nullable|integer|exists:designs,id',
+
+            'rate_per' => 'nullable|array',
+            'rate_per.*' => 'nullable|numeric|min:0',
+
+            'sub_total' => 'nullable|array',
+            'sub_total.*' => 'nullable|numeric|min:0',
+
             'order_item_quantity' => 'nullable|array',
             'order_item_quantity.*' => 'integer|min:1',
             
@@ -60,13 +68,15 @@ class OrdersController extends Controller
             'payment_method.*' => 'nullable|string',
         ]);
 
+        // dd($request->all());
+
 
         try {
             DB::beginTransaction();
 
             $user_id = Auth::id();
 
-            // find customer
+           // Find the customer
             $customer = Customers::find($request->customer);
 
             // Create new order
@@ -82,10 +92,12 @@ class OrdersController extends Controller
                 'deposit_received' => $request->deposit_received ?? null,
             ]);
 
-            // Create follow-ups
+            // Handle follow-ups
             if (isset($request->follow_date)) {
                 foreach ($request->follow_date as $index => $followDate) {
                     $note = $request->note[$index] ?? '';
+
+                    // Create schedule
                     $schedule = new Schedule();
                     $schedule->user_id = $user_id;
                     $schedule->order_id = $order->id;
@@ -95,6 +107,7 @@ class OrdersController extends Controller
                     $schedule->level = 'Warning';
                     $schedule->save();
 
+                    // Create reminder
                     $reminder = new Reminders();
                     $reminder->user_id = $user_id;
                     $reminder->title = 'Follow-up Reminder';
@@ -105,48 +118,40 @@ class OrdersController extends Controller
                 }
             }
 
-            $sub_total = 0;
+            // Handle order items
+            if (isset($request->design)) {
+                for ($i = 0; $i < count($request->design); $i++) {
+    
+                    // Find or create the category
+                    $category = Categories::firstOrCreate(['name' => $request->category[$i]], ['type' => $request->type]);
 
-            // Create order items
-            if (isset($request->order_item)) {
-                for ($i = 0; $i < count($request->order_item); $i++) {
-                    $subCategory = Categories::where('name', $request->sub_category[$i])->first();
+                    // Find or create the subcategory
+                    $subCategory = Categories::firstOrCreate(
+                        ['name' => $request->sub_category[$i], 'parent_id' => $category->id],
+                        ['type' => $request->type]
+                    );
             
-                    if (!$subCategory) {
-                        $category = Categories::where('name', $request->category[$i])->first();
-            
-                        if (!$category) {
-                            $category = Categories::create([
-                                'name' => $request->category[$i],
-                                'type' => $request->type,
-                            ]);
-                        }
-            
-                        $subCategory = Categories::create([
-                            'name' => $request->sub_category[$i],
-                            'parent_id' => $category->id,
-                            'type' => $request->type,
-                        ]);
-                    }
-            
-                    $product = Products::findOrFail($request->order_item[$i]);
-                    $sub_total += $product->rate_per * $request->order_item_quantity[$i];
-                    $orderItem = OrderItems::create([
+                    // Find the design
+                    $design = Designs::findOrFail($request->design[$i]);
+
+                    $rate_per = $request->rate_per[$i] ?? 0;
+
+                    // Create order item
+                    DB::table('order_items')->insert([
                         'order_id' => $order->id,
                         'category_id' => $subCategory->id,
-                        'product_id' => $product->id,
+                        'design_id' => $design->id,
                         'quantity' => $request->order_item_quantity[$i],
-                        'total' => $product->rate_per * $request->order_item_quantity[$i],
+                        'rate_per' => $rate_per,
+                        'sub_total' => $request->sub_total[$i],
+                        'discount_percentage' => $request->discount_percentage,
+                        'discount_amount' => $request->sub_total[$i] * ($request->discount_percentage ?? 0 / 100),
+                        'total' => $request->sub_total[$i] - ($request->sub_total[$i] * ($request->discount_percentage ?? 0 / 100)),
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
+                    
 
-                    // $effectiveDate = $request->due_date ?? $request->order_ending_date ?? $request->order_starting_date ?? Carbon::now();
-
-                    // $rateHistory = new RateHistory([
-                    //     'rate_per' => $product->rate_per,
-                    //     'effective_date' =>  $effectiveDate,
-                    // ]);
-
-                    // $orderItem->rateHistories()->save($rateHistory);
                 }
             }
 
@@ -162,44 +167,54 @@ class OrdersController extends Controller
                 }
             }
 
-            // Calculate invoice details
-            $discountAmount = $sub_total * ($request->discount_percentage ?? 0 / 100);
-            $totalAfterDiscount = $sub_total - $discountAmount;
-            $balanceAmount = $totalAfterDiscount - ($request->advance_pay_amount ?? 0);
-
             $latestInvoice = Invoices::orderBy('id', 'desc')->first();
             $nextInvoiceNumber = $latestInvoice ? ((int) substr($latestInvoice->invoice_number, 5)) + 1 : 1;
             $formattedInvoiceNumber = '#INV-' . str_pad($nextInvoiceNumber, 5, '0', STR_PAD_LEFT);
 
+            $sub_total = $order->orderItems->sum('sub_total');
+            $discountAmount = $sub_total * ($request->discount_percentage / 100);
+            $totalAfterDiscount = $sub_total - $discountAmount;
+
+            $balanceAmount = $totalAfterDiscount - $order->paymentHistory->sum('amount');
+
+
             // Create invoice
-            $invoice = new Invoices();
-            $invoice->order_id = $order->id;
-            $invoice->user_id =  $user_id;
-            $invoice->customer_id = $customer->id;
-            $invoice->invoice_number = $formattedInvoiceNumber;
-            $invoice->created_date = $request->created_date ?? null;
-            $invoice->due_date = $request->due_date ?? null;
-            $invoice->discount_percentage = $request->discount_percentage ?? 0;
-            $invoice->discount_amount = $discountAmount ?? 0;
-            $invoice->advance_pay_amount = $request->advance_pay_amount ?? 0;
-            $invoice->payment_status = $request->payment_status ?? 'pending';
-            $invoice->sub_total_amount = $sub_total ?? 0;
-            $invoice->total_amount = $totalAfterDiscount ?? 0;
-            $invoice->balance_amount = $balanceAmount ?? 0;
-            $invoice->terms_and_conditions = $request->terms_and_conditions ?? '';
-            $invoice->save();
+            $invoice = Invoices::create([
+                'order_id' => $order->id,
+                'user_id' => $user_id,
+                'customer_id' => $customer->id,
+                'invoice_number' => $formattedInvoiceNumber,
+                'created_date' => $request->created_date,
+                'due_date' => $request->due_date ?? null,
+                'discount_percentage' => $request->discount_percentage ?? 0,
+                'discount_amount' => $discountAmount ?? 0,
+                'advance_pay_amount' => $request->advance_pay_amount ?? 0,
+                'payment_status' => $request->payment_status ?? 'pending',
+                'sub_total_amount' => $sub_total ?? 0,
+                'total_amount' => $totalAfterDiscount ?? 0,
+                'balance_amount' => $balanceAmount ?? 0,
+                'terms_and_conditions' => $request->terms_and_conditions ?? '',
+            ]);
             
+            // Commit the transaction
             DB::commit();
 
             return redirect()->back()->with('message', 'Order created successfully.');
         } catch (Exception $e) {
             DB::rollBack();
+            \Log::error('Order creation failed:', ['error' => $e->getMessage()]);
             dd($e);
             return back()->with('error', 'Failed to create order. Please try again later.');
         }
     }
 
     public function update(Request $request, string $encodedId){
+
+        // $decodeID = base64_decode($encodedId);
+
+        // $order = Orders::findOrFail($decodeID);
+
+        
 
          $request->validate([
             'name' => 'nullable|string',
@@ -222,8 +237,8 @@ class OrdersController extends Controller
             'alt_payment_history_id' => 'nullable|array',
             'alt_payment_history_id.*' => 'nullable|integer|exists:payment_history,id',
             
-            'alt_order_item_id' => 'nullable|array',
-            'alt_order_item_id.*' => 'nullable|integer|exists:order_items,id',
+            'alt_order_item' => 'nullable|array',
+            'alt_order_item.*' => 'nullable|integer|exists:order_items,id',
             
             'alt_category_id' => 'nullable|array',
             'alt_category_id.*' => 'nullable|integer|exists:categories,id',
@@ -231,11 +246,17 @@ class OrdersController extends Controller
             'alt_sub_category_id' => 'nullable|array',
             'alt_sub_category_id.*' => 'nullable|integer|exists:categories,id',
             
-            'alt_order_item' => 'nullable|array',
-            'alt_order_item.*' => 'nullable|integer|exists:products,id',
+            'alt_design' => 'nullable|array',
+            'alt_design.*' => 'nullable|integer|exists:designs,id',
             
             'alt_order_item_quantity' => 'nullable|array',
             'alt_order_item_quantity.*' => 'nullable|numeric|min:0',
+            
+            'alt_rate_per' => 'nullable|array',
+            'alt_rate_per.*' => 'nullable|numeric|min:0',
+            
+            'alt_sub_total' => 'nullable|array',
+            'alt_sub_total.*' => 'nullable|numeric|min:0',
             
             'alt_category' => 'nullable|array',
             'alt_category.*' => 'nullable|string|max:255',
@@ -290,15 +311,23 @@ class OrdersController extends Controller
             
             'sub_category' => 'nullable|array',
             'sub_category.*' => 'nullable|string|max:255',
-            
-            'order_item' => 'nullable|array',
-            'order_item.*' => 'nullable|integer|exists:products,id',
+
+            'design' => 'nullable|array',
+            'design.*' => 'nullable|integer|exists:designs,id',
+
+            'rate_per' => 'nullable|array',
+            'rate_per.*' => 'nullable|numeric|min:0',
+
+            'sub_total' => 'nullable|array',
+            'sub_total.*' => 'nullable|numeric|min:0',
             
             'order_item_quantity' => 'nullable|array',
             'order_item_quantity.*' => 'nullable|integer|min:1',
 
         ]);
-        
+
+        // dd($request->all());
+
 
         try {
 
@@ -340,42 +369,46 @@ class OrdersController extends Controller
                             $orderItem->delete();
                         } else {
                             // Update category and sub-category
-                            $currentSubCategory = $orderItem->product()->first()->name;
                             $newSubCategory = $request->alt_sub_category[$index];
+                            $newCategory = $request->alt_category[$index];
     
-                            if ($currentSubCategory != $newSubCategory) {
+                                // Find or create the new main category
                                 $category = Categories::firstOrCreate(
-                                    ['name' => $request->alt_category[$index], 'type' => $request->type],
+                                    ['name' => $newCategory],
                                     ['type' => $request->type]
                                 );
-    
+                            
+                                // Find or create the new subcategory under the new main category
                                 $subCategory = Categories::firstOrCreate(
                                     ['name' => $newSubCategory, 'parent_id' => $category->id],
                                     ['type' => $request->type]
                                 );
-    
+                                
                                 $orderItem->update(['category_id' => $subCategory->id]);
-                            }
+                 
+
     
-                            // Update product, quantity, and total
+                            // Update Design, quantity, and total
                             if (isset($request->alt_order_item[$index])) {
-                                $orderItem->update(['product_id' => $request->alt_order_item[$index]]);
+                                $orderItem->update(['design_id' => $request->alt_design[$index]]);
                             }
     
                             if (isset($request->alt_order_item_quantity[$index])) {
                                 $quantity = $request->alt_order_item_quantity[$index];
-                                $orderItem->update(['quantity' => $quantity]);
+                                $rate_per = $request->alt_rate_per[$index];
+                                $sub_total = $request->alt_sub_total[$index];
+                                $discount_percentage = $request->discount_percentage ?? 0;
+                                $discount_amount = $sub_total * ($discount_percentage / 100);
+                                $total = $sub_total - $discount_amount;
     
-                                $product = $orderItem->product;
-                                if ($product) {
-                                    $total = $product->rate_per * $quantity;
-                                    $orderItem->update(['total' => $total]);
-                                }
-                            }
-    
-                            // Update discount percentage
-                            if (isset($request->discount_percentage)) {
-                                $orderItem->update(['discount_percentage' => $request->discount_percentage]);
+                                $orderItem->update([
+                                    'quantity' => $quantity,
+                                    'rate_per' => $rate_per,
+                                    'sub_total' => $sub_total,
+                                    'discount_percentage' => $discount_percentage,
+                                    'discount_amount' => $discount_amount,
+                                    'total' => $total,
+                                ]);
                             }
                         }
                     }
@@ -383,35 +416,39 @@ class OrdersController extends Controller
             }
 
             // Create new order items
-            if (isset($request->order_item)) {
-                for ($i = 0; $i < count($request->order_item); $i++) {
-                    $subCategory = Categories::where('name', $request->sub_category[$i])->first();
-            
-                    if (!$subCategory) {
-                        $category = Categories::where('name', $request->category[$i])->first();
-            
-                        if (!$category) {
-                            $category = Categories::create([
-                                'name' => $request->category[$i],
-                                'type' => $request->type,
-                            ]);
-                        }
-            
-                        $subCategory = Categories::create([
-                            'name' => $request->sub_category[$i],
-                            'parent_id' => $category->id,
-                            'type' => $request->type,
-                        ]);
-                    }
-            
-                    $product = Products::findOrFail($request->order_item[$i]);
+            if (isset($request->design)) {
+                for ($i = 0; $i < count($request->design); $i++) {
 
-                    OrderItems::create([
+                    // Find or create the category
+                    $category = Categories::firstOrCreate(['name' => $request->category[$i]], ['type' => $request->type]);
+
+                    // Find or create the subcategory
+                    $subCategory = Categories::firstOrCreate(
+                        ['name' => $request->sub_category[$i], 'parent_id' => $category->id],
+                        ['type' => $request->type]
+                    );
+
+                    // Find the design
+                    $design = Designs::findOrFail($request->design[$i]);
+                    $rate_per = $request->rate_per[$i] ?? 0;
+                    $sub_total = $request->sub_total[$i];
+                    $discount_percentage = $request->discount_percentage ?? 0;
+                    $discount_amount = $sub_total * ($discount_percentage / 100);
+                    $total = $sub_total - $discount_amount;
+
+                     // Create order item
+                     DB::table('order_items')->insert([
                         'order_id' => $order->id,
                         'category_id' => $subCategory->id,
-                        'product_id' => $product->id,
+                        'design_id' => $design->id,
                         'quantity' => $request->order_item_quantity[$i],
-                        'total' => $product->rate_per * $request->order_item_quantity[$i],
+                        'rate_per' => $rate_per,
+                        'sub_total' => $sub_total,
+                        'discount_percentage' => $discount_percentage,
+                        'discount_amount' => $discount_amount,
+                        'total' => $total,
+                        'created_at' => now(),
+                        'updated_at' => now(),
                     ]);
                 }
             }
@@ -517,18 +554,16 @@ class OrdersController extends Controller
 
                 if ($invoice) {
                     // Calculate invoice details
-                    $sub_total = 0;
-                    foreach ($order->orderItems as $item) {
-                        $sub_total += $item->total;
-                    }
-
-                    $discountAmount = $sub_total * ($request->discount_percentage ?? 0 / 100);
+                    $sub_total = $order->orderItems->sum('sub_total');
+                    $discountAmount = $sub_total * ($request->discount_percentage / 100);
                     $totalAfterDiscount = $sub_total - $discountAmount;
-                    $balanceAmount = $totalAfterDiscount - ($request->advance_pay_amount ?? 0);
+
+                    $balanceAmount = $totalAfterDiscount - $order->paymentHistory->sum('amount');
 
                     $invoice->update([
                         'created_date' => $request->created_date,
                         'due_date' => $request->due_date,
+                        'sub_total_amount' => $sub_total,
                         'discount_amount' => $discountAmount,
                         'discount_percentage' => $request->discount_percentage,
                         'advance_pay_amount' => $request->advance_pay_amount,
@@ -542,11 +577,11 @@ class OrdersController extends Controller
 
             // Commit the transaction
             DB::commit();
-    
             return back()->with('message', 'Order updated successfully.');
             
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return back()->with('error', 'Failed to update order. Please try again later.');
         }
     }
@@ -559,7 +594,6 @@ class OrdersController extends Controller
         try {
             DB::beginTransaction();
             foreach ($order->orderItems as $orderItem) {
-                $orderItem->rateHistory()->delete();
                 $orderItem->delete();
             }
             foreach ($order->followup()->get() as $followup) {
@@ -580,7 +614,6 @@ class OrdersController extends Controller
             return abort(404, 'Order not found'); 
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
             return back()->with('error', 'An error occurred while deleting the order.');
         }
     }

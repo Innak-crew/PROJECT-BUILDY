@@ -47,6 +47,18 @@
 
             <div class="col-md-6 mb-3">
               <div class="form-floating">
+              <input type="text" name="name" id="name" class="form-control " value="{{old('name',$pageData->design->name)}}" placeholder="Enter category here"  required/>
+                <label for="name">Design name *</label>
+                @error('name')
+                  <div class="invalid-feedback">
+                    <p class="error">{{ $message }}</p>
+                  </div>
+                @enderror
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
               <input type="text" name="category" id="category1" class="form-control " value="{{$pageData->design->category->parentCategory->name}}" placeholder="Enter category here" required/>
                 <label for="category1">Design Category *</label>
                 <small id="textHelp" class="form-text text-muted">(e.g., Kitchen)</small>
@@ -65,6 +77,18 @@
                 <label for="sub-category1">Design Sub Category *</label>
                 <small id="textHelp" class="form-text text-muted">(e.g., Kitchen Cupboard)</small>
                 @error('sub_category')
+                  <div class="invalid-feedback">
+                    <p class="error">{{ $message }}</p>
+                  </div>
+                @enderror
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+              <input type="text" name="category_key" id="category-key" class="form-control typeahead" placeholder="Enter key here" value="{{old('category_key',$pageData->design->categoryKey->key)}}" required/>
+                <label for="category_key">Common Key *</label>
+                @error('category_key')
                   <div class="invalid-feedback">
                     <p class="error">{{ $message }}</p>
                   </div>
@@ -136,10 +160,11 @@
 
 @push('script')
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
+<script src="/js/bootstrap3-typeahead.min.js"></script>
 
 <script>
     $(document).ready(function () {
+
       $('#category1').typeahead({
         hint: true,
         highlight: true,
@@ -164,7 +189,7 @@
         minLength: 1,
         source: function (query, process) {
           $.ajax({
-            url: `/api/search/{{ base64_encode($userId) }}/subcategories/${query}`,
+            url: `/api/search/{{ base64_encode($userId) }}/subcategories/${query}?`,
             method: 'GET',
             success: function (data) {
               process(data);
@@ -175,6 +200,32 @@
           });
         }
       });
+
+      $('#category-key').typeahead({
+        source: function(query, process) {
+            $.ajax({
+                url: `/api/search/{{ base64_encode($userId) }}/categorykey/${encodeURIComponent(query)}`,
+                method: 'GET',
+                success: function(data) {
+                    var items = $.map(data, function(item) {
+                        return { id: item.id, name: item.key };
+                    });
+                    process(data); 
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching category keys:', textStatus, errorThrown);
+                }
+            });
+          },
+          showHintOnFocus:true,
+          displayText: function(item) {
+            return item.key; 
+          },
+          afterSelect: function(item) {
+              $('#category-key').val(item.key); 
+          }
+      });
+    
     });
   </script>
 

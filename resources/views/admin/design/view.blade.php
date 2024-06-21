@@ -37,14 +37,15 @@
 
             <div class="col-md-6 mb-3">
               <div class="form-floating">
+              <input type="text" class="form-control " value="{{$pageData->design->name}}" placeholder="Enter category here" disabled  required/>
+                <label for="category1">Design name *</label>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
               <input type="text" name="category" id="category1" class="form-control " value="{{$pageData->design->category->parentCategory->name}}" placeholder="Enter category here" disabled  required/>
                 <label for="category1">Design Category *</label>
-                
-                @error('category')
-                  <div class="invalid-feedback">
-                    <p class="error">{{ $message }}</p>
-                  </div>
-                @enderror
               </div>
             </div>
 
@@ -52,6 +53,13 @@
               <div class="form-floating">
               <input type="text" name="sub_category" id="sub-category1" class="form-control typeahead" placeholder="Enter sub-category here" value="{{$pageData->design->category->name}}" disabled required/>
                 <label for="sub-category1">Design Sub Category *</label>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <div class="form-floating">
+              <input type="text"  class="form-control typeahead" placeholder="Enter key here" value="{{$pageData->design->categoryKey->key}}" disabled required/>
+                <label for="sub-category1">Common Key *</label>
               </div>
             </div>
  

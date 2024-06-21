@@ -34,10 +34,13 @@
         <h6 class="fs-4 fw-semibold mb-0">Created By</h6>
       </th>
       <th>
-        <h6 class="fs-4 fw-semibold mb-0">Created At</h6>
+        <h6 class="fs-4 fw-semibold mb-0">Order Status</h6>
       </th>
       <th>
-        <h6 class="fs-4 fw-semibold mb-0">Status</h6>
+        <h6 class="fs-4 fw-semibold mb-0">Payment Status</h6>
+      </th>
+      <th>
+        <h6 class="fs-4 fw-semibold mb-0">Created At</h6>
       </th>
       <th>
         <h6 class="fs-4 fw-semibold mb-0">Action</h6>
@@ -52,7 +55,7 @@
             <p class="mb-0 fw-normal fs-4">{{$i + 1}}</p>
           </td>
           <td>
-            <p class="mb-0 fw-normal fs-4">#ODR-{{ str_pad($pageData->Orders[$i]->id,5,'0',STR_PAD_LEFT) }}</p>
+            <p class="mb-0 fw-normal fs-4">#ODR-{{ str_pad($pageData->Orders[$i]->id ,5,'0',STR_PAD_LEFT) }}</p>
           </td>
           <td>
             <p class="mb-0 fw-normal fs-4">{{ $pageData->Orders[$i]->name }}</p>
@@ -61,18 +64,38 @@
             <p class="mb-0 fw-normal fs-4">@if ($pageData->Orders[$i]->user_id == $userId) You @else {{ $pageData->Orders[$i]->user()->first()->name }}@endif </p>
           </td>
           <td>
-            <p class="mb-0 fw-normal fs-4">{{ \Carbon\Carbon::parse($pageData->Orders[$i]->created_at)->diffForHumans() }}</p>
+            <p class="mb-0 fw-normal fs-4">
+                @php
+                    $statusClasses = [
+                        'ongoing' => 'bg-light-primary text-primary',
+                        'cancelled' => 'bg-light-danger text-danger',
+                        'follow-up' => 'bg-light-info text-info',
+                        'completed' => 'bg-light-success text-success',
+                    ];
+                    $statusClass = $statusClasses[$pageData->Orders[$i]->status] ?? 'bg-light-success text-success';
+                @endphp
+
+                <span class="mb-1 badge font-medium {{ $statusClass }}"> {{ ucfirst($pageData->Orders[$i]->status) }}</span>
+            </p>
           </td>
           <td>
             <p class="mb-0 fw-normal fs-4">
-                @if ($pageData->Orders[$i]->status == 'ongoing')
-                    <span class="mb-1 badge font-medium bg-light-primary text-primary"> {{ ucfirst($pageData->Orders[$i]->status) }}</span>
-                @elseif ($pageData->Orders[$i]->status == 'cancelled')
-                    <span class="mb-1 badge font-medium bg-light-danger text-danger"> {{ ucfirst($pageData->Orders[$i]->status) }}</span>
-                @else
-                    <span class="mb-1 badge font-medium bg-light-success text-success">Completed</span>
-                @endif
+                @php
+                    $paymentStatusClasses = [
+                        'pending' => 'bg-light-warning text-warning',
+                        'paid' => 'bg-light-success text-success',
+                        'partially_paid' => 'bg-light-info text-info',
+                        'late' => 'bg-light-warning text-warning',
+                        'overdue' => 'bg-light-danger text-danger',
+                    ];
+                    $paymentStatus = $pageData->Orders[$i]->invoice()->first()->payment_status;
+                    $paymentStatusClass = $paymentStatusClasses[$paymentStatus] ?? 'bg-light-warning text-warning';
+                @endphp
+                <span class="mb-1 badge font-medium {{ $paymentStatusClass }}"> {{ ucfirst($paymentStatus) }}</span>
             </p>
+          </td>
+          <td>
+            <p class="mb-0 fw-normal fs-4">{{ \Carbon\Carbon::parse($pageData->Orders[$i]->created_at)->format('jS F Y')}}</p>
           </td>
           <td class="">
             <a href="{{route('admin.view.order',['encodedId' => base64_encode($pageData->Orders[$i]->id)])}}" class="text-success"><svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg></a>

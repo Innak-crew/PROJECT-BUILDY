@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Categories;
+use App\Models\CategoryKey;
 use App\Models\Designs;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,15 +15,17 @@ class DesignsController extends Controller
 {
     public function store(Request $request)
     {
+
         // Validate the request
         $request->validate([
-            'name' => 'nullable|string',
+            'name' => 'required|string',
             'description' => 'nullable|string',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'type' => 'required|in:Interior,Exterior,Both',
             'unit_id' => 'required|numeric',
             'category' => 'required|string',
             'sub_category' => 'required|string',
+            'category_key' => 'required|string',
         ]);
 
 
@@ -33,25 +36,19 @@ class DesignsController extends Controller
             $user_id = Auth::id();
     
             // Find or create the category and subcategory
-            $subCategory = Categories::where('name', $request->sub_category)->first();
+            $category = Categories::firstOrCreate(['name' => $request->category, 'type' => $request->type]);
+
+            // Now, attempt to find the subcategory by name and parent_id (category_id)
+            $subCategory = Categories::firstOrCreate([
+                'name' => $request->sub_category,
+                'parent_id' => $category->id,
+                'type' => $request->type,
+            ]);
+
+          
     
-            if (!$subCategory) {
-                $category = Categories::where('name', $request->category)->first();
-    
-                if (!$category) {
-                    $category = Categories::create([
-                        'name' => $request->category,
-                        'type' => $request->type,
-                    ]);
-                }
-    
-                $subCategory = Categories::create([
-                    'name' => $request->sub_category,
-                    'parent_id' => $category->id,
-                    'type' => $request->type,
-                ]);
-            }
-    
+            $imagePath = null;
+
             // Handle image upload
             if ($request->hasFile('image')) {
                 $timestamp = now()->format('YmdHis');
@@ -61,9 +58,10 @@ class DesignsController extends Controller
                 $imageName = $timestamp . '_' . $sanitizedFileName . '.' . $extension;
                 $path = $request->file('image')->storeAs('Designs', $imageName, 'public');
                 $imagePath = "/storage/" . $path;
-            } else {
-                $imagePath = null;
-            }
+            } 
+
+            // Find or create the category key
+            $categoryKey = CategoryKey::firstOrCreate(['key' => $request->category_key]);
     
             // Create the design record
             Designs::create([
@@ -71,21 +69,21 @@ class DesignsController extends Controller
                 'name' => $request->name ?? null,
                 'description' => $request->description ?? null,
                 'category_id' => $subCategory->id,
+                'category_key_id' => $categoryKey->id,
                 'image_url' => $imagePath,
                 'type' => $request->type,
                 'unit_id' => $request->unit_id,
             ]);
     
             DB::commit();
-    
-            return back()->with('message', 'Design uploaded successfully.');
+            return redirect()->back()->with('message', 'Design uploaded successfully.');
         } catch (Exception $e) {
             DB::rollBack();
+            dd($e);
             return back()->with('error', 'Failed to upload design. Please try again later.');
         }
 
     }
-
 
     public function update(Request $request, string $encodedId)
     {
@@ -98,11 +96,10 @@ class DesignsController extends Controller
             'unit_id' => 'required|numeric',
             'category' => 'required|string',
             'sub_category' => 'required|string',
+            'category_key' => 'required|string',
         ]);
 
         DB::beginTransaction();
-
-
 
         try {
         $decodedId = base64_decode($encodedId);
@@ -111,26 +108,16 @@ class DesignsController extends Controller
             $design = Designs::findOrFail($decodedId);
 
             $user_id = Auth::id();
+    
+             // Find or create the category and subcategory
+             $category = Categories::firstOrCreate(['name' => $request->category, 'type' => $request->type]);
 
-            // Find or create the category and subcategory
-            $subCategory = Categories::where('name', $request->sub_category)->first();
-
-            if (!$subCategory) {
-                $category = Categories::where('name', $request->category)->first();
-
-                if (!$category) {
-                    $category = Categories::create([
-                        'name' => $request->category,
-                        'type' => $request->type,
-                    ]);
-                }
-
-                $subCategory = Categories::create([
-                    'name' => $request->sub_category,
-                    'parent_id' => $category->id,
-                    'type' => $request->type,
-                ]);
-            }
+             // Now, attempt to find the subcategory by name and parent_id (category_id)
+             $subCategory = Categories::firstOrCreate([
+                 'name' => $request->sub_category,
+                 'parent_id' => $category->id,
+                 'type' => $request->type,
+             ]);
 
             // Handle image update
             if ($request->hasFile('image')) {
@@ -150,12 +137,16 @@ class DesignsController extends Controller
                 $imagePath = $design->image_url;
             }
 
+            $categoryKey = CategoryKey::firstOrCreate(['key' => $request->category_key]);
+
+
             // Update the design record
             $design->update([
                 'user_id' => $user_id,
                 'name' => $request->name ?? null,
                 'description' => $request->description ?? null,
                 'category_id' => $subCategory->id,
+                'category_key_id' => $categoryKey->id,
                 'image_url' => $imagePath,
                 'type' => $request->type,
                 'unit_id' => $request->unit_id,
@@ -170,7 +161,6 @@ class DesignsController extends Controller
         }
     }
 
-        
     public function destroy(string $encodedId)
     {
         DB::beginTransaction();

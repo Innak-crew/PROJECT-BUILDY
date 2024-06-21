@@ -45,6 +45,8 @@ return new class extends Migration
             $table->foreign('parent_id')->references('id')->on('categories')->cascadeOnDelete();
         });
 
+        
+
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('name');

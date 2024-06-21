@@ -210,8 +210,10 @@ class AdminController extends Controller
         $decodedId = base64_decode($encodedId);
 
         try {
-            $order = Orders::findOrFail($decodedId);
-            $data = $this->getUserData('Orders', 'Edit Order', $order);
+            $pageData = new stdClass();
+            $pageData->QuantityUnits = QuantityUnits::all();
+            $pageData->order = Orders::findOrFail($decodedId);
+            $data = $this->getUserData('Orders', 'Edit Order', $pageData);
             return view('admin.orders.update', $data);
         } catch (ModelNotFoundException $e) {
             return abort(404, 'Order not found'); 
