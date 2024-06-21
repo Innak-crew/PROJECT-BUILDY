@@ -48,48 +48,29 @@
     
 
 
-     <!-- Display success message -->
-    @if (session('message'))
-        <script>
-            new Notify({
-                status: "success",
-                title: "{{ session('message') }}",
-                text: "",
-                autoclose: false,
-                effect: "slide",
-                speed: 300,
-                position: "right bottom"
-            });
-        </script>
-    @endif
+     <!-- Display Notify -->
+     @php
+        $notifyConfigs = [
+            'message' => ['status' => 'success', 'title' => session('message'), 'text' => '', 'autoclose' => false],
+            'success' => ['status' => 'success', 'title' => session('success'), 'text' => '', 'autoclose' => false],
+            'error' => ['status' => 'error', 'title' => session('error'), 'text' => '', 'autoclose' => false]
+        ];
+    @endphp
 
-    @if (session('success'))
-        <script>
-            new Notify({
-                status: "success",
-                title: "{{ session('message') }}",
-                text: "",
-                autoclose: false,
-                effect: "slide",
-                speed: 300,
-                position: "right bottom"
-            });
-        </script>
-    @endif
-
-    <!-- Display error message -->
-    @if (session('error'))
-        <script>
-            new Notify({
-                status: "error",
-                title: "{{ session('error') }}",
-                text: "",
-                autoclose: false,
-                effect: "slide",
-                speed: 300,
-                position: "right bottom"
-            });
-        </script>
-    @endif
+    @foreach($notifyConfigs as $key => $config)
+        @if(session($key))
+            <script>
+                new Notify({
+                    status: "{{ $config['status'] }}",
+                    title: "{{ $config['title'] }}",
+                    autoclose: true,
+                    autotimeout: 5000,
+                    effect: "slide",
+                    speed: 300,
+                    position: "right bottom"
+                });
+            </script>
+        @endif
+    @endforeach
 </body>
 </html>

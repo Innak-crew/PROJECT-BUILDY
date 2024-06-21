@@ -22,7 +22,7 @@
         <h6 class="fs-4 fw-semibold mb-0">Created By</h6>
       </th>
       <th>
-        <h6 class="fs-4 fw-semibold mb-0">Creater Role</h6>
+        <h6 class="fs-4 fw-semibold mb-0">Creator Role</h6>
       </th>
       <th>
         <h6 class="fs-4 fw-semibold mb-0">Action</h6>

@@ -72,6 +72,8 @@ class AdminController extends Controller
             $pageData->QuantityUnits = QuantityUnits::all();
         }else if ($title == "New Product"){
             $pageData->QuantityUnits = QuantityUnits::all();
+        }else if ($title == "New Order"){
+            $pageData->QuantityUnits = QuantityUnits::all();
         }else if ($title == "List Product"){
             $pageData->Products = $user->products()->get();
         }else if ($title == "List Orders"){

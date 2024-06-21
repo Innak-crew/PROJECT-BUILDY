@@ -43,12 +43,6 @@
                 @csrf
                 <div class="row">
 
-                <!-- @if (session('message'))
-                    <div class="alert alert-success">
-                        {{ session('message') }}
-                    </div>
-                @endif -->
-
                     <div class="col-md-6 mb-4">
                         <label for="customer">Customer *</label>
                         <select class="customer-details form-control mb-4 d-block" id="customer" name="customer" id="customer"
@@ -410,25 +404,28 @@
                     </div>
                 @endif
 
-                <div class="row mt-3">
+                <!-- <div class="row mt-3">
                     <div class="col-md-12">
                         <div class="d-flex justify-content-end">
-                            <!-- Large Update Button -->
                             <button type="submit" class="btn btn-info rounded-pill px-4">
                                 <div class="d-flex align-items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit-circle">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <path d="M12 15l8.385 -8.415a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3z"/>
-                                        <path d="M16 5l3 3"/>
-                                        <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6"/>
-                                    </svg>
                                     Update
                                 </div>
                             </button>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
+                <button class="btn btn-primary p-3 rounded-circle d-flex align-items-center justify-content-center customizer-btn" type="submit" >
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit-circle">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 15l8.385 -8.415a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3z"/>
+                        <path d="M16 5l3 3"/>
+                        <path d="M9 7.07a7 7 0 0 0 1 13.93a7 7 0 0 0 6.929 -6"/>
+                    </svg>
+                    </span>
+                </button>
 
             </form>
         </div>

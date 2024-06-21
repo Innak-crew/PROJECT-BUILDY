@@ -30,26 +30,37 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->middleware(\App\Http\Middleware\RoleAdminMiddleware::class)->group(function () {
         Route::controller(AdminController::class)->group(function () {
             Route::get('/', "index")->name('admin.index');
+
+            // Users
             Route::get('/add-user', "add_user")->name('admin.add-user');
             Route::post('/add-user', "user_store")->name('admin.add-user.store');
+
+            // Quantity Units
             Route::get('/quantity-units', "QuantityUnits")->name('admin.quantity-units');
             Route::get('/quantity-units/new', "QuantityUnitsAdd")->name('admin.quantity-units.add');
+            Route::get('/quantity-units/{encodedId}/edit', "QuantityUnitsEdit")->name('admin.quantity-units.edit');
+
+            // Product
             Route::get('/new/product', "newProduct")->name('admin.new.product');
             Route::get('/list/product', "listProduct")->name('admin.list.product');
             Route::get('/view/{encodedId}/product', "viewProduct")->name('admin.view.product');
             Route::get('/edit/{encodedId}/product', "editProduct")->name('admin.edit.product');
-            Route::get('/quantity-units/{encodedId}/edit', "QuantityUnitsEdit")->name('admin.quantity-units.edit');
+
+            // Reminder
             Route::get('/reminder', "reminder")->name('admin.reminder');
             Route::get('/reminder/list', "reminder_list")->name('admin.reminder.list');
             Route::get('/reminder/{encodedId}/view', "reminder_view")->name('admin.reminder.view');
             Route::get('/reminder/{encodedId}/edit', "reminder_edit")->name('admin.reminder.edit');
+
+            // Order
             Route::get('/new/order', "newOrder")->name('admin.new.order');
             Route::get('/list/order', "listOrder")->name('admin.list.order');
             Route::get('/view/{encodedId}/order', "viewOrder")->name('admin.view.order');
             Route::get('/edit/{encodedId}/order', "editOrder")->name('admin.edit.order');
             Route::get('/invoice', "invoiceShow")->name('admin.invoice');
-            Route::get('/gallery', "Gallery")->name('admin.gallery');
+
             // Design
+            Route::get('/gallery', "Gallery")->name('admin.gallery');
             Route::get('/new/design', "newDesign")->name('admin.new.design');
             Route::get('/list/design', "listDesign")->name('admin.list.design');
             Route::get('/view/{encodedId}/design', "viewDesign")->name('admin.view.design');
@@ -66,6 +77,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/customer/overall/{encodedId}/view/', "admin_view_all")->name('admin.customer.all.view');
             Route::get('/customer/{encodedId}/edit', "admin_edit")->name('admin.customer.edit');
         });
+        
     });
 
     // Routes for Manager
@@ -88,7 +100,7 @@ Route::middleware('auth')->group(function () {
         });
     });
 
-    // Routes for comman Admin and Manager
+    // Routes for common Admin and Manager
     Route::controller(CustomerController::class)->group(function(){
         Route::post('/add-customer', "store")->name('customer.store');
         Route::post('/customer/{encodedId}/update', "update")->name('customer.update');

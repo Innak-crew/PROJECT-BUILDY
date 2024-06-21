@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categories;
 use App\Models\Customers;
+use App\Models\Designs;
 use App\Models\Products;
 use Illuminate\Http\Request;
 
@@ -52,33 +53,97 @@ class ApisController extends Controller
         return response()->json([]);
     }
 
-    public function Search( string $encodedUserID, string $name, string $searchTerm){
+    public function search(string $encodedUserID, string $name, string $searchTerm)
+    {
         $returnData = [];
-
         $decodedUserId = base64_decode($encodedUserID);
-
-        if($name == "products"){
-            $returnData = Products::where('user_id', $decodedUserId)
-            ->Where('name', 'LIKE', '%' . $searchTerm . '%') 
-            ->get();
-        }else if ($name == "customers"){
-            $returnData = Customers::where('user_id', $decodedUserId)
-            ->Where('name', 'LIKE', '%' . $searchTerm . '%') 
-            ->orWhere('email', 'LIKE', '%' . $searchTerm . '%') 
-            ->orWhere('phone', 'LIKE', '%' . $searchTerm . '%') 
-            ->orWhere('address', 'LIKE', '%' . $searchTerm . '%') 
-            ->get();
-        }else if ($name == "categories") {
-            $returnData = Categories::whereNull('parent_id')
-                ->where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->get();
-        } else if ($name == "subcategories") {
-            $returnData = Categories::whereNotNull('parent_id')
-                ->where('name', 'LIKE', '%' . $searchTerm . '%')
-                ->get();
+    
+        switch ($name) {
+    
+            case 'customers':
+                $returnData = Customers::where('user_id', $decodedUserId)
+                    ->where(function ($query) use ($searchTerm) {
+                        $query->where('name', 'LIKE', '%' . $searchTerm . '%')
+                              ->orWhere('email', 'LIKE', '%' . $searchTerm . '%')
+                              ->orWhere('phone', 'LIKE', '%' . $searchTerm . '%')
+                              ->orWhere('address', 'LIKE', '%' . $searchTerm . '%');
+                    })
+                    ->get();
+                break;
+    
+            case 'categories':
+                $returnData = Categories::whereNull('parent_id')
+                    ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                    ->get();
+                break;
+    
+            case 'subcategories':
+                $categoryParam = request()->input('category');
+                if ($categoryParam) {
+                    $category = Categories::where('name', 'LIKE', '%' . $categoryParam . '%')
+                        ->whereNull('parent_id')
+                        ->first();
+                    
+                    if ($category) {
+                        $returnData = Categories::where('parent_id', $category->id)
+                            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                            ->get();
+                    } else {
+                        $returnData = Categories::whereNotNull('parent_id')
+                            ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                            ->get();
+                    }
+                } else {
+                    $returnData = Categories::whereNotNull('parent_id')
+                        ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                        ->get();
+                }
+                break;
+    
+            case 'designs':
+                $categoryParam = request()->input('category');
+                $subcategoryParam = request()->input('subcategory');
+                $searchKeyParam = request()->input('searchKey');
+    
+                $designsQuery = Designs::query();
+    
+                if ($categoryParam) {
+                    $category = Categories::where('name', 'LIKE', '%' . $categoryParam . '%')
+                        ->whereNull('parent_id')
+                        ->first();
+    
+                    if ($category) {
+                        $subcategories = Categories::where('parent_id', $category->id)->get()->pluck('id');
+                        $designsQuery->whereIn('category_id', $subcategories);
+                    }
+                }
+    
+                if ($subcategoryParam) {
+                    $subcategory = Categories::where('name', 'LIKE', '%' . $subcategoryParam . '%')
+                        ->whereNotNull('parent_id')
+                        ->first();
+    
+                    if ($subcategory) {
+                        $designsQuery->where('category_id', $subcategory->id);
+                    }
+                }
+    
+                if ($searchKeyParam != 'undefined') {
+                    $designsQuery->where('name', 'LIKE', '%' . $searchKeyParam . '%');
+                }
+    
+                if ($searchTerm === 'all') {
+                    $returnData = $designsQuery->get();
+                } else {
+                    $returnData = $designsQuery->find($searchTerm);
+                }
+                break;
+    
+            default:
+                return response()->json(['error' => 'Invalid search type'], 400);
         }
-
+    
         return response()->json($returnData);
     }
-
+    
 }

@@ -62,28 +62,48 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string',
-            'email' => 'nullable|string|email|unique:customers,email',
-            'phone' => 'nullable|min:10',
-            'address' => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|string|email|unique:customers,email|max:255',
+            'phone' => 'nullable|min:10|max:15',
+            'address' => 'nullable|string|max:250|max:250',
         ]);
 
         if ($validator->fails()) {
+            if ($request->input('returnType') === 'json') {
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+            }
             return back()->withErrors($validator)->withInput();
         }
 
         $user_id = Auth::id();
 
         try {
-            Customers::create([
+            $customer = Customers::create([
                 "user_id" => $user_id,
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
                 'address' => $request->address,
             ]);
+
+            if ($request->input('returnType') === 'json') {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Customer created successfully.',
+                    'customer' => $customer,
+                ], 200);
+            }
+
             return back()->with('message', 'Customer created successfully.');
         } catch (Exception $e) {
+            if ($request->input('returnType') === 'json') {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to create customer. Please try again later.',
+                ], 500);
+            }
             return back()->with('error', 'Failed to create customer. Please try again later.');
         }
     }

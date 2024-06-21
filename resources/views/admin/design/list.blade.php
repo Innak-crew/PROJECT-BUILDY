@@ -82,7 +82,7 @@
         @else
         <tr>
           <td>
-            <p class="mb-0 fw-normal fs-4">No Customers Found</p>
+            <p class="mb-0 fw-normal fs-4">No Designs Found</p>
           </td>
         </tr>
     @endif

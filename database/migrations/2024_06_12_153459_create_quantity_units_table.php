@@ -61,23 +61,24 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('customer_id')->references('id')->on('customers')->cascadeOnDelete();
+            $table->foreign('customer_id')->references('id')->on('customers');
         });
 
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->index();
             $table->unsignedBigInteger('category_id')->index();
-            $table->unsignedBigInteger('product_id')->index();
+            $table->unsignedBigInteger('design_id')->index();
             $table->decimal('quantity', 10, 2);
+            $table->decimal('rate_per', 10, 2);
             $table->decimal('discount_amount', 10, 2)->default(0.00);
             $table->decimal('discount_percentage', 5, 2)->default(0.00);
             $table->decimal('total', 10, 2);
+            $table->decimal('sub_total', 10, 2);
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
-            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+            $table->foreign('category_id')->references('id')->on('categories');
         });
 
         Schema::create('invoices', function (Blueprint $table) {
@@ -101,8 +102,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('customer_id')->references('id')->on('customers')->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('customer_id')->references('id')->on('customers');
         });
 
     }

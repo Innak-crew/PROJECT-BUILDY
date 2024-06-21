@@ -1,6 +1,6 @@
 @extends('layout.admin-app')
 @section('adminContent')
-
+@use('Carbon\Carbon')
 @push('style')
 <link rel="stylesheet" type="text/css" href="{{ asset('css/select2.min.css') }}">
 
@@ -20,9 +20,16 @@
     .product-name {
         font-weight: bold;
     }
+
 </style>
 @endpush
 
+<style>
+    
+    .select2{
+        width: 100%;
+    }
+</style>
 
 <div class="card w-100 position-relative overflow-hidden">
     <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
@@ -44,41 +51,22 @@
                 @csrf
                 <div class="row">
 
-                    <!-- <div class="col-md-6 mb-4">
-                        <label for="name">Order Name *</label>
-                        <input type="text" name="name" id="name" value="{{ old('name') }}"
-                            class="form-control @error('name') is-invalid @enderror" placeholder="" required />
-                        @error('name')
-                        <div class="invalid-feedback">
-                            <p class="error">{{ $message }}</p>
-                        </div>
-                        @enderror
-                    </div> -->
-
-                    <!-- <div class="col-md-6 mb-4">
-                        <label for="description">Order Description</label>
-                        <input type="text" name="description" id="description" value="{{ old('description') }}"
-                            class="form-control typeahead @error('description') is-invalid @enderror" placeholder="" />
-                        @error('description')
-                        <div class="invalid-feedback">
-                            <p class="error">{{ $message }}</p>
-                        </div>
-                        @enderror
-                    </div> -->
-
                     <div class="col-md-6 mb-4">
-                        <label for="customer">Customer *</label>
-                        <select class="customer-details form-control mb-4" id="customer" name="customer" id="customer"
-                            required></select>
-                        <small class="form-control-feedback">If customer is not found , <a
-                                href="{{route('admin.customer.add')}}" target="_blank">click here to add
-                                customer</a></small>
+                        <label for="customer" class="control-label">Customer *</label>
+                        <select class="customer-details form-control" id="customer" name="customer" required></select>
+                        <small class="form-control-feedback mt-2 d-block">
+                            If customer is not found, 
+                            <button type="button" class="btn btn-link p-0 m-0" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                                click here to add customer
+                            </button>
+                        </small>
                         @error('customer')
-                        <div class="invalid-feedback">
+                        <div class="invalid-feedback d-block">
                             <p class="error">{{ $message }}</p>
                         </div>
                         @enderror
                     </div>
+
 
                     <div class="col-md-6 mb-4">
                         <label for="location">Order location *</label>
@@ -116,17 +104,25 @@
                         <input type="date" class="form-control" name="order_ending_date"/>
                     </div>
 
-                    <!-- <div class="col-md-6 mb-4">
-                        <label for="estimated_cost">Estimated Cost</label>
-                        <input type="number" step="0.01" id="estimated_cost" name="estimated_cost"
-                            value="{{ old('estimated_cost') }}"
-                            class="form-control @error('estimated_cost') is-invalid @enderror" placeholder="">
-                        @error('estimated_cost')
-                        <div class="invalid-feedback">
-                            <p class="error">{{ $message }}</p>
+                    <div class="row my-1">
+                        <div class="col-md-12">
+                            <div class=" py-3 d-flex justify-content-between align-items-center">
+                                <div>
+                                <h5 class="card-title fw-semibold mb-0 lh-sm">Order items </h5>
+                                <small class="form-control-feedback"><a href="{{ route('admin.new.product') }}" target="_blank">Click here to add Product</a></small>
+                                </div>
+                                <button onclick="order_item_container();"
+                                    class="btn btn-success font-weight-medium waves-effect waves-light rounded-pill pt-2 px-2" type="button">
+                                    <i class="ti ti-circle-plus fs-5"></i>
+                                </button>
+                            </div>
                         </div>
-                        @enderror
-                    </div> -->
+                    </div>
+
+                    <div id="order-item-container">
+                        <hr>
+
+                    </div>
 
                     <div class="row my-1">
                         <div class="col-md-12">
@@ -145,22 +141,6 @@
 
                     </div>
 
-
-                    <div class="row my-1">
-                        <div class="col-md-12">
-                            <div class=" py-3 d-flex justify-content-between align-items-center">
-                                <h5 class="card-title fw-semibold mb-0 lh-sm">Order items</h5>
-                                <button onclick="order_item_container();"
-                                    class="btn btn-success font-weight-medium waves-effect waves-light rounded-pill pt-2 px-2" type="button">
-                                    <i class="ti ti-circle-plus fs-5"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="order-item-container">
-                        <hr>
-                    </div>
                 </div>
 
                 <!-- Invoice -->
@@ -174,15 +154,15 @@
                 </div>
 
                 <div class="row">
-                <div class="col-md-6 mb-4">
-                    <label class="control-label">Creating Date *</label>
-                    <input type="date" class="form-control" name="created_date" value="{{old('created_date')}}" required/>
-                </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="control-label">Creating Date *</label>
+                        <input type="date" class="form-control" name="created_date" value="{{old('created_date',Carbon::now()->format('Y-m-d'))}}" required/>
+                    </div>
 
-                <div class="col-md-6 mb-4">
-                    <label class="control-label">Due Date *</label>
-                    <input type="date" class="form-control" name="due_date" value="{{old('due_date')}}"/>
-                </div>
+                    <div class="col-md-6 mb-4">
+                        <label class="control-label">Due Date *</label>
+                        <input type="date" class="form-control" name="due_date" value="{{old('due_date')}}"/>
+                    </div>
                 </div>
 
                 <!-- Payment Details -->
@@ -199,7 +179,7 @@
 
                     <div class="col-md-4 mb-4">
                         <label for="discount_percentage">Discount Percentage</label>
-                        <input type="number" step="0.01" name="discount_percentage" id="discount_percentage" value="{{ old('discount_percentage') }}" 
+                        <input type="number" step="0.01" name="discount_percentage" id="discount_percentage" value="{{ old('discount_percentage',0) }}" 
                             class="form-control @error('discount_percentage') is-invalid @enderror" placeholder="" />
                         @error('discount_percentage')
                             <div class="invalid-feedback">
@@ -210,7 +190,7 @@
 
                     <div class="col-md-4 mb-4">
                         <label for="advance_pay_amount">Advance Payment</label>
-                        <input type="number" step="0.01" name="advance_pay_amount" id="advance_pay_amount" value="{{ old('advance_pay_amount') }}" 
+                        <input type="number" step="0.01" name="advance_pay_amount" id="advance_pay_amount" value="{{ old('advance_pay_amount',0) }}" 
                             class="form-control @error('advance_pay_amount') is-invalid @enderror" placeholder="" />
                         @error('advance_pay_amount')
                             <div class="invalid-feedback">
@@ -235,8 +215,8 @@
                             </div>
                         @enderror
                     </div>
-                </div>
 
+                </div>
 
                 <div class="row">
                     <div class="col-lg-6 mb-4">
@@ -263,8 +243,6 @@
                             </div>
                         @enderror
                     </div>
-
-                </div>
                 </div>
 
                 @if ($errors->any())
@@ -278,7 +256,7 @@
                 @endif
 
 
-                <div class="row mt-3">
+                <!-- <div class="row mt-3">
                     <div class="col-md-12">
                         <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-info rounded-pill px-4">
@@ -288,17 +266,88 @@
                             </button>
                         </div>
                     </div>
-                </div>
+                </div> -->
+
+                <button class="btn btn-primary p-3 rounded-circle d-flex align-items-center justify-content-center customizer-btn" type="submit" >
+                    <span data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Add" class="th-plus fs-5 fw-semibold">
+                        
+                    </span>
+                </button>
             </form>
-
-
-
-
-
         </div>
     </div>
 </div>
 
+<div class="offcanvas offcanvas-end customizer" tabindex="-1" id="offcanvasExample"
+    aria-labelledby="offcanvasExampleLabel" data-simplebar="init" aria-modal="true" role="dialog">
+    <div class="simplebar-wrapper" style="margin: 0px;">
+        <div class="simplebar-mask">
+            <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+                <div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content"
+                    style="height: 100%; overflow: hidden scroll;">
+                    <div class="simplebar-content" style="padding: 0px;">
+                        <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+                            <h4 class="offcanvas-title fw-semibold" id="offcanvasExampleLabel">New Customer</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="offcanvas-body p-4">
+                            <div class="row">
+                              
+                                <form action="{{route('customer.store',['returnType'=>'json'])}}" id="newCustomerForm" method="post">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="text" name="name" id="name" value="{{old('name')}}" class="form-control " placeholder="Enter user name here" required/>
+                                            <label for="fname"> Name *</label>
+                                        </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                        <div class="form-floating">
+                                            <input type="email" name="email" id="email" value="{{old('email')}}" class="form-control " placeholder="name@example.com" />
+                                            <label for="email"> Email address</label>
+                                        </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <div class="form-floating">
+                                                <input type="text" name="phone" id="phone" value="{{old('phone')}}" class="form-control"  placeholder="Enter customer Phone no." required/>
+                                                <label for="phone"> Phone no. *</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
+                                            <div class="form-floating">
+                                                <textarea type="text" name="address" id="address" value="{{old('address')}}" class="form-control "placeholder="Enter customer Address" required></textarea>
+                                                <label for="address"> Address *</label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button  type="submit"  class="btn btn-info font-medium rounded-pill px-4">
+                                            <div class="d-flex align-items-center">
+                                                <i class="ti ti-send me-2 fs-4"></i>
+                                                Submit
+                                            </div>
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="simplebar-placeholder" style="width: auto; height: 1171px;"></div>
+    </div>
+   
+</div>
 
 @endsection
 
@@ -312,9 +361,9 @@ var roomID = 1;
 function follow_container() {
         roomID++;
         var objTo = document.getElementById("follow-container");
-        var divtest = document.createElement("div");
-        divtest.setAttribute("class", `row remove-follow-class${roomID}`);
-        divtest.innerHTML = `
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", `row remove-follow-class${roomID}`);
+        rowDiv.innerHTML = `
             <div class="col-12 col-md-5 col-lg-5 mb-4 my-auto">
                 <label for="note">Note *</label>
                 <input type="text" name="note[]" id="note${roomID}" class="form-control " placeholder="" required/>
@@ -335,7 +384,7 @@ function follow_container() {
 
             <hr>
         `;
-        objTo.appendChild(divtest);
+        objTo.appendChild(rowDiv);
     }
 
     document.getElementById("follow-container").addEventListener("click", function (e) {
@@ -345,64 +394,75 @@ function follow_container() {
         }
     });
 
-
-
     var room = 1;
 
     function order_item_container() {
         room++;
         var objTo = document.getElementById("order-item-container");
-        var divtest = document.createElement("div");
-        divtest.setAttribute("class", `row removeclass${room}`);
-        divtest.innerHTML = `
-        <div class="col-12 col-md-3 col-lg-2 mb-4 my-auto">
-            <label for="category">Item Category</label>
-            <input type="text" name="category[]" id="category${room}" class="form-control " placeholder="Enter category here" required/>
-        </div>
-
-        <div class="col-12 col-md-3 col-lg-3 mb-4 my-auto">
-            <label for="sub-category">Item Sub Category</label>
-            <input type="text" name="sub_category[]" id="sub-category${room}" class="form-control typeahead" placeholder="Enter sub-category here" required/>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4 mb-4 my-auto">
-            <label for="order_item">Product *</label>
-            <select class="Order-product form-control" id="order_item${room}" name="order_item[]" required></select>
-            <small class="form-control-feedback"><a href="{{ route('admin.new.product') }}" target="_blank">Click here to add Product</a></small>
-        </div>
-
-        <div class="col-12 col-md-3 col-lg-2 mb-4 my-auto">
-            <label for="order_item_quantity">Item Quantity *</label>
-            <input type="number" step="0.01" id="order_item_quantity${room}" name="order_item_quantity[]" class="form-control" placeholder="Enter item quantity value" required/>
-        </div>
-
-        <div class="col-sm-1 my-auto">
-            <div class="form-group">
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", `row removeClass${room}`);
+        rowDiv.innerHTML = `
+            <div class="col-12 col-md-11 ">
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="category">Category *</label>
+                        <input type="text" name="category[]" id="category${room}" class="form-control" placeholder="Enter category here" required />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="sub-category">Sub Category *</label>
+                        <input type="text" name="sub_category[]" id="sub-category${room}" class="form-control typeahead" placeholder="Enter sub-category here" required />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="design">Design *</label>
+                        <select class="Order-product form-control" id="design${room}" name="design[]" required></select>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="order_item_quantity">Quantity *</label>
+                        <input type="number" step="0.01" id="order_item_quantity${room}" name="order_item_quantity[]" class="form-control" placeholder="Enter item quantity value" required />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="rate_per">Rate Per *</label>
+                        <input type="number" step="0.01" id="rate_per${room}" name="rate_per[]" class="form-control" placeholder="Enter rate per value" required />
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="order_item">Total *</label>
+                        <input type="number" step="0.01" id="sub_total${room}" name="sub_total[]" class="form-control" value="0" placeholder="Enter Total value" required />
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-1 d-flex align-items-center justify-content-center">
                 <button class="btn btn-danger remove-field rounded-pill py-2 px-2" type="button" data-room="${room}" onclick="remove_order_item_container(${room})">
                     <i class="ti ti-minus"></i>
                 </button>
             </div>
-        </div>
 
         <hr class="mt-4 mt-md-0">
         `;
-        objTo.appendChild(divtest);
-        refreshSerach(room);
+        objTo.appendChild(rowDiv);
+        refreshSearch(room);
     }
-
 
     function remove_follow_container(rid){
         document.querySelector(`.remove-follow-class${rid}`).remove();
     }    
 
     function remove_order_item_container(rid){
-        document.querySelector(`.removeclass${rid}`).remove();
+        document.querySelector(`.removeClass${rid}`).remove();
     }
 
- 
+
+  var quantityData = <?= json_encode($pageData->QuantityUnits->map(function ($QuantityUnit) {
+    return [
+      'id' => $QuantityUnit->id,
+      'name' => $QuantityUnit->name,
+      'description' => $QuantityUnit->description,
+    ];
+  })) ?>;
 
 
-    function refreshSerach (rid = 2){
+
+
+    function refreshSearch (rid = 2){
 
         $(`#category${rid}`).typeahead({
             source: function (query, process) {
@@ -414,16 +474,16 @@ function follow_container() {
 
         $(`#sub-category${rid}`).typeahead({
             source: function (query, process) {
-                return $.get('/api/search/{{ base64_encode($userId) }}/subcategories/' + query, function (data) {
+                return $.get('/api/search/{{ base64_encode($userId) }}/subcategories/' + query + '?category=' + $(`#category${rid}`).val() , function (data) {
                     return process(data);
                 });
             }
         });
 
-        $(`#order_item${rid}`).select2({
+        $(`#design${rid}`).select2({
             ajax: {
                 url: function (params) {
-                    return '/api/search/{{ base64_encode($userId) }}/products/' + params.term;
+                    return '/api/search/{{ base64_encode($userId) }}/designs/all?category=' + $(`#category${rid}`).val() + '&subcategory='  + $(`#sub-category${rid}`).val() + '&searchKey='  +  params.term;
                 },
                 dataType: 'json',
                 delay: 250,
@@ -437,49 +497,59 @@ function follow_container() {
                     console.error('AJAX request failed:', status, error);
                 }
             },
-            placeholder: 'Search for a Product',
-            minimumInputLength: 1,
-            templateResult: formatProduct,
-            templateSelection: formatProductSelection
+            placeholder: 'Search for a Design',
+            templateResult: formatDesign,
+            templateSelection: formatDesignSelection
         });
 
+        $(`#rate_per${rid}`).on('input', (e) => {
+            var quantity = $(`#order_item_quantity${rid}`).val();
+            var rate = parseFloat(e.target.value);
+            if (!isNaN(quantity)) {
+                var subtotal = quantity * rate;
+                $(`#sub_total${rid}`).val(subtotal.toFixed(2)); 
+            } else {
+                alert('Invalid quantity input');
+            }
+        });
+
+
+        $('.select2-container').css('width','100%');
     }
 
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     refreshProduct();
-    // });
 
-    function formatProduct(Product) {
-        if (!Product || Product.length === 0) {
+    function formatDesign(design) {
+        if (!design || design.length === 0) {
             return 'No products found.';
         }
 
-        if (Product.loading) {
-            return Product.text;
+        if (design.loading) {
+            return design.text;
         }
 
 
         var $container = $(
             "<div class='container mb-1'>" +
             "<div class='row result'>" +
-            "<div class='col-lg-3 col-md-4 col-4 d-flex justify-content-center align-items-center'>" +
-            "<img src='" + Product.image_url + "' alt='" + Product.name + "' class='img-fluid img-thumbnail' style='min-width: 60px; width:auto; height: auto;' />" +
+            "<div class='col-lg-5 col-md-5 col-5 d-flex justify-content-center align-items-center'>" +
+            "<img src='" + design.image_url + "' alt='design' class='img-fluid img-thumbnail' style='min-width: 60px; width:auto; height: auto;' />" +
             "</div>" +
-            "<div class='col-lg-9 col-md-8 col-8 product-details'>" +
-            "<h6 class='product-name mb-1' >" + Product.name + "</h6>" +
-            "<p class='text-muted mb-1' style='font-size: 0.7rem;'><strong>Type:</strong> " + Product.type + "</p>" +
-            "<p class='text-muted' style='font-size: 0.7rem;'><strong>Rate Per:</strong> ₹ " + Product.rate_per + "</p>" +
+            "<div class='col-lg-7 col-md-7 col-7 product-details'>" +
+            "<p class='product-name mb-1 text-dark'>" + design.name + "</p>" +
+            "<p class='mb-1 text-dark'>" + (design.description != null ? design.description : '') + "</p>" +
+            "<p class='mb-1 text-dark text-tiny'> Unit: " + (quantityData.find(e => e.id === design.unit_id)?.name || '') + " (" + (quantityData.find(e => e.id === design.unit_id)?.description || '') + ")</p>" +
             "</div>" +
             "</div>" +
             "</div>"
         );
 
 
+
         return $container;
     }
 
-    function formatProductSelection(Product) {
-            return Product.name || Product.text ;
+    function formatDesignSelection(design) {
+            return  design.name || design.text ;
     }
 
 
@@ -496,7 +566,7 @@ function follow_container() {
                 for (var i = 0; i < data.length; i++) {
                     var customer = data[i];
                     results.push(customer);
-                    if (customer.id === {{old('customer',0)}}) {
+                    if (customer.id == '<?= old('customer',0) ?>') {
                         console.log(`${customer.id} selected`)
                         $(`.customer-details`).select2('data', customer);
                     }
@@ -517,33 +587,40 @@ function follow_container() {
         
     });
 
-     $(document).ready(function() {
-        if ({{ old('customer', 0) }}) {
-            
-            console.log('done', {{ old('customer', 0) }});
-            $.ajax({
-                url: `/api/get/{{ base64_encode($userId) }}/customer-by-id/{{base64_encode(old('customer', 0))  }}`,
-                dataType: 'json',
-                success: function(data) {
-                    if (data && data.id) {
-                        var option = new Option(data.name, data.id, true, true);
-                        $('.customer-details').append(option).trigger('change');
-                        $('.customer-details').trigger({
-                            type: 'select2:select',
-                            params: {
-                                data: data
-                            }
-                        });
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX request failed:', status, error);
-                }
-            });
-        }else{
-            console.log('not done');
+    $(document).ready(function() {
+    const userId = '{{ base64_encode($userId) }}';
+        const oldCustomerId = '{{ base64_encode(old('customer',0))}}';
+
+        if (oldCustomerId !== 'MA==') { 
+            fetchOldCustomerData(userId, oldCustomerId);
         }
     });
+
+
+    function fetchOldCustomerData(userId, customerId) {
+        $.ajax({
+            url: `/api/get/${userId}/customer-by-id/${customerId}`,
+            dataType: 'json',
+            success: handleCustomerDataSuccess,
+            error: handleAjaxError
+        });
+    }
+
+    function handleCustomerDataSuccess(data) {
+    if (data && data.id) {
+        const option = new Option(data.name, data.id, true, true);
+        const $customerDetails = $('.customer-details');
+        $customerDetails.append(option).trigger('change');
+        $customerDetails.trigger({
+            type: 'select2:select',
+            params: { data: data }
+        });
+    }
+}
+
+    function handleAjaxError(xhr, status, error) {
+        console.error('AJAX request failed:', status, error);
+    }
 
     function formatCustomer(customer) {
         if (!customer || customer.length === 0) {
@@ -577,9 +654,9 @@ function follow_container() {
     function payment_history_container() {
     phID++;
         var objTo = document.getElementById("payment-history");
-        var divtest = document.createElement("div");
-        divtest.setAttribute("class", `row remove-payment-history-class${phID}`);
-        divtest.innerHTML = `
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", `row remove-payment-history-class${phID}`);
+        rowDiv.innerHTML = `
             <div class="col-md-3 col-12">
                 <label for="payment_history">Paid Amount *</label>
                 <input type="number" step="0.01" name="paid_amount[]" id="paid_amount" value="" 
@@ -615,13 +692,83 @@ function follow_container() {
 
             <hr>
         `;
-        objTo.appendChild(divtest);
+        objTo.appendChild(rowDiv);
     }
 
 
     function remove_payment_container(rid){
         document.querySelector(`.remove-payment-history-class${rid}`).remove();
     }
+</script>
+
+
+<!-- Add new Customer -->
+<script>
+
+$(document).ready(function() {
+    $('#newCustomerForm').on('submit', function(e) {
+        e.preventDefault();
+        $('#newCustomerForm').find('.text-danger').remove();
+
+        let formData = $(this).serialize();
+
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            dataType: 'json',
+            success: function(response) {
+                console.log('Form submitted successfully:', response);
+                if (response.status === 'success') {
+                    $('#newCustomerForm')[0].reset();
+                    $('.offcanvas').offcanvas('hide');
+                    new Notify({
+                        status: response.status,
+                        title: response.message,
+                        text: response.customer ? `${response.customer.name} has been added as a new customer.` : '',
+                        autoclose: true,
+                        autotimeout: 5000,
+                        effect: "slide",
+                        speed: 300,
+                        position: "right bottom"
+                    });
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Failed to create customer.',
+                        text: 'Please try again.',
+                        autoclose: true,
+                        autotimeout: 5000,
+                        effect: "slide",
+                        speed: 300,
+                        position: "right bottom"
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error submitting form:', status, error);
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    $.each(xhr.responseJSON.errors, function(key, value) {
+                        $('#newCustomerForm').find(`[name="${key}"]`).after(`<span class="text-danger text-tiny fs-2">${value}</span>`);
+                    });
+                } else {
+                    new Notify({
+                        status: 'error',
+                        title: 'Error submitting form.',
+                        text: 'Please try again later.',
+                        autoclose: true,
+                        autotimeout: 5000,
+                        effect: "slide",
+                        speed: 300,
+                        position: "right bottom"
+                    });
+                }
+            }
+        });
+    });
+});
+
+
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>

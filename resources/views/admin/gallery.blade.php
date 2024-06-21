@@ -99,10 +99,8 @@ for (let i = 3; i < length; i += 4) {
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
                             <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
                             <div class="el-overlay w-100 overflow-hidden">
-                                <ul class="list-style-none el-info text-white text-uppercase d-inline-block p-0 ">
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemCategory }}</li>
-                                <li class="el-item d-inline-block my-0 mx-1"><span class="th-angle-right"></span></li>
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemSubCategory }}</li>
+                                <ul class="list-style-none el-info text-white  d-inline-block p-0 ">
+                                <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
                                 </ul>
                             </div>
                         </a>
@@ -125,10 +123,8 @@ for (let i = 3; i < length; i += 4) {
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
                             <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
                             <div class="el-overlay w-100 overflow-hidden">
-                                <ul class="list-style-none el-info text-white text-uppercase d-inline-block p-0 ">
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemCategory }}</li>
-                                <li class="el-item d-inline-block my-0 mx-1"><span class="th-angle-right"></span></li>
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemSubCategory }}</li>
+                                <ul class="list-style-none el-info text-white  d-inline-block p-0 ">
+                                <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
                                 </ul>
                             </div>
                         </a>
@@ -151,10 +147,8 @@ for (let i = 3; i < length; i += 4) {
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
                             <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
                             <div class="el-overlay w-100 overflow-hidden">
-                                <ul class="list-style-none el-info text-white text-uppercase d-inline-block p-0 ">
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemCategory }}</li>
-                                <li class="el-item d-inline-block my-0 mx-1"><span class="th-angle-right"></span></li>
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemSubCategory }}</li>
+                                <ul class="list-style-none el-info text-white  d-inline-block p-0 ">
+                                <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
                                 </ul>
                             </div>
                         </a>
@@ -175,12 +169,10 @@ for (let i = 3; i < length; i += 4) {
                 <div class="el-card-item">
                     <div class=" el-card-avatar el-overlay-1 w-100 overflow-hidden position-relative  text-center">
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
-                            <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
+                            <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" />
                             <div class="el-overlay w-100 overflow-hidden">
-                                <ul class="list-style-none el-info text-white text-uppercase d-inline-block p-0 ">
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemCategory }}</li>
-                                <li class="el-item d-inline-block my-0 mx-1"><span class="th-angle-right"></span></li>
-                                <li class="el-item d-inline-block my-0 mx-1">{{ $itemSubCategory }}</li>
+                                <ul class="list-style-none el-info text-white d-inline-block p-0 ">
+                                <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
                                 </ul>
                             </div>
                         </a>

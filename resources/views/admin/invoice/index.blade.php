@@ -25,24 +25,25 @@
               <div class="app-invoice">
                 <ul class="overflow-auto invoice-users" style="height: calc(100vh - 262px)" data-simplebar>
 
-                    @foreach ( $pageData as $order)
+                  @forelse ( $pageData as $order)
                         <li>
                         <a href="javascript:void(0)"
                         class="p-3 bg-hover-light-black border-bottom d-flex align-items-start invoice-user listing-user bg-light"
                         id="invoice-{{substr($order->invoice()->first()->invoice_number, 5)}}" data-invoice-id="{{substr($order->invoice()->first()->invoice_number, 5)}}">
-                        <!-- <div
-                            class="btn btn-primary round rounded-circle d-flex align-items-center justify-content-center">
-                            <i class="ti ti-user fs-6"></i>
-                        </div> -->
                         <div class="ms-3 d-inline-block w-75">
                             <h6 class="mb-0 invoice-customer">{{$order->customer()->first()->name}}</h6>
-
                             <span class="fs-3 invoice-id text-truncate text-body-color d-block w-85">Id: {{$order->invoice()->first()->invoice_number}}</span>
                             <span class="fs-3 invoice-date text-nowrap text-body-color d-block">{{ Carbon::parse($order->invoice()->first()->created_date)->format('jS M Y') }}</span>
                         </div>
                         </a>
                     </li>
-                    @endforeach
+                    @empty
+                    <li>
+                        <div class="p-3 text-center text-muted">
+                            No Invoice found.
+                        </div>
+                    </li>
+                    @endforelse
                   
 
                 </ul>
@@ -54,13 +55,13 @@
                   <div class="invoice-header d-flex align-items-center border-bottom p-3">
                     <h4 class="font-medium text-uppercase mb-0">Invoice</h4>
                     <div class="ms-auto">
-                      <h4 class="invoice-number">{{$pageData[0]->invoice()->first()->invoice_number}}</h4>
+                      <h4 class="invoice-number">{{$pageData->count() != 0 ? $pageData[0]->invoice()->first()->invoice_number : ''}}</h4>
                     </div>
                   </div>
                   <div class="p-3" id="custom-invoice">
 
-                  @foreach ( $pageData as $order)
-                <div class="invoice-{{substr($order->invoice()->first()->invoice_number, 5)}}" id="printableArea">
+                  @forelse ( $pageData as $order)
+                    <div class="invoice-{{substr($order->invoice()->first()->invoice_number, 5)}}" id="printableArea">
                       <div class="row pb-5">
                       <div class="row border-bottom border-warning border-5 align-items-center p-3 bg-light  shadow-sm">
                         <div class="col-md-3 col-3 text-center text-md-left mb-3 mb-md-0">
@@ -153,7 +154,11 @@
                       </div>
                     </div>
     
-                    @endforeach
+                    @empty
+                        <div class="p-3 text-center text-muted">
+                            No Invoice found.
+                        </div>
+                    @endforelse
                   </div>
                 </div>
               </div>
@@ -177,7 +182,7 @@
               <div class="app-invoice overflow-auto">
                 <ul class="invoice-users">
 
-                @foreach ( $pageData as $order)
+                @forelse ( $pageData as $order)
                         <li>
                         <a href="javascript:void(0)"
                         class="p-3 bg-hover-light-black border-bottom d-flex align-items-start invoice-user listing-user bg-light"
@@ -194,9 +199,13 @@
                         </div>
                         </a>
                     </li>
-
-    
-                    @endforeach
+                    @empty
+                    <li>
+                        <div class="p-3 text-center text-muted">
+                            No Invoice found.
+                        </div>
+                    </li>
+                    @endforelse
 
 
                  
