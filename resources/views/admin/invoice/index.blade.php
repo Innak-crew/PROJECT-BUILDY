@@ -2,6 +2,16 @@
 @section('adminContent')
 @use('Carbon\Carbon')
 
+@push('style')
+<style>
+    @media print {
+        .print-page {
+            display: none;
+        }
+}
+</style>
+@endpush
+
 <div class="card overflow-hidden invoice-application">
     <div class="d-flex align-items-center justify-content-between gap-3 m-3 d-lg-none">
         <button class="btn btn-primary d-flex" type="button" data-bs-toggle="offcanvas" data-bs-target="#chat-sidebar"
@@ -18,14 +28,12 @@
         <div class="w-25 d-none d-lg-block border-end user-chat-box">
             <div class="p-3 border-bottom">
                 <form class="position-relative">
-                    <input type="search" class="form-control search-invoice ps-5" id="text-srh"
-                        placeholder="Search Invoice" />
+                    <input type="search" class="form-control search-invoice ps-5" id="text-srh" placeholder="Search Invoice" />
                     <i class="ti ti-search position-absolute top-50 start-0 translate-middle-y fs-6 text-dark ms-3"></i>
                 </form>
             </div>
             <div class="app-invoice">
                 <ul class="overflow-auto invoice-users" style="height: calc(100vh - 262px)" data-simplebar>
-
                     @forelse ( $pageData as $order)
                     <li>
                         <a href="javascript:void(0)"
@@ -36,8 +44,9 @@
                                 <h6 class="mb-0 invoice-customer">{{$order->customer()->first()->name}}</h6>
                                 <span class="fs-3 invoice-id text-truncate text-body-color d-block w-85">Id:
                                     {{$order->invoice()->first()->invoice_number}}</span>
-                                <span class="fs-3 invoice-date text-nowrap text-body-color d-block">{{
-                                    Carbon::parse($order->invoice()->first()->created_date)->format('jS M Y') }}</span>
+                                <span class="fs-3 invoice-date text-nowrap text-body-color d-block">
+                                    {{ Carbon::parse($order->invoice()->first()->created_date)->format('jS M Y') }}
+                                </span>
                             </div>
                         </a>
                     </li>
@@ -48,8 +57,6 @@
                         </div>
                     </li>
                     @endforelse
-
-
                 </ul>
             </div>
         </div>
@@ -59,122 +66,106 @@
                     <div class="invoice-header d-flex align-items-center border-bottom p-3">
                         <h4 class="font-medium text-uppercase mb-0">Invoice</h4>
                         <div class="ms-auto">
-                            <h4 class="invoice-number">{{$pageData->count() != 0 ?
-                                $pageData[0]->invoice()->first()->invoice_number : ''}}</h4>
+                            <h4 class="invoice-number">{{$pageData->count() != 0 ? $pageData[0]->invoice()->first()->invoice_number : ''}}</h4>
                         </div>
                     </div>
                     <div class="px-3" id="custom-invoice">
-
                         @forelse ( $pageData as $order)
                         <div class="invoice-{{substr($order->invoice()->first()->invoice_number, 5)}}" id="printableArea">
-                          <div class="row pb-5">
-                              <div class="row border-bottom border-warning border-5 align-items-center p-3 mx-3 bg-light shadow-sm">
-                                  <div class="col-3 text-center text-md-left mb-3 mb-md-0">
-                                      <img src="{{ asset('images/logo/logo-2.png') }}" alt="Company Logo" class="img-fluid" width="100px">
-                                  </div>
-                                  <div class="col-9 text-md-left text-center">
-                                      <h4 class="h4 font-weight-bold mb-1" style="color:#EB7D1E;">Smart Construction And Interiors</h4>
-                                      <p class="mb-0">Aarthi theatre road, Dindigul, Tamil Nadu, 624001</p>
-                                      <p class="mb-0"><b>Mobile:</b> 8825979705</p>
-                                      <p class="mb-0"><b>Email:</b> smartinteriors2020@gmail.com</p>
-                                  </div>
-                              </div>
-                              <div class="col-md-12 d-flex justify-content-between flex-wrap">
-                                  <p class="mt-2 mb-2">
-                                      <span>Invoice Date :</span>
-                                      <i class="ti ti-calendar"></i>
-                                      {{ Carbon::parse($order->invoice()->first()->created_date)->format('jS M Y') }}
-                                  </p>
-                                  <p class="mt-2 mb-2">{{$order->invoice()->first()->invoice_number}}</p>
-                                  <p class="mt-2 mb-2">
-                                      <span>Due Date :</span>
-                                      <i class="ti ti-calendar"></i>
-                                      {{ Carbon::parse($order->invoice()->first()->due_date)->format('jS M Y') }}
-                                  </p>
-                              </div>
-                              <hr>
-                              <div class="col-md-12">
-                                  <div class="text-start">
-                                      <p class="fs-3 pb-0 mb-0 fw-semibold">BILL TO,</p>
-                                      <p class="px-4 ">
-                                          {{$order->customer()->first()->name}},
-                                      </p>
-                                  </div>
-                              </div>
-                              <div class="col-md-12">
-                                  <div class="table-responsive">
-                                      <table class="table table-hover">
-                                          <thead>
-                                              <tr>
-                                                  <th class="text-center">#</th>
-                                                  <th>Description</th>
-                                                  <th class="text-end">Quantity</th>
-                                                  <th class="text-end">Unit Cost</th>
-                                                  <th class="text-end">Total</th>
-                                              </tr>
-                                          </thead>
-                                          <tbody>
-                                              @foreach($order->orderItems as $i => $item)
-                                              <tr>
-                                                  <td class="text-center">{{$i + 1}}</td>
-                                                  <td>{{$item->catagories->name}} <br> {{$item->design->name}}</td>
-                                                  <td >{{ rtrim(rtrim(number_format($item->quantity, 2), '0'), '.')}} ({{$item->design->unit->name}})</td>
-                                                  <td class="text-end">{{$item->rate_per}}</td>
-                                                  <td class="text-end">{{$item->total}}</td>
-                                              </tr>
-                                              @endforeach
-                                          </tbody>
-                                      </table>
-                                  </div>
-                              </div>
-                              <div class="col-md-12">
-                                  <div class="pull-right mt-4 text-end">
-                                      <p>Sub - Total amount: $20,858</p>
-                                      <p>vat (10%) : $2,085</p>
-                                      <hr />
-                                      <h3><b>Total :</b> $22,943</h3>
-                                  </div>
-                                  <div class="clearfix"></div>
-                                  <hr />
-                              </div>
-                          </div>
-                      </div>
-
-                      <style>
-                      @media (max-width: 768px) {
-                          .invoice-customer {
-                              font-size: 1rem;
-                          }
-
-                          .table thead th {
-                              font-size: 0.85rem;
-                          }
-
-                          .table tbody td {
-                              font-size: 0.85rem;
-                          }
-
-                          .text-end {
-                              text-align: right;
-                          }
-
-                          .text-center {
-                              text-align: center;
-                          }
-
-                          .text-md-left {
-                              text-align: left;
-                          }
-                      }
-                      </style>
-
-                        <div class="text-end">
-                            <button class="btn btn-default print-page" type="button">
-                                <span><i class="ti ti-printer fs-5"></i>
-                                    Print</span>
-                            </button>
+                            <div class="row pb-5">
+                                <div class="row border-bottom border-warning border-5 align-items-center p-3 mx-3 bg-light shadow-sm">
+                                    <div class="col-3 text-center text-md-left mb-3 mb-md-0">
+                                        <img src="{{ asset('images/logo/logo-2.png') }}" alt="Company Logo" class="img-fluid" width="100px">
+                                    </div>
+                                    <div class="col-9 text-md-left text-center">
+                                        <h4 class="h4 font-weight-bold mb-1" style="color:#EB7D1E;">Smart Construction And Interiors</h4>
+                                        <p class="mb-0">Aarthi theatre road, Dindigul, Tamil Nadu, 624001</p>
+                                        <p class="mb-0"><b>Mobile:</b> 8825979705</p>
+                                        <p class="mb-0"><b>Email:</b> smartinteriors2020@gmail.com</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 d-flex justify-content-between flex-wrap">
+                                    <p class="mt-2 mb-2">
+                                        <span>Invoice Date :</span>
+                                        <i class="ti ti-calendar"></i>
+                                        {{ Carbon::parse($order->invoice()->first()->created_date)->format('jS M Y') }}
+                                    </p>
+                                    <p class="mt-2 mb-2">{{$order->invoice()->first()->invoice_number}}</p>
+                                    <p class="mt-2 mb-2">
+                                        <span>Due Date :</span>
+                                        <i class="ti ti-calendar"></i>
+                                        {{ Carbon::parse($order->invoice()->first()->due_date)->format('jS M Y') }}
+                                    </p>
+                                </div>
+                                <hr>
+                                <div class="col-md-12">
+                                    <div class="text-start">
+                                        <p class="fs-3 pb-0 mb-0 fw-semibold">BILL TO,</p>
+                                        <p class="px-4 ">
+                                            {{$order->customer()->first()->name}},
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="">
+                                        <table class="table table-sm mb-0">
+                                            <thead>
+                                                <tr class="text-dark fw-bold">
+                                                    <!-- <th class="text-center">#</th> -->
+                                                    <th>ITEMS/SERVICES</th>
+                                                    <th class="text-center">QUANTITY</th>
+                                                    <th class="text-end">RATE PER</th>
+                                                    <th class="text-end">DISC.</th>
+                                                    <th class="text-end">AMOUNT</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($order->orderItems as $i => $item)
+                                                <tr>
+                                                    <!-- <td class="text-center">{{$i + 1}}</td> -->
+                                                    <td class="fw-semibold">{{$item->catagories->name}}<p class="fs-2 pb-1 mb-0 fw-normal">{{$item->design->name}}</p></td>
+                                                    <td class="text-center">{{ rtrim(rtrim(number_format($item->quantity, 2), '0'), '.') }} ({{$item->design->unit->name}})</td>
+                                                    <td class="text-end">₹ {{ rtrim(rtrim(number_format($item->rate_per, 2), '0'), '.') }}</td>
+                                                    <td class="text-end">₹ {{ rtrim(rtrim(number_format($item->discount_amount, 2), '0'), '.') }}<p class="fs-1 pb-0 mb-0">({{ rtrim(rtrim(number_format($item->discount_percentage, 2), '0'), '.') }})</p></td>
+                                                    <td class="text-end">₹ {{rtrim(rtrim(number_format($item->total, 2), '0'), '.') }}</td>
+                                                </tr>
+                                                
+                                                @endforeach
+                                                <tr style="border-top: 3px solid #ffc107; border-bottom: 3px solid #ffc107;" class="justify-end">
+                                                    <!-- <td class="text-center mt-5"></td> -->
+                                                    <td class="fw-semibold"><p class="d-block my-2">SUBTOTAL</p></td>
+                                                    <td class="text-center"></td>
+                                                    <td class="text-end"></td>
+                                                    <td class="text-end "><p class="d-block my-2">₹ {{ number_format($order->invoice()->first()->discount_amount) }}</p></td>
+                                                    <td class="text-end my-2"><p class="d-block my-2">₹ {{number_format($order->invoice()->first()->total_amount) }}</p></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mt-5">
+                                    <div class="col-6">
+                                        <p class="lead fw-semibold">Terms and Conditions</p>
+                                        <p id="terms_and_conditions">
+                                            {!! nl2br(e($order->invoice()->first()->terms_and_conditions)) !!}
+                                        </p>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="pull-right text-end">
+                                            <p>TAXABLE AMOUNT: ₹ {{number_format($order->invoice()->first()->total_amount) }}</p>
+                                            <hr />
+                                            <p><b>TOTAL AMOUNT:</b> ₹ {{number_format($order->invoice()->first()->total_amount) }}</p>
+                                        </div>
+                                        <hr />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <button class="btn btn-default print-page customizer-btn" type="button">
+                                    <span><i class="ti ti-printer fs-5"></i> Print</span>
+                                </button>
+                            </div>
                         </div>
-
                         @empty
                         <div class="p-3 text-center text-muted">
                             No Invoice found.
@@ -184,6 +175,8 @@
                 </div>
             </div>
         </div>
+
+
 
         <div class="offcanvas offcanvas-start user-chat-box" tabindex="-1" id="chat-sidebar"
             aria-labelledby="offcanvasExampleLabel">
@@ -236,8 +229,6 @@
                 </ul>
             </div>
         </div>
-
-
     </div>
 </div>
 @endsection
@@ -248,6 +239,49 @@
 
 <script src="/js/apps/jquery.PrintArea.js"></script>
 
+<!-- <script>
+    $(function () {
+        // Search filter for invoices
+        $(".search-invoice").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $(".invoice-users li").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+
+        // Display the first invoice by default
+        $("#custom-invoice > #printableArea:first").show();
+
+        // Print functionality
+        $(".print-page").click(function () {
+            var mode = "iframe"; //popup
+            var close = mode == "popup";
+            var options = {
+                mode: mode,
+                popClose: close,
+            };
+            $("div#printableArea:first").printArea(options);
+        });
+
+        // Invoice selection functionality
+        var $btns = $(".listing-user").click(function () {
+            var getDataInvoiceAttr = $(this).attr("data-invoice-id");
+            var $el = $("." + this.id).show();
+            $("#custom-invoice > div").not($el).hide();
+
+            // Set Invoice Number
+            var setInvoiceNumber = $(".invoice-inner-part .invoice-number").text("#INV-" + getDataInvoiceAttr);
+
+            // Toggle visibility for selected invoice
+            $(this).addClass("bg-light").siblings().removeClass("bg-light");
+            $(".invoiceing-box").show();
+
+            // Reset scroll position
+            var myDiv = document.getElementsByClassName("invoice-inner-part")[0];
+            myDiv.scrollTop = 0;
+        });
+    });
+</script> -->
 
 <script>
     $(function () {
@@ -320,4 +354,5 @@
     });
 
 </script>
+
 @endpush

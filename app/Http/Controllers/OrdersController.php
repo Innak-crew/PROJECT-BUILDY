@@ -136,6 +136,12 @@ class OrdersController extends Controller
 
                     $rate_per = $request->rate_per[$i] ?? 0;
 
+                    $rate_per = $request->rate_per[$i] ?? 0;
+                    $sub_total = $request->sub_total[$i];
+                    $discount_percentage = $request->discount_percentage ?? 0;
+                    $discount_amount = $sub_total * ($discount_percentage / 100);
+                    $total = $sub_total - $discount_amount;
+
                     // Create order item
                     DB::table('order_items')->insert([
                         'order_id' => $order->id,
@@ -143,10 +149,10 @@ class OrdersController extends Controller
                         'design_id' => $design->id,
                         'quantity' => $request->order_item_quantity[$i],
                         'rate_per' => $rate_per,
-                        'sub_total' => $request->sub_total[$i],
-                        'discount_percentage' => $request->discount_percentage,
-                        'discount_amount' => $request->sub_total[$i] * ($request->discount_percentage ?? 0 / 100),
-                        'total' => $request->sub_total[$i] - ($request->sub_total[$i] * ($request->discount_percentage ?? 0 / 100)),
+                        'sub_total' => $sub_total,
+                        'discount_percentage' => $discount_percentage,
+                        'discount_amount' => $discount_amount,
+                        'total' => $total,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
