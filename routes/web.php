@@ -171,4 +171,6 @@ Route::middleware('guest')->group(function () {
     });
 });
 
+
 Route::get('export/', [ReportController::class, 'export']);
+Route::get('report/', [ReportController::class, 'report']);

@@ -44,8 +44,9 @@ class Orders extends Model
         return $this->belongsTo(Customers::class,"customer_id");
     }
 
-    public function invoice(){
-        return $this->hasMany(Invoices::class,"order_id", 'id');
+    public function invoice()
+    {
+        return $this->belongsTo(Invoices::class, 'id', 'order_id');
     }
 
     public function paymentHistory(){

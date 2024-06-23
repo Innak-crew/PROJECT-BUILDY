@@ -222,6 +222,7 @@
             <p class="fw-bold mt-3 mb-0 text-dark"><b>AUTHORISED SIGNATORY FOR</b></p>
             <p>Smart Construction And Interiors</p>
         </div>
+        
     </div>
 </body>
 </html>
