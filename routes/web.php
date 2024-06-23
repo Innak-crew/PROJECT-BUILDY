@@ -5,11 +5,13 @@ use App\Http\Controllers\ApisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DesignsController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\QuantityUnitsController;
 use App\Http\Controllers\reminderController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ScheduleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -144,6 +146,12 @@ Route::middleware('auth')->group(function () {
         Route::post('/order/{encodedId}/update', "update")->name('order.update');
         Route::delete('/order/{encodedId}/destroy', "destroy")->name('order.destroy');
     });
+
+    Route::controller(InvoiceController::class)->group(function () {
+        Route::get('/invoice/{encodeID}/download', "invoiceDownload")->name('admin.invoice.download');
+        Route::get('/vendor/invoice/{encodeID}/download', "vendorInvoiceDownload")->name('admin.vendor.invoice.download');
+    });
+
     
     Route::prefix('/api')->group( function () {
         Route::controller(ApisController::class)->group(function () {
@@ -163,3 +171,4 @@ Route::middleware('guest')->group(function () {
     });
 });
 
+Route::get('export/', [ReportController::class, 'export']);
