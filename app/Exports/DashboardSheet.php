@@ -25,9 +25,13 @@ class DashboardSheet implements FromArray, WithTitle,  ShouldAutoSize, WithStyle
     {
         $totalOrders = (string) $this->orders->count();
         $completedOrders = (string) $this->orders->where('status', 'completed')->count();
-        $canceledOrders = (string) $this->orders->where('status', 'canceled')->count();
+        $canceledOrders = (string) $this->orders->where('status', 'cancelled')->count();
         $ongoingOrders = (string) $this->orders->where('status', 'ongoing')->count();
-        $pendingOrders = (string) $this->orders->where('status', 'pending')->count();
+        $followUpOrders = (string) $this->orders->where('status', 'follow-up')->count();
+
+        $interiorTypeOrders = (string) $this->orders->where('type', 'Interior')->count();
+        $exteriorTypeOrders = (string) $this->orders->where('type', 'Exterior')->count();
+        $bothTypeOrders = (string) $this->orders->where('type', 'Both')->count();
 
         $totalAmount = (float) $this->orders->sum(function($order) {
             return $order->invoice->sum('total_amount');
@@ -39,7 +43,7 @@ class DashboardSheet implements FromArray, WithTitle,  ShouldAutoSize, WithStyle
             return $order->invoice->sum('balance_amount');
         });
 
-        $reportExportDate = now()->toDateString(); // Example report export date
+        $reportExportDate = now()->toDateString();
         $note = <<<EOT
 This report provides a summary of the orders data.
 It includes a dashboard overview, detailed orders list,
@@ -53,15 +57,21 @@ EOT;
             ['Completed Orders', $completedOrders],
             ['Canceled Orders', $canceledOrders],
             ['Ongoing Orders', $ongoingOrders],
-            ['Pending Orders', $pendingOrders],
+            ['Follow Up Orders', $followUpOrders],
+            ["",""], 
+            ['Interior Type Orders', $interiorTypeOrders],
+            ['Exterior Type Orders', $exteriorTypeOrders],
+            ['Both Type Orders', $bothTypeOrders],
             ["",""], 
             ['Total Amount', "₹ ".format_inr(number_format($totalAmount))],
             ['Total Discount Amount', "₹ ".format_inr(number_format($totalDiscountAmount))],
             ['Balance Amount', "₹ ".format_inr(number_format($balanceAmount))],
             ["",""],  
             ["",""],  
-            ['Report Export Date', $reportExportDate],
-            ['Note', $note],
+            ["",""],  
+            ["",""],  
+            ['','','Report Export Date', $reportExportDate],
+            ['','','Note', $note],
         ];
     }
 
@@ -90,12 +100,8 @@ EOT;
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
             ],
 
-            'A9:B11' => [
-                'font' => ['bold' => true],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => 'FFFF00'],
-                ]
+            'A13:B15' => [
+                'font' => ['bold' => true,'color' => ['rgb' => '2C71DE'],],
             ],
         ];
     }

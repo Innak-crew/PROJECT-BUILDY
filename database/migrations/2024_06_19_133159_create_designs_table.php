@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('category_keys', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique(); // e.g., 'Loft Door', 'Cupboard', etc.
-            $table->string('general_key')->nullable(); // Optional: e.g., 'Door', 'Furniture', etc.
+            $table->string('key')->unique(); 
+            $table->string('general_key')->nullable(); 
             $table->timestamps();
         });
 

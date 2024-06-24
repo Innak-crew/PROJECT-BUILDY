@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\SendLoginDetails;
+use App\Models\Customers;
 use App\Models\Designs;
 use App\Models\Orders;
 use App\Models\QuantityUnits;
@@ -84,6 +85,10 @@ class AdminController extends Controller
             $pageData->QuantityUnits = QuantityUnits::all();
         }else if ($title == "Gallery" || $title == "List Designs"){
             $pageData = Designs::all();
+        }else if ($title == "Report" ){
+            $pageData->orders = Orders::all();
+            $pageData->users = User::all();
+            $pageData->customers = Customers::all();
         }
        
        
@@ -360,6 +365,12 @@ class AdminController extends Controller
         } catch (ModelNotFoundException $e) {
             return abort(404, 'Order not found'); 
         }
+    }
+
+    public function Report()
+    {
+        $data = $this->getUserData('General', 'Report');
+        return view('admin.report', $data);
     }
 
 }

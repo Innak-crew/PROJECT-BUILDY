@@ -16,6 +16,11 @@ return new class extends Migration
             $table->string('message');
             $table->string('level');
             $table->string('type')->nullable();
+            $table->string('context')->nullable();
+            $table->string('source')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->ipAddress('ip_address')->nullable();
+            $table->text('extra_info')->nullable();
             $table->timestamps();
         });
     }

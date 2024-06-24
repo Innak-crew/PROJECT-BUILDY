@@ -45,8 +45,7 @@ return new class extends Migration
             $table->foreign('parent_id')->references('id')->on('categories')->cascadeOnDelete();
         });
 
-        
-
+    
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -58,10 +57,8 @@ return new class extends Migration
             $table->enum('status', ['ongoing', 'follow-up', 'completed', 'cancelled'])->default('ongoing');
             $table->timestamp('start_date');
             $table->timestamp('end_date')->nullable();
-            $table->decimal('estimated_cost', 10, 2)->nullable();
-            $table->decimal('deposit_received', 10, 2)->nullable();
+            $table->boolean('is_approved')->default(false);
             $table->timestamps();
-
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->foreign('customer_id')->references('id')->on('customers');
         });

@@ -2,9 +2,9 @@
     <table>
         <thead>
             <tr>
-                <th bgcolor="#FFFF00" align="center" ><b>Invoice Date</b></th>
-                <th bgcolor="#FFFF00" align="center"><b>Invoice Number</b></th>
-                <th bgcolor="#FFFF00" align="center"><b>Due Date</b></th>
+                <th align="center" style="color:#2C71DE;"><b>Invoice Date</b></th>
+                <th align="center" style="color:#2C71DE;"><b>Invoice Number</b></th>
+                <th align="center" style="color:#2C71DE;"><b>Due Date</b></th>
             </tr>
             <tr>
                 <th align="center"  >{{ $created_date }}</th>
@@ -33,7 +33,7 @@
                 {{ $customer_name }}
                 </td>
             <tr>
-                <td>
+                <td align="left">
                 {{ $customer_phone }}
                 </td>
             </tr>
@@ -48,18 +48,18 @@
     <table class="table-items">
         <thead>
             <tr>
-                <th bgcolor="#2C71DE" style="color:#000000;"><b>ITEMS/SERVICES</b></th>
-                <th bgcolor="#2C71DE" style="color:#000000;" align="center"><b>QUANTITY</b></th>
-                <th bgcolor="#2C71DE" style="color:#000000;" align="right"><b>RATE PER</b></th>
-                <th bgcolor="#2C71DE" style="color:#000000;" align="right"><b>DISC.</b></th>
-                <th bgcolor="#2C71DE" style="color:#000000;" align="right"><b>AMOUNT</b></th>
+                <th style="color:#2C71DE;"><b>ITEMS/SERVICES</b></th>
+                <th style="color:#2C71DE;" align="center"><b>QUANTITY</b></th>
+                <th style="color:#2C71DE;" align="right"><b>RATE PER</b></th>
+                <th style="color:#2C71DE;" align="right"><b>DISC.</b></th>
+                <th style="color:#2C71DE;" align="right"><b>AMOUNT</b></th>
             </tr>
         </thead>
         <tbody>
             @foreach($orderItems as $item)
             <tr>
                 <td>
-                    <strong>{{ $item['category_name'] }}</strong><br>{{ $item['design_name'] }}
+                    {{ $item['category_name'] }}<br>{{ $item['design_name'] }}
                 </td>
                 <td align="center">{{ $item['quantity'] }}({{ $item['unit'] }})</td>
                 <td align="right">{{ $item['rate_per'] }}/-</td>
@@ -68,9 +68,9 @@
             </tr>
             @endforeach
             <tr>
-                <td colspan="3" style="border-top:2px solid #FFFF00; border-bottom:2px solid #FFFF00;"><b>SUBTOTAL</b></td>
-                <td align="right" style="border-top:2px solid #FFFF00; border-bottom:2px solid #FFFF00;"><b>₹ {{ $discount_amount }}</b></td>
-                <td align="right" style="border-top:2px solid #FFFF00; border-bottom:2px solid #FFFF00;"><b>₹ {{ $total_amount }}</b></td>
+                <td colspan="3" style="border-top:2px solid #2C71DE; border-bottom:2px solid #2C71DE;color:#2C71DE;"><b>SUBTOTAL</b></td>
+                <td align="right" style="border-top:2px solid #2C71DE; border-bottom:2px solid #2C71DE;"><b>₹ {{ $discount_amount }}</b></td>
+                <td align="right" style="border-top:2px solid #2C71DE; border-bottom:2px solid #2C71DE;"><b>₹ {{ $total_amount }}</b></td>
             </tr>
         </tbody>
     </table>
@@ -78,20 +78,18 @@
     <table class="table-totals">
         <thead>
             <tr>
-                <th colspan="4" ></th>
-                <th align="right"><b>TOTAL AMOUNT</b></th>
+                <th align="right" colspan="5" style="color:#2C71DE;"><b>TOTAL AMOUNT</b></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td colspan="4"></td>
-                <td align="right">₹ {{ $total_amount }}</td>
+                <td align="right" colspan="5">₹ {{ $total_amount }}</td>
             </tr>
             <tr>
                 <td colspan="5"></td>
             </tr>
             <tr>
-                <td colspan="5" align="right"><b>Total Amount (in Words)</b></td>
+                <td colspan="5" align="right" style="color:#2C71DE;"><b>Total Amount (in Words)</b></td>
             </tr>
             <tr>
                 <td colspan="5" align="right">{{ $amountInWords }}</td>

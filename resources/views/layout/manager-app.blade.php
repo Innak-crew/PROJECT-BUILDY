@@ -16,7 +16,7 @@
         <div>
           <div class="brand-logo d-flex align-items-center justify-content-between">
             <a href="#" class="text-nowrap logo-img">
-              <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="100" alt="" />
+            <img src="{{ asset('images\logo\logo-2.png') }}" class="light-logo"  width="50" alt="" />
               <!-- <h1>SC</h1> -->
             </a>
             <div class="close-btn d-lg-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
@@ -27,10 +27,6 @@
           <!-- Sidebar navigation-->
           <nav class="sidebar-nav scroll-sidebar" data-simplebar>
               <ul id="sidebarnav">
-                <li class="nav-small-cap">
-                  <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                  <span class="hide-menu">Home</span>
-                </li>
                 <li class="sidebar-item">
                   <a class="sidebar-link @if ($title == 'Index') active @endif" href="{{route('manager.index')}}" aria-expanded="false">
                     <span>
@@ -40,10 +36,6 @@
                   </a>
                 </li>
 
-                <li class="nav-small-cap">
-                  <i class="ti ti-dots nav-small-cap-icon fs-4"></i>
-                  <span class="hide-menu">General</span>
-                </li>
                 <li class="sidebar-item">
                   <a class="sidebar-link @if ($title == 'Profile') active @endif" href="{{route('manager.profile')}}" aria-expanded="false">
                     <span>
@@ -214,7 +206,7 @@
         <!--  Header End -->
         <div class="container-fluid">
 
-        <div class="card bg-white-info shadow-none position-relative overflow-hidden">
+        <!-- <div class="card bg-white-info shadow-none position-relative overflow-hidden">
             <div class="card-body pb-4 ">
                 <div class="row ">
                     <div class="col order-md-1 order-2">
@@ -227,7 +219,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
                 @yield('managerContent')
         </div>
       </div>

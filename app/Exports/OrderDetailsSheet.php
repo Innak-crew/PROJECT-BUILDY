@@ -46,9 +46,9 @@ class OrderDetailsSheet implements FromView, WithTitle,  ShouldAutoSize, WithSty
                     'quantity' => $item->quantity,
                     'unit' => $item->design->unit->name,
                     'rate_per' => format_inr(number_format($item->rate_per)),
-                    'discount_amount' => format_inr(number_format($item->discount_amount)),
+                    'discount_amount' => format_inr(number_format($item->discount_amount,2),1),
                     'discount_percentage' => $item->discount_percentage,
-                    'total' => format_inr(number_format($item->total)),
+                    'total' => format_inr(number_format($item->total,2),1),
                 ];
             })->toArray(),
             'discount_amount' => format_inr(number_format(optional($this->order->invoice)->discount_amount)),
@@ -75,10 +75,6 @@ class OrderDetailsSheet implements FromView, WithTitle,  ShouldAutoSize, WithSty
                     'size'      =>  15,
                     'bold' => true],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => 'FFFF00'], 
-                ],
             ],
             4 => [
                 'font' => [
@@ -97,10 +93,6 @@ class OrderDetailsSheet implements FromView, WithTitle,  ShouldAutoSize, WithSty
                     'name'      =>  'Calibri',
                     'size'      =>  15,
                     'bold' => true],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['rgb' => '2C71DE'], 
-                ],
             ],
         ];
     }
