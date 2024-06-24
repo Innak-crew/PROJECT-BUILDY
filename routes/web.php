@@ -129,7 +129,6 @@ Route::middleware('auth')->group(function () {
         Route::delete('/product/{encodedId}/destroy', "destroy")->name('product.destroy');
     });
 
-
     Route::controller(ScheduleController::class)->group(function () {
         Route::post('/schedule/store', "store")->name('schedule.store');
         Route::post('/schedule/{id}/update', "update")->name('schedule.update');
@@ -158,7 +157,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/invoice/{encodeID}/download', "invoiceDownload")->name('admin.invoice.download');
         Route::get('/vendor/invoice/{encodeID}/download', "vendorInvoiceDownload")->name('admin.vendor.invoice.download');
     });
-
     
     Route::prefix('/api')->group( function () {
         Route::controller(ApisController::class)->group(function () {

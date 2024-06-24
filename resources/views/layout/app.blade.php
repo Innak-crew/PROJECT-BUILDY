@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="handheldfriendly" content="true" />
     <meta name="MobileOptimized" content="width" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Theme Style -->
     <link rel="stylesheet" type="text/css" href="{{ asset('css/style.min.css') }}">
