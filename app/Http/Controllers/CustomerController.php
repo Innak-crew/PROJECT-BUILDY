@@ -33,20 +33,23 @@ class CustomerController extends Controller
             
             $customers = Customers::all(); 
             $customersWithUserDetails = [];
+            
             foreach ($customers as $customer) {
                 $user = User::find($customer->user_id);
-        
+            
                 if ($user) {
-                    $customersWithUsernames[] = [
+                    $customersWithUserDetails[] = [
                         "id" => $customer->id, 
                         'customer_name' => $customer->name, 
                         'username' => $user->name,
                         'userrole' => $user->role,
                     ];
-                } else {
                 }
             }
-            $pageData->Customers =  $customersWithUsernames;
+            
+            $pageData->customers = $customersWithUserDetails ?: [];
+            
+            
         }
 
         return [
