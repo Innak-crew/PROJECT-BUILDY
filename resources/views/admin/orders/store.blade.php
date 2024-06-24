@@ -109,7 +109,7 @@
                             <div class=" py-3 d-flex justify-content-between align-items-center">
                                 <div>
                                 <h5 class="card-title fw-semibold mb-0 lh-sm">Order items </h5>
-                                <small class="form-control-feedback"><a href="{{ route('admin.new.product') }}" target="_blank">Click here to add Product</a></small>
+                                <small class="form-control-feedback"><a href="{{ route('admin.new.design') }}" target="_blank">Click here to add Design</a></small>
                                 </div>
                                 <button onclick="order_item_container();"
                                     class="btn btn-success font-weight-medium waves-effect waves-light rounded-pill pt-2 px-2" type="button">

@@ -44,13 +44,13 @@
                     <span class="hide-menu">Profile</span>
                   </a>
                 </li>
-                <li class="sidebar-item">
-                  <a class="sidebar-link" href="{{route('manager.invoice')}}" aria-expanded="false">
+                <!-- <li class="sidebar-item">
+                  <a class="sidebar-link" href="" aria-expanded="false">
                     <span>
                       <i class="ti ti-file-text"></i>
                     </span>
                     <span class="hide-menu">Invoices</span> </a>
-                </li>
+                </li> -->
 
                 <li class="sidebar-item">
                     <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
