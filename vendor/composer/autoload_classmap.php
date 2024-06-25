@@ -6,6 +6,10 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Exports\\DashboardSheet' => $baseDir . '/app/Exports/DashboardSheet.php',
+    'App\\Exports\\OrderDetailsSheet' => $baseDir . '/app/Exports/OrderDetailsSheet.php',
+    'App\\Exports\\OrdersSheet' => $baseDir . '/app/Exports/OrdersSheet.php',
+    'App\\Exports\\ReportExport' => $baseDir . '/app/Exports/ReportExport.php',
     'App\\Http\\Controllers\\AdminController' => $baseDir . '/app/Http/Controllers/AdminController.php',
     'App\\Http\\Controllers\\ApisController' => $baseDir . '/app/Http/Controllers/ApisController.php',
     'App\\Http\\Controllers\\AuthController' => $baseDir . '/app/Http/Controllers/AuthController.php',
@@ -17,6 +21,7 @@ return array(
     'App\\Http\\Controllers\\OrdersController' => $baseDir . '/app/Http/Controllers/OrdersController.php',
     'App\\Http\\Controllers\\ProductsController' => $baseDir . '/app/Http/Controllers/ProductsController.php',
     'App\\Http\\Controllers\\QuantityUnitsController' => $baseDir . '/app/Http/Controllers/QuantityUnitsController.php',
+    'App\\Http\\Controllers\\ReportController' => $baseDir . '/app/Http/Controllers/ReportController.php',
     'App\\Http\\Controllers\\ScheduleController' => $baseDir . '/app/Http/Controllers/ScheduleController.php',
     'App\\Http\\Controllers\\reminderController' => $baseDir . '/app/Http/Controllers/reminderController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',

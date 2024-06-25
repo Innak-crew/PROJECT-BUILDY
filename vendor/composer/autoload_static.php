@@ -612,6 +612,10 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
     );
 
     public static $classMap = array (
+        'App\\Exports\\DashboardSheet' => __DIR__ . '/../..' . '/app/Exports/DashboardSheet.php',
+        'App\\Exports\\OrderDetailsSheet' => __DIR__ . '/../..' . '/app/Exports/OrderDetailsSheet.php',
+        'App\\Exports\\OrdersSheet' => __DIR__ . '/../..' . '/app/Exports/OrdersSheet.php',
+        'App\\Exports\\ReportExport' => __DIR__ . '/../..' . '/app/Exports/ReportExport.php',
         'App\\Http\\Controllers\\AdminController' => __DIR__ . '/../..' . '/app/Http/Controllers/AdminController.php',
         'App\\Http\\Controllers\\ApisController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApisController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
@@ -623,6 +627,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Http\\Controllers\\OrdersController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrdersController.php',
         'App\\Http\\Controllers\\ProductsController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductsController.php',
         'App\\Http\\Controllers\\QuantityUnitsController' => __DIR__ . '/../..' . '/app/Http/Controllers/QuantityUnitsController.php',
+        'App\\Http\\Controllers\\ReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/ReportController.php',
         'App\\Http\\Controllers\\ScheduleController' => __DIR__ . '/../..' . '/app/Http/Controllers/ScheduleController.php',
         'App\\Http\\Controllers\\reminderController' => __DIR__ . '/../..' . '/app/Http/Controllers/reminderController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
