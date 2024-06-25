@@ -18,7 +18,8 @@ return [
     |
     */
 
-    'driver' => env('SESSION_DRIVER', 'database'),
+    // 'driver' => env('SESSION_DRIVER', 'database'),
+    'driver' => env('SESSION_DRIVER', 'file'),
 
     /*
     |--------------------------------------------------------------------------
@@ -73,7 +74,8 @@ return [
     |
     */
 
-    'connection' => env('SESSION_CONNECTION'),
+    // 'connection' => env('SESSION_CONNECTION'),
+    'connection' => env('SESSION_CONNECTION',null),
 
     /*
     |--------------------------------------------------------------------------
@@ -86,7 +88,8 @@ return [
     |
     */
 
-    'table' => env('SESSION_TABLE', 'sessions'),
+    // 'table' => env('SESSION_TABLE', 'sessions'),
+    'table' =>'sessions',
 
     /*
     |--------------------------------------------------------------------------
@@ -101,7 +104,8 @@ return [
     |
     */
 
-    'store' => env('SESSION_STORE'),
+    // 'store' => env('SESSION_STORE'),
+    'store' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -156,7 +160,8 @@ return [
     |
     */
 
-    'domain' => env('SESSION_DOMAIN'),
+    // 'domain' => env('SESSION_DOMAIN'),
+    'domain' => env('SESSION_DOMAIN',null),
 
     /*
     |--------------------------------------------------------------------------
@@ -169,7 +174,8 @@ return [
     |
     */
 
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // 'secure' => env('SESSION_SECURE_COOKIE'),
+    'secure' => env('SESSION_SECURE_COOKIE', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -182,7 +188,8 @@ return [
     |
     */
 
-    'http_only' => env('SESSION_HTTP_ONLY', true),
+    // 'http_only' => env('SESSION_HTTP_ONLY', true),
+    'http_only' => true,
 
     /*
     |--------------------------------------------------------------------------
