@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DesignsController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\LabourController;
 use App\Http\Controllers\ManagerController;
 use App\Http\Controllers\OrdersController;
 use App\Http\Controllers\ProductsController;
@@ -59,6 +60,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/list/order', "listOrder")->name('admin.list.order');
             Route::get('/view/{encodedId}/order', "viewOrder")->name('admin.view.order');
             Route::get('/edit/{encodedId}/order', "editOrder")->name('admin.edit.order');
+            Route::get('/labours/{encodedOrderId}/{date?}', "showLabours")->name('admin.order.Labours');
             Route::get('/invoice', "invoiceShow")->name('admin.invoice');
 
             // Design
@@ -152,6 +154,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/order/{encodedId}/update', "update")->name('order.update');
         Route::delete('/order/{encodedId}/destroy', "destroy")->name('order.destroy');
         Route::get('/order/{encodedId}/set/approved', "setApproved")->name('order.set_approved');
+    });
+
+    Route::controller(LabourController::class)->group(function () {
+        Route::post('/labours/{encodedOrderId}/', "SaveLabours")->name('order.save.labours');
     });
 
     Route::controller(InvoiceController::class)->group(function () {

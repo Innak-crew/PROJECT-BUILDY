@@ -53,5 +53,9 @@ class Orders extends Model
         return $this->hasMany(PaymentHistory::class,"order_id", 'id');
     }
 
+    public function labours(){
+        return $this->hasMany(Labour::class,"order_id");
+    }
+
 }
  

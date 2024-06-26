@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Mail\SendLoginDetails;
 use App\Models\Customers;
 use App\Models\Designs;
+use App\Models\Labour;
 use App\Models\Orders;
 use App\Models\QuantityUnits;
 use App\Models\User;
+use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -203,7 +205,32 @@ class AdminController extends Controller
 
         try {
             $order = Orders::findOrFail($decodedId);
-            $data = $this->getUserData('Orders', 'View Order', $order);
+
+            $pageData = new stdClass();
+            $pageData->order = $order;
+            $labourData=[];
+
+            $labours = Labour::where('order_id', $order->id)->orderBy('date')->get();
+            foreach ($labours as $labour) {
+                $date = Carbon::parse($labour->date)->format('Y-m-d');
+                if (!isset($labourData[$date])) {
+                    $labourData[$date] = [];
+                }
+                
+                $labourData[$date][] = [
+                    'labor_category_id' => $labour->labor_category_id,
+                    'labor_category_name' => $labour->category->name,
+                    'number_of_labors' => $labour->number_of_labors,
+                    'per_labor_amount' => $labour->per_labor_amount,
+                    'total_amount' => $labour->total_amount,
+                    'date' => Carbon::parse($labour->date)->format('jS F Y'),
+                    'edit_link' => route('admin.order.Labours',['encodedOrderId'=> $encodedId,"date"=>$date])
+                ];
+            }
+
+            $pageData->labours = $labourData;
+
+            $data = $this->getUserData('Orders', 'View Order', $pageData);
             return view('admin.orders.view', $data);
         } catch (ModelNotFoundException $e) {
             return abort(404, 'Order not found'); 
@@ -220,6 +247,24 @@ class AdminController extends Controller
             $pageData->order = Orders::findOrFail($decodedId);
             $data = $this->getUserData('Orders', 'Edit Order', $pageData);
             return view('admin.orders.update', $data);
+        } catch (ModelNotFoundException $e) {
+            return abort(404, 'Order not found'); 
+        }
+    }
+
+    public function showLabours($encodedOrderId, $date = null)
+    {
+        // Decode the order ID
+        $decodedOrderId = base64_decode($encodedOrderId);
+
+        try {
+            $pageData = new stdClass();
+            $pageData->order = Orders::findOrFail($decodedOrderId);
+            $date = $date ?? Carbon::today()->toDateString();
+            $pageData->date = $date;
+            $pageData->labours = Labour::where('order_id', $decodedOrderId)->where('date', $date)->get();
+            $data = $this->getUserData('Orders', 'Show Labours', $pageData);
+            return view('admin.orders.workers', $data);
         } catch (ModelNotFoundException $e) {
             return abort(404, 'Order not found'); 
         }

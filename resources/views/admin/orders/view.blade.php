@@ -90,30 +90,30 @@
 <section class="h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-lg-11 col-xl-10  col-12 gap-2 d-flex align-items-center justify-content-end">
-            @if ($pageData->is_set_approved)
-                @if ($pageData->is_approved)
+            @if ($pageData->order->is_set_approved)
+                @if ($pageData->order->is_approved)
                     <button class="btn btn-success gap-2" onclick="downloadInvoice('invocie')"><span class="th-download fs-3 fw-semibold px-2"></span>Invoice</button>
                     <button class="btn btn-info" onclick="downloadInvoice('vendor')"><span class="th-download fs-3 fw-semibold px-2"></span>Vendor Invoice</button>
                 @else
-                    <a class="btn btn-success" href="{{route('admin.order.is_approved',['encodedId' => base64_encode($pageData->id)])}}" >Set Approved</a>
+                    <a class="btn btn-success" href="{{route('admin.order.is_approved',['encodedId' => base64_encode($pageData->order->id)])}}" >Set Approved</a>
                     <!-- <span class="badge bg-light-info text-info" disable>Waiting For Approved</span> -->
                 @endif
             @else
-                <!-- <a class="btn btn-success" href="{{route('order.set_approved',['encodedId' => base64_encode($pageData->id)])}}" >Request Approval</a> -->
+                <!-- <a class="btn btn-success" href="{{route('order.set_approved',['encodedId' => base64_encode($pageData->order->id)])}}" >Request Approval</a> -->
             @endif
-            <a class="btn btn-danger" href="{{route('admin.edit.order',['encodedId' => base64_encode($pageData->id)])}}" ><svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>Edit</a>
+            <a class="btn btn-danger" href="{{route('admin.edit.order',['encodedId' => base64_encode($pageData->order->id)])}}" ><svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>Edit</a>
         </div>
         <div class="col-lg-11 col-xl-10 mt-5  col-12">
             <div class="card">
                 <div class="card-header px-lg-4 pb-3 invoice-header">
                     <div class="d-flex justify-content-center pt-2">
                         <h5
-                            class="mb-1 badge @if($pageData->status == 'ongoing') bg-light-info text-info @elseif($pageData->status == 'cancelled') bg-light-danger text-danger @elseif($pageData->status == 'follow-up') bg-light-warning text-warning @else bg-light-success text-success  @endif">
-                            {{ ucfirst($pageData->status) }} Order</h5>
+                            class="mb-1 badge @if($pageData->order->status == 'ongoing') bg-light-info text-info @elseif($pageData->order->status == 'cancelled') bg-light-danger text-danger @elseif($pageData->order->status == 'follow-up') bg-light-warning text-warning @else bg-light-success text-success  @endif">
+                            {{ ucfirst($pageData->order->status) }} Order</h5>
                     </div>
                     <div class="d-flex justify-content-between pt-2">
                         <h5 class=" mb-0">Order Details</h5>
-                        <h5 class=" mb-0">#ODR-{{ str_pad($pageData->id ,5,'0',STR_PAD_LEFT) }}</h5>
+                        <h5 class=" mb-0">#ODR-{{ str_pad($pageData->order->id ,5,'0',STR_PAD_LEFT) }}</h5>
                     </div>
                 </div>
                 <div class="card-body invoice-body">
@@ -122,13 +122,13 @@
                         <div class="col-6 col-md-6 col-12">
                             <p class="text-muted mb-0">
                                 <b class="me-4">Start Date</b>
-                                <br>{{ \Carbon\Carbon::parse($pageData->start_date)->format('jS F Y') }}
+                                <br>{{ \Carbon\Carbon::parse($pageData->order->start_date)->format('jS F Y') }}
                             </p>
                         </div>
                         <div class="col-6 col-md-6 col-12 d-flex justify-content-end">
                             <p class="text-muted mb-0">
                                 <b class="d-flex justify-content-end">End Date</b>
-                                {{ \Carbon\Carbon::parse($pageData->end_date)->format('jS F Y') }}
+                                {{ \Carbon\Carbon::parse($pageData->order->end_date)->format('jS F Y') }}
                             </p>
                         </div>
                     </div>
@@ -136,25 +136,25 @@
                     <div class="row mb-4">
                         <div class="col-md-6 col-12">
                             <b>Creator By</b>
-                            <p class="text-muted mb-0">Name: {{$pageData->user()->first()->name}}</p>
-                            <p class="text-muted mb-0">Role: {{$pageData->user()->first()->role}}</p>
-                            <p class="text-muted mb-0">Email: {{$pageData->user()->first()->email}}</p>
+                            <p class="text-muted mb-0">Name: {{$pageData->order->user()->first()->name}}</p>
+                            <p class="text-muted mb-0">Role: {{$pageData->order->user()->first()->role}}</p>
+                            <p class="text-muted mb-0">Email: {{$pageData->order->user()->first()->email}}</p>
                         </div>
                         <div class="col-md-6 col-12 ">
                             <b class="d-flex justify-content-end">Customer Details</b>
-                            <p class="text-muted mb-0 d-flex justify-content-end">{{$pageData->Customer()->first()->name
+                            <p class="text-muted mb-0 d-flex justify-content-end">{{$pageData->order->Customer()->first()->name
                                 }}</p>
                             <p class="text-muted mb-0 d-flex justify-content-end">
-                                {{$pageData->Customer()->first()->phone }}</p>
+                                {{$pageData->order->Customer()->first()->phone }}</p>
                             <span
-                                class="text-muted mb-0 d-flex justify-content-end">{{$pageData->Customer()->first()->address
+                                class="text-muted mb-0 d-flex justify-content-end">{{$pageData->order->Customer()->first()->address
                                 }}</span>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center mt-5">
                         <p class="lead fw-normal mb-0">Order Items</p>
-                        <p class="lead text-muted mb-0">#{{count($pageData->orderItems()->get())}} Item(s)</p>
+                        <p class="lead text-muted mb-0">#{{count($pageData->order->orderItems()->get())}} Item(s)</p>
                     </div>
 
                     <div class="px-2 py-4">
@@ -176,7 +176,7 @@
                                         </th>
                                         <th>
                                             <p class="lead fw-normal mb-0">
-                                                DISC({{$pageData->invoice()->first()->discount_percentage}}%)</p>
+                                                DISC({{$pageData->order->invoice()->first()->discount_percentage}}%)</p>
                                         </th>
                                         <th>
                                             <p class="lead fw-normal mb-0">Total</p>
@@ -185,8 +185,8 @@
                                 </thead>
                                 <tbody>
                                     <?php $sub_total = 0; ?>
-                                    @if (count($pageData->orderItems()->get()) != 0)
-                                    @foreach ($pageData->orderItems()->get() as $orderItem)
+                                    @if (count($pageData->order->orderItems()->get()) != 0)
+                                    @foreach ($pageData->order->orderItems()->get() as $orderItem)
                                     <tr>
                                         <td>
                                             <div class="d-flex align-items-center">
@@ -218,7 +218,7 @@
                                         <td>
                                             <p class="text-muted mb-0 fs-4">₹ {{
                                                 rtrim(rtrim(number_format($orderItem->sub_total *
-                                                ($pageData->invoice()->first()->discount_percentage / 100), 2), '0'),
+                                                ($pageData->order->invoice()->first()->discount_percentage / 100), 2), '0'),
                                                 '.')}}</p>
                                         </td>
                                         <td>
@@ -259,8 +259,8 @@
                                         <td>Discount Percentage</td>
                                         <td>
                                             <?php $discountPercentage = 0; ?>
-                                            @if ($pageData->invoice()->first() != null)
-                                            <?php $discountPercentage = $pageData->invoice()->first()->discount_percentage; ?>
+                                            @if ($pageData->order->invoice()->first() != null)
+                                            <?php $discountPercentage = $pageData->order->invoice()->first()->discount_percentage; ?>
                                             {{ $discountPercentage }}%
                                             @else
                                             {{$discountPercentage}}%
@@ -271,7 +271,7 @@
                                         <td>Discount Amount</td>
                                         <td>
                                             <?php $discountAmount = 0; ?>
-                                            @if ($pageData->invoice()->first() != null)
+                                            @if ($pageData->order->invoice()->first() != null)
                                             <?php $discountAmount = $sub_total * ($discountPercentage / 100); ?>
                                             ₹ {{format_inr(number_format($discountAmount, 2))}}
                                             @else
@@ -286,12 +286,12 @@
                                     </tr>
                                     <tr>
                                         <td>Advance Payment</td>
-                                        <?php  $advancePayAmount = $pageData->invoice()->first() != null ?  ($pageData->invoice()->first()->advance_pay_amount != null ? $pageData->invoice()->first()->advance_pay_amount : 0 ) : 0; ?>
+                                        <?php  $advancePayAmount = $pageData->order->invoice()->first() != null ?  ($pageData->order->invoice()->first()->advance_pay_amount != null ? $pageData->order->invoice()->first()->advance_pay_amount : 0 ) : 0; ?>
                                         <td>₹ {{ format_inr(number_format($advancePayAmount)) }}</td>
                                     </tr>
                                     <tr>
                                         <td>Total Paid Amount</td>
-                                        <td>₹ {{ format_inr(format_inr($pageData->paymentHistory()->sum('amount'))) }}
+                                        <td>₹ {{ format_inr(format_inr($pageData->order->paymentHistory()->sum('amount'))) }}
                                         </td>
                                     </tr>
 
@@ -308,8 +308,8 @@
                             <div class="row mb-4">
                                 <div class="col-md-12 col-12">
                                     <p class="lead fw-semibold">Payment Status</p>
-                                    <p class="badge badge-status {{$pageData->invoice()->first()->payment_status}}">
-                                        {{ ucFirst($pageData->invoice()->first()->payment_status) }}
+                                    <p class="badge badge-status {{$pageData->order->invoice()->first()->payment_status}}">
+                                        {{ ucFirst($pageData->order->invoice()->first()->payment_status) }}
                                     </p>
                                 </div>
                             </div>
@@ -318,9 +318,9 @@
                                 <div class="row mb-4">
                                     <div class="col-12">
                                         <p class="lead fw-semibold">Payment History</p>
-                                        @if ($pageData->paymentHistory()->count() > 0)
+                                        @if ($pageData->order->paymentHistory()->count() > 0)
                                         <div id="payment_history">
-                                            @foreach ($pageData->paymentHistory as $index => $paymentHistory)
+                                            @foreach ($pageData->order->paymentHistory as $index => $paymentHistory)
                                             <p class="mb-2">
                                                 Paid ₹{{ format_inr(number_format($paymentHistory->amount)) }} via {{
                                                 ucwords(str_replace('_', ' ', $paymentHistory->payment_method)) }} on {{
@@ -338,7 +338,7 @@
                                     <div class="col-12">
                                         <p class="lead fw-semibold">Terms and Conditions</p>
                                         <p id="terms_and_conditions">
-                                            {!! nl2br(e($pageData->invoice()->first()->terms_and_conditions)) !!}
+                                            {!! nl2br(e($pageData->order->invoice()->first()->terms_and_conditions)) !!}
                                         </p>
                                     </div>
                                 </div>
@@ -362,52 +362,67 @@
 <section class="sm-timeline py-5 py-xl-8">
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-10 col-md-8 col-xl-6 ">
+      <div class="col-10 col-md-8">
         <div class="d-flex justify-content-center pt-2">
             <h2 class="mb-5 text-dark ">Labours Details</h2>
         </div>
         <ul class="timeline ">
+        @if (count($pageData->labours) != 0)
+            @foreach($pageData->labours as $date => $labours)
+                <li class="timeline-item">
+                    <div class="timeline-body">
+                        <div class="timeline-content">
+                            <h5 class="lead fw-bold mb-1">{{ $labours[0]['date'] }} 
+                                <a href="{{ $labours[0]['edit_link'] }}"  
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Edit" ><svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg></a></h5>
+                            <ul>
+                                <?php $total = 0; ?>
 
+                                @foreach($labours as $labour)
+                                    <li>{{ $labour['number_of_labors'] }} {{ $labour['labor_category_name'] }} at ₹{{ $labour['per_labor_amount'] }} each, Total: ₹{{ $labour['total_amount'] }}</li>
+                                    <?php $total += $labour['total_amount']; ?>
+                                @endforeach
+                            </ul>
+                            <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹{{ $total }}</p>
+                        </div>
+                    </div>
+                </li>
+            @endforeach
+            <li class="timeline-item">
+                    <div class="timeline-body">
+                        <div class="timeline-content">
+                        <button class="btn btn-success p-1 rounded-circle d-flex align-items-center justify-content-center" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Add Today" 
+                            onclick="window.location.href=`{{ route('admin.order.Labours', ['encodedOrderId' => base64_encode($pageData->order->id)]) }}`">
+                        <span class="th-plus fs-5 fw-semibold"></span>
+                    </button>
+
+
+                        </div>
+                    </div>
+                </li>
+        @else
             <li class="timeline-item">
                 <div class="timeline-body">
                     <div class="timeline-content">
-                        <h5 class="lead fw-bold mb-1">2024-06-01</h5>
-                        <ul class="">
-                            <li>5 painters (5 workers) at ₹450 each, Total: ₹2250</li>
-                            <li>3 electricians (3 workers) at ₹550 each, Total: ₹1650</li>
-                        </ul>
-                        <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹3900</p>
-                    </div>
-                </div>
-            </li>
+                    <button class="btn btn-success p-1 rounded-circle d-flex align-items-center justify-content-center" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="top" 
+                        title="Add Today" 
+                        onclick="window.location.href=`{{ route('admin.order.Labours', ['encodedOrderId' => base64_encode($pageData->order->id)]) }}`">
+                    <span class="th-plus fs-5 fw-semibold"></span>
+                </button>
 
-            <!-- Example Order 2 -->
-            <li class="timeline-item">
-                <div class="timeline-body">
-                    <div class="timeline-content">
-                        <h5 class="lead fw-bold mb-1">2024-06-02</h5>
-                        <ul class="list-unstyled">
-                            <li>4 carpenters (4 workers) at ₹500 each, Total: ₹2000</li>
-                            <li>2 plumbers (2 workers) at ₹600 each, Total: ₹1200</li>
-                        </ul>
-                        <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹3200</p>
-                    </div>
-                </div>
-            </li>
 
-            <!-- Example Order 3 -->
-            <li class="timeline-item">
-                <div class="timeline-body">
-                    <div class="timeline-content">
-                        <h5 class="lead fw-bold mb-1">2024-06-03</h5>
-                        <ul class="list-unstyled">
-                            <li>3 masons (3 workers) at ₹480 each, Total: ₹1440</li>
-                            <li>1 welder (1 worker) at ₹600 each, Total: ₹600</li>
-                        </ul>
-                        <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹2040</p>
                     </div>
                 </div>
             </li>
+        @endif
+             
         </ul>
 
       </div>
@@ -426,7 +441,7 @@
 
 <script>
   function downloadInvoice(mode){
-    var downloadUrl = mode == "invocie" ? `{{ route('admin.invoice.download', ['encodeID' => base64_encode($pageData->id)]) }}` :`{{ route('admin.vendor.invoice.download', ['encodeID' => base64_encode($pageData->id)]) }}`;
+    var downloadUrl = mode == "invocie" ? `{{ route('admin.invoice.download', ['encodeID' => base64_encode($pageData->order->id)]) }}` :`{{ route('admin.vendor.invoice.download', ['encodeID' => base64_encode($pageData->order->id)]) }}`;
     var loadingScreen = document.getElementById('invoice-loading-screen');
     loadingScreen.style.display = 'flex';
 
@@ -442,7 +457,7 @@
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = url;
-        a.download = 'invoice-' + '{{ $pageData->invoice()->first()->invoice_number }}' + '.pdf'; // Dynamic file name
+        a.download = 'invoice-' + '{{ $pageData->order->invoice()->first()->invoice_number }}' + '.pdf'; // Dynamic file name
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
