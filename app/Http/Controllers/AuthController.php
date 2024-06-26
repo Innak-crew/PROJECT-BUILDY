@@ -17,10 +17,17 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        // Log the logout action
+        $user = Auth::user();
+        
         Log::create([
-            'message' => 'User ' . Auth::user()->email . ' logged out.',
-            'level' => 'info'
+            'message' => 'User ' . $user->email . ' (ID: ' . $user->id . ') logged out.',
+            'level' => 'info',
+            'context' => 'web',
+            'source' => 'logout_form',
+            'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')]),
+            'user_id' => $user->id,
+            'type' => 'logout',
+            'ip_address' => $request->ip()
         ]);
 
         Auth::logout();
@@ -47,7 +54,13 @@ class AuthController extends Controller
             $request->session()->regenerate();
             Log::create([
                 'message' => 'User ' . Auth::user()->email . ' logged in.',
-                'level' => 'info'
+                'level' => 'info',
+                'type' => 'login',
+                'user_id' => Auth::user()->id,
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'login_form',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
             ]);
 
             // Redirect based on user role
@@ -65,7 +78,12 @@ class AuthController extends Controller
             if (!Hash::check($request->password, $user->password)) {
                 Log::create([
                     'message' => 'Failed login attempt with email: ' . $request->email . ' due to incorrect password.',
-                    'level' => 'warning'
+                    'level' => 'warning',
+                    'type' => 'login',
+                    'ip_address' => $request->ip(),
+                    'context' => 'web',
+                    'source' => 'login_form',
+                    'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
                 ]);
                 return back()->withErrors([
                     'password' => 'The provided password is incorrect.',
@@ -75,7 +93,12 @@ class AuthController extends Controller
             // Email not found
             Log::create([
                 'message' => 'Failed login attempt with non-existent email: ' . $request->email,
-                'level' => 'warning'
+                'level' => 'warning',
+                'type' => 'login',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'login_form',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
             ]);
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
@@ -84,7 +107,12 @@ class AuthController extends Controller
 
         Log::create([
             'message' => 'Failed login attempt with email: ' . $request->email,
-            'level' => 'warning'
+            'level' => 'warning',
+            'type' => 'login',
+            'ip_address' => $request->ip(),
+            'context' => 'web',
+            'source' => 'login_form',
+            'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
         ]);
     
         // Authentication failed due to incorrect credentials

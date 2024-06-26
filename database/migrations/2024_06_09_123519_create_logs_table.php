@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('source')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->ipAddress('ip_address')->nullable();
-            $table->text('extra_info')->nullable();
+            $table->json('extra_info')->nullable();
             $table->timestamps();
         });
     }

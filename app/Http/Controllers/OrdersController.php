@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Categories;
 use App\Models\Customers;
 use App\Models\Invoices;
+use App\Models\Log as ModelsLog;
 use App\Models\OrderItems;
 use App\Models\Orders;
 use App\Models\PaymentHistory;
@@ -17,6 +18,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OrdersController extends Controller
 {
@@ -88,8 +90,8 @@ class OrdersController extends Controller
                 'customer_id' => $request->customer,
                 'start_date' => $request->order_starting_date,
                 'end_date' => $request->order_ending_date,
-                'estimated_cost' => $request->estimated_cost,
-                'deposit_received' => $request->deposit_received ?? null,
+                'is_set_approved' => Auth::check() && Auth::user()->role === "admin" ? 1:0,
+                'is_approved' => Auth::check() && Auth::user()->role === "admin" ? 1:0,
             ]);
 
             // Handle follow-ups
@@ -208,8 +210,16 @@ class OrdersController extends Controller
             return redirect()->back()->with('message', 'Order created successfully.');
         } catch (Exception $e) {
             DB::rollBack();
-            \Log::error('Order creation failed:', ['error' => $e->getMessage()]);
-            dd($e);
+            Log::error('Order creation failed:', ['error' => $e->getMessage()]);
+            ModelsLog::create([
+                'message' => 'Order creation failed',
+                'level' => 'error',
+                'type' => 'order',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'order_create_form',
+                'extra_info' =>json_encode( ['user_agent' => $request->header('User-Agent'),'error_message' => $e->getMessage()])
+            ]);
             return back()->with('error', 'Failed to create order. Please try again later.');
         }
     }
@@ -587,7 +597,15 @@ class OrdersController extends Controller
             
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
+            ModelsLog::create([
+                'message' => 'Failed to update order.',
+                'level' => 'error',
+                'type' => 'order',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'order_update_form',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error_message' => $e->getMessage()])
+            ]);
             return back()->with('error', 'Failed to update order. Please try again later.');
         }
     }
@@ -621,6 +639,46 @@ class OrdersController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'An error occurred while deleting the order.');
+        }
+    }
+    
+    public function setApproved(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId); 
+        $order = Orders::findOrFail($decodedId);
+
+        try {
+            DB::beginTransaction();
+            $order->update(['is_set_approved' => 1]); 
+            DB::commit();
+            return back()->with('message', 'Order approval requested successfully.');
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return abort(404, 'Order not found'); 
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'An error occurred while requesting order approval.');
+        }
+    }
+    public function isApproved(string $encodedId) 
+    {
+        $decodedId = base64_decode($encodedId); 
+        $order = Orders::findOrFail($decodedId);
+        try {
+            if (Auth::user()->role === "admin") {
+                DB::beginTransaction();
+                $order->update(['is_approved' => 1]); 
+                DB::commit();
+                return back()->with('message', 'Order approved successfully.');
+            } else {
+                return abort(403, 'Unauthorized action'); 
+            }
+        } catch (ModelNotFoundException $e) {
+            DB::rollBack();
+            return abort(404, 'Order not found'); 
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'An error occurred while approving the order.');
         }
     }
 

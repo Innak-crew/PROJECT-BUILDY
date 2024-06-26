@@ -265,7 +265,6 @@
         }
       });
 
-
        
       function completeReminder(id) {
             fetch('{{route('reminder.is_completed')}}', {

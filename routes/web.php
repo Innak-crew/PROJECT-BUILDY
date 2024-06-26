@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/customer/{encodedId}/edit', "admin_edit")->name('admin.customer.edit');
         });
         
+        Route::get('/order/{encodedId}/is/approved', [OrdersController::class,'isApproved'])->name('admin.order.is_approved');
     });
 
     // Routes for Manager
@@ -91,8 +92,7 @@ Route::middleware('auth')->group(function () {
         Route::controller(ManagerController::class)->group(function () {
             Route::get('/', "index")->name('manager.index');
             Route::get('/profile', "profile")->name('manager.profile');
-
-
+            
             // Reminder
             Route::get('/reminder', "reminder")->name('manager.reminder');
             Route::get('/reminder/list', "reminder_list")->name('manager.reminder.list');
@@ -151,6 +151,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/order/store', "store")->name('order.store');
         Route::post('/order/{encodedId}/update', "update")->name('order.update');
         Route::delete('/order/{encodedId}/destroy', "destroy")->name('order.destroy');
+        Route::get('/order/{encodedId}/set/approved', "setApproved")->name('order.set_approved');
     });
 
     Route::controller(InvoiceController::class)->group(function () {

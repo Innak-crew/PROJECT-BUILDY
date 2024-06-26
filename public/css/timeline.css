@@ -1,0 +1,102 @@
+.py-8 {
+    padding-bottom: 4.5rem !important;
+    padding-top: 4.5rem !important
+}
+
+@media(min-width:576px) {
+    .py-sm-8 {
+        padding-bottom: 4.5rem !important;
+        padding-top: 4.5rem !important
+    }
+}
+
+@media(min-width:768px) {
+    .py-md-8 {
+        padding-bottom: 4.5rem !important;
+        padding-top: 4.5rem !important
+    }
+}
+
+@media(min-width:992px) {
+    .py-lg-8 {
+        padding-bottom: 4.5rem !important;
+        padding-top: 4.5rem !important
+    }
+}
+
+@media(min-width:1200px) {
+    .py-xl-8 {
+        padding-bottom: 4.5rem !important;
+        padding-top: 4.5rem !important
+    }
+}
+
+@media(min-width:1400px) {
+    .py-xxl-8 {
+        padding-bottom: 4.5rem !important;
+        padding-top: 4.5rem !important
+    }
+}
+
+.sm-timeline {
+    --bsb-tl-color: #ebf1f6;
+    --bsb-tl-circle-color: #ebf1f6;
+    --bsb-tl-circle-size: 12px;
+    --bsb-tl-circle-offset: 6px
+}
+
+.sm-timeline .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative
+}
+
+.sm-timeline .timeline:after {
+    background-color: var(--bsb-tl-color);
+    bottom: 0;
+    content: "";
+    left: 0;
+    margin-left: -1px;
+    position: absolute;
+    top: 0;
+    width: 2px
+}
+
+.sm-timeline .timeline>.timeline-item {
+    margin: 0;
+    padding: 0;
+    position: relative
+}
+
+.sm-timeline .timeline>.timeline-item:before {
+    background-color: var(--bsb-tl-circle-color);
+    border-radius: 50%;
+    content: "";
+    height: var(--bsb-tl-circle-size);
+    left: calc(var(--bsb-tl-circle-offset)*-1);
+    position: absolute;
+    top: 0;
+    width: var(--bsb-tl-circle-size);
+    z-index: 1
+}
+
+.sm-timeline .timeline>.timeline-item .timeline-body {
+    margin: 0;
+    padding: 0;
+    position: relative
+}
+
+.sm-timeline .timeline>.timeline-item .timeline-content {
+    padding: 0 0 0.5rem 2.5rem
+}
+
+@media(min-width:768px) {
+    .sm-timeline .timeline>.timeline-item .timeline-content {
+        padding-bottom: 1.5rem
+    }
+}
+
+.sm-timeline .timeline>.timeline-item:last-child .timeline-content {
+    padding-bottom: 0
+}

@@ -6,6 +6,7 @@ use App\Models\Categories;
 use App\Models\CategoryKey;
 use App\Models\Customers;
 use App\Models\Designs;
+use App\Models\LaborCategory;
 use App\Models\Products;
 use Illuminate\Http\Request;
 
@@ -140,6 +141,12 @@ class ApisController extends Controller
             case 'categories':
                 $returnData = Categories::whereNull('parent_id')
                     ->where('name', 'LIKE', '%' . $searchTerm . '%')
+                    ->get();
+                break;
+
+            // Search Labor categories by name
+            case 'laborCategories':
+                $returnData = LaborCategory::where('name', 'LIKE', '%' . $searchTerm . '%')
                     ->get();
                 break;
 

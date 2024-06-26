@@ -83,17 +83,27 @@
 
 
 </style>
+
+<link rel="stylesheet" href="/css/timeline.css">
 @endpush
 
 <section class="h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-lg-11 col-xl-10  col-12 gap-2 d-flex align-items-center justify-content-end">
-            <button class="btn btn-success gap-2" onclick="downloadInvoice('invocie')"><span class="th-download fs-3 fw-semibold px-2"></span>Invoice</button>
-            <button class="btn btn-info" onclick="downloadInvoice('vendor')"><span class="th-download fs-3 fw-semibold px-2"></span>Vendor Invoice</button>
+            @if ($pageData->is_set_approved)
+                @if ($pageData->is_approved)
+                    <button class="btn btn-success gap-2" onclick="downloadInvoice('invocie')"><span class="th-download fs-3 fw-semibold px-2"></span>Invoice</button>
+                    <button class="btn btn-info" onclick="downloadInvoice('vendor')"><span class="th-download fs-3 fw-semibold px-2"></span>Vendor Invoice</button>
+                @else
+                    <a class="btn btn-success" href="{{route('admin.order.is_approved',['encodedId' => base64_encode($pageData->id)])}}" >Set Approved</a>
+                    <!-- <span class="badge bg-light-info text-info" disable>Waiting For Approved</span> -->
+                @endif
+            @else
+                <!-- <a class="btn btn-success" href="{{route('order.set_approved',['encodedId' => base64_encode($pageData->id)])}}" >Request Approval</a> -->
+            @endif
             <a class="btn btn-danger" href="{{route('admin.edit.order',['encodedId' => base64_encode($pageData->id)])}}" ><svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>Edit</a>
-
         </div>
-        <div class="col-lg-11 col-xl-10  col-12">
+        <div class="col-lg-11 col-xl-10 mt-5  col-12">
             <div class="card">
                 <div class="card-header px-lg-4 pb-3 invoice-header">
                     <div class="d-flex justify-content-center pt-2">
@@ -345,9 +355,65 @@
                 </div>
             </div>
         </div>
-      </div>
+    </div>
 </section>
 
+<!-- Timeline 1 - Bootstrap Brain Component -->
+<section class="sm-timeline py-5 py-xl-8">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-10 col-md-8 col-xl-6 ">
+        <div class="d-flex justify-content-center pt-2">
+            <h2 class="mb-5 text-dark ">Labours Details</h2>
+        </div>
+        <ul class="timeline ">
+
+            <li class="timeline-item">
+                <div class="timeline-body">
+                    <div class="timeline-content">
+                        <h5 class="lead fw-bold mb-1">2024-06-01</h5>
+                        <ul class="">
+                            <li>5 painters (5 workers) at ₹450 each, Total: ₹2250</li>
+                            <li>3 electricians (3 workers) at ₹550 each, Total: ₹1650</li>
+                        </ul>
+                        <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹3900</p>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Example Order 2 -->
+            <li class="timeline-item">
+                <div class="timeline-body">
+                    <div class="timeline-content">
+                        <h5 class="lead fw-bold mb-1">2024-06-02</h5>
+                        <ul class="list-unstyled">
+                            <li>4 carpenters (4 workers) at ₹500 each, Total: ₹2000</li>
+                            <li>2 plumbers (2 workers) at ₹600 each, Total: ₹1200</li>
+                        </ul>
+                        <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹3200</p>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Example Order 3 -->
+            <li class="timeline-item">
+                <div class="timeline-body">
+                    <div class="timeline-content">
+                        <h5 class="lead fw-bold mb-1">2024-06-03</h5>
+                        <ul class="list-unstyled">
+                            <li>3 masons (3 workers) at ₹480 each, Total: ₹1440</li>
+                            <li>1 welder (1 worker) at ₹600 each, Total: ₹600</li>
+                        </ul>
+                        <p class="fs-3 fw-semibold font-weight-bold">Total Amount for the day: ₹2040</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+
+      </div>
+    </div>
+  </div>
+</section>
 <!-- Loading -->
 <div class="invoice-loading-screen" id="invoice-loading-screen">
   <div class="loader"></div>

@@ -21,8 +21,8 @@ class Orders extends Model
         'status',
         'start_date',
         'end_date',
-        'estimated_cost',
-        'deposit_received',
+        'is_set_approved',
+        'is_approved',
     ];
     
 

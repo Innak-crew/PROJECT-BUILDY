@@ -57,6 +57,7 @@ return new class extends Migration
             $table->enum('status', ['ongoing', 'follow-up', 'completed', 'cancelled'])->default('ongoing');
             $table->timestamp('start_date');
             $table->timestamp('end_date')->nullable();
+            $table->boolean('is_set_approved')->default(false);
             $table->boolean('is_approved')->default(false);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
