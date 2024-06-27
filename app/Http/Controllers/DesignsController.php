@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categories;
 use App\Models\CategoryKey;
 use App\Models\Designs;
+use App\Models\Log;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -79,7 +80,15 @@ class DesignsController extends Controller
             return redirect()->back()->with('message', 'Design uploaded successfully.');
         } catch (Exception $e) {
             DB::rollBack();
-            dd($e);
+            Log::create([
+                'message' => 'Failed to upload Design.',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'upload_design',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Failed to upload design. Please try again later.');
         }
 
@@ -157,11 +166,20 @@ class DesignsController extends Controller
             return redirect()->back()->with('message', 'Design updated successfully.');
         } catch (Exception $e) {
             DB::rollBack();
+            Log::create([
+                'message' => 'Failed to update Design.',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'update_design',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Failed to update design. Please try again later.');
         }
     }
 
-    public function destroy(string $encodedId)
+    public function destroy(string $encodedId, Request $request)
     {
         DB::beginTransaction();
 
@@ -184,6 +202,15 @@ class DesignsController extends Controller
             return redirect()->back()->with('message', 'Design deleted successfully.');
         } catch (Exception $e) {
             DB::rollBack();
+            Log::create([
+                'message' => 'Failed to delete Design.',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'delete_design',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Failed to delete design. Please try again later.');
         }
     }

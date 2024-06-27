@@ -94,21 +94,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function setDisable(is_true){
     if(is_true){
-        getModalTitleEl.setAttribute("disabled",true);
-        getModalVisibilityEl.setAttribute("disabled",true);
-        getModalTitleEl.setAttribute("disabled",true);
-        getModalDescriptionEl.setAttribute("disabled",true);
-        getModalStartDateEl.setAttribute("disabled",true);
-        getModalEndDateEl.setAttribute("disabled",true);
-        getModalForeditableEl.setAttribute("disabled",true);
+        getModalFormEl.querySelectorAll('input, textarea').forEach(input => {
+            input.setAttribute("disabled",true);
+        });
     }else{
-        getModalTitleEl.removeAttribute("disabled");
-        getModalVisibilityEl.removeAttribute("disabled");
-        getModalTitleEl.removeAttribute("disabled");
-        getModalDescriptionEl.removeAttribute("disabled");
-        getModalStartDateEl.removeAttribute("disabled");
-        getModalEndDateEl.removeAttribute("disabled");
-        getModalForeditableEl.removeAttribute("disabled");
+        getModalFormEl.querySelectorAll('input, textarea').forEach(input => {
+            input.removeAttribute('disabled');
+        });
     }
   }
 
@@ -267,12 +259,15 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const removeModelData = () => {
-      getModalTitleEl.value = "";
-      getModalStartDateEl.value = "";
-      getModalEndDateEl.value = "";
-      getModalDescriptionEl.value = "";
-      getModalForeditableEl.removeAttribute("checked");
-  }
+    getModalTitleEl.value = "";
+    getModalStartDateEl.value = "";
+    getModalEndDateEl.value = "";
+    getModalDescriptionEl.value = "";
+    getModalForeditableEl.checked = false;
+    getModalFormEl.querySelectorAll('input, textarea').forEach(input => {
+        input.removeAttribute('disabled');
+    });
+};
 
   // Calendar Init
   calendar.render();

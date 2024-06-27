@@ -1,17 +1,19 @@
+<?php
+
+use Illuminate\Support\Facades\Auth;
+?>
 @extends('layout.manager-app')
 @section('managerContent')
-
 
 @push('style')
 <style>
     .app-calendar .fc .fc-daygrid-day.fc-day-today .fc-daygrid-day-frame {
         background-color: #d7dfff;
-        border-radius: 8px;
     }
 </style>
 @endpush
 
-
+ 
 <div class="card">
     <div class="row gx-0">
         <div class="col-lg-12">
@@ -128,7 +130,7 @@
 <script src="/libs/fullcalendar/index.global.min.js"></script>
 <script>
 
-var schedulesData = {!! json_encode($pageData -> Schedules -> map(function ($schedule) {
+var schedulesData = <?= json_encode($pageData -> Schedules -> map(function ($schedule) {
       return [
           'id' => $schedule -> id,
           'is_mine' => Auth::user()->id === $schedule->user_id,
@@ -142,7 +144,7 @@ var schedulesData = {!! json_encode($pageData -> Schedules -> map(function ($sch
           'visibility' => $schedule -> visibility,
           'extendedProps' => ['calendar' => $schedule -> level]
       ];
-  }))!!};
+  }))?>;
    
    var storeURL = "{{route('schedule.store')}}";
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Reminders;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -34,7 +35,16 @@ class reminderController extends Controller
             $reminders->save();
             return back()->with('message', 'Reminder set successfully!');
         } catch (\Exception $e) {
-            return back()->with('error', 'Error seting reminder ');
+            Log::create([
+                'message' => 'Error setting reminder',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'setting_reminder',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
+            return back()->with('error', 'Error setting reminder ');
         }
 
     }
@@ -69,11 +79,20 @@ class reminderController extends Controller
           } catch (ModelNotFoundException $e) {
             return back()->with('error', 'Reminder not found.');
           } catch (\Exception $e) {
+            Log::create([
+                'message' => 'Error updating reminder',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'update_reminder',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Error updating reminder.');
           }
     }
 
-    public function destroy($encodedId)
+    public function destroy($encodedId, Request $request)
     {
 
         $decodedId = base64_decode($encodedId); 
@@ -82,6 +101,15 @@ class reminderController extends Controller
             $user_id = Auth::id();
             
             if ($user_id != $reminder->user_id) {
+                Log::create([
+                    'message' => 'Error delete reminder',
+                    'level' => 'warning',
+                    'type' => 'security',
+                    'ip_address' => $request->ip(),
+                    'context' => 'web',
+                    'source' => 'delete_reminder',
+                    'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
+                ]);
             abort(403, 'You can only delete reminders you created.');
             }
             
@@ -90,6 +118,15 @@ class reminderController extends Controller
         } catch (ModelNotFoundException $e) {
             return back()->with('error', 'Reminder not found.');
         } catch (\Exception $e) {
+            Log::create([
+                'message' => 'Error delete reminder',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'delete_reminder',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Error deleting reminder.');
         }
     }
@@ -109,6 +146,15 @@ class reminderController extends Controller
           } catch (ModelNotFoundException $e) {
             return response()->json(['success' => false, 'message' => 'Reminder not found'], 404);
           } catch (\Exception $e) {
+            Log::create([
+                'message' => 'Error updating reminder',
+                'level' => 'danger',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'delete_reminder',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
+            ]);
             return response()->json(['success' => false, 'message' => 'Error updating reminder.'], 404);
           }
     }

@@ -136,9 +136,9 @@
                     <div class="row mb-4">
                         <div class="col-md-6 col-12">
                             <b>Creator By</b>
-                            <p class="text-muted mb-0">Name: {{$pageData->order->user()->first()->name}}</p>
-                            <p class="text-muted mb-0">Role: {{$pageData->order->user()->first()->role}}</p>
-                            <p class="text-muted mb-0">Email: {{$pageData->order->user()->first()->email}}</p>
+                            <p class="text-muted mb-0">Name: {{$pageData->order->creator->name}}</p>
+                            <p class="text-muted mb-0">Role: {{$pageData->order->creator->role}}</p>
+                            <p class="text-muted mb-0">Email: {{$pageData->order->creator->email}}</p>
                         </div>
                         <div class="col-md-6 col-12 ">
                             <b class="d-flex justify-content-end">Customer Details</b>
@@ -164,6 +164,9 @@
                                     <tr>
                                         <th>
                                             <p class="lead fw-normal mb-0">Items</p>
+                                        </th>
+                                        <th>
+                                            <p class="lead fw-normal mb-0">Dimension</p>
                                         </th>
                                         <th>
                                             <p class="lead fw-normal mb-0">Quantity</p>
@@ -201,6 +204,9 @@
                                                         {{ucwords(strtolower($orderItem->design->name))}}</p>
                                                 </div>
                                             </div>
+                                        </td>
+                                        <td>
+                                            <p class="text-muted mb-0 fs-4">{{ $orderItem->dimension != null ? $orderItem->dimension : 'N/A' }}</p>
                                         </td>
                                         <td>
                                             <p class="text-muted mb-0 fs-4">{{

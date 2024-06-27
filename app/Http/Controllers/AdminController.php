@@ -6,6 +6,7 @@ use App\Mail\SendLoginDetails;
 use App\Models\Customers;
 use App\Models\Designs;
 use App\Models\Labour;
+use App\Models\Log;
 use App\Models\Orders;
 use App\Models\QuantityUnits;
 use App\Models\User;
@@ -15,6 +16,7 @@ use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -58,7 +60,7 @@ class AdminController extends Controller
     // Common method to get user data
     private function getUserData(string $sectionName, string $title, object $pageData = new stdClass()): array
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         $userName = $user ? $user->name : 'Guest';
         $userId = $user ? $user->id : 'Guest';
         $reminder = $user->reminders()
@@ -90,7 +92,7 @@ class AdminController extends Controller
             $pageData = Designs::all();
         }else if ($title == "Report" ){
             $pageData->orders = Orders::all();
-            $pageData->users = User::all();
+            $pageData->users = User::where('role','!=',"developer")->get();
             $pageData->customers = Customers::all();
         } 
        
@@ -154,37 +156,62 @@ class AdminController extends Controller
         return view('admin.product.list', $data);
     }
 
-    public function viewProduct(string $encodedId) 
+    public function viewProduct(string $encodedId, Request $request) 
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $product = Auth::user()->products()->findOrFail($decodedId);
+            $user = User::find(Auth::id());
+            $product = $user->products()->findOrFail($decodedId);
             $data = $this->getUserData('Products', 'View Product', $product);
             $user_id = Auth::id();
             if($user_id != $product->user_id){
+                Log::create([
+                    'message' => 'Unauthorized operation by ' . $user->email . ' while trying to view product.',
+                    'level' => 'warning',
+                    'type' => 'security',
+                    'ip_address' => $request->ip(),
+                    'context' => 'web',
+                    'source' => 'view_product',
+                    'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
+                ]);
                 abort(403, 'You can only view product you created.');
             }
             return view('admin.product.view', $data);
         } catch (ModelNotFoundException $e) {
+            
             return abort(404, 'Customer not found'); 
         }
     }
 
-    public function editProduct(string $encodedId) 
+    public function editProduct(string $encodedId, Request $request)
     {
-        $decodedId = base64_decode($encodedId); 
+        $decodedId = base64_decode($encodedId);
         try {
+            $user = User::find(Auth::id());
+            $product = $user->products()->findOrFail($decodedId);
+    
+            if ($user->id != $product->user_id) {
+                Log::create([
+                    'message' => 'Unauthorized operation by ' . $user->email . ' while trying to edit product.',
+                    'level' => 'warning',
+                    'type' => 'security',
+                    'ip_address' => $request->ip(),
+                    'context' => 'web',
+                    'source' => 'edit_product',
+                    'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
+                ]);
+                abort(403, 'You can only edit a product you created.');
+            }
+    
             $pageData = new stdClass();
-            $pageData->product = Auth::user()->products()->findOrFail($decodedId);
+            $pageData->product = $product;
             $pageData->QuantityUnits = QuantityUnits::all();
             $data = $this->getUserData('Products', 'Edit Product', $pageData);
-            $user_id = Auth::id();
-            if($user_id != $pageData->product->user_id){
-                abort(403, 'You can only edit product you created.');
-            }
+    
             return view('admin.product.edit', $data);
         } catch (ModelNotFoundException $e) {
-            return abort(404, 'Customer not found'); 
+            
+            return abort(404, 'Product not found');
         }
     }
 
@@ -298,22 +325,39 @@ class AdminController extends Controller
             return back()->withErrors($validator)->withInput();
         }
 
+
         // Generate a random password for the new user
         $password = $this->generatePassword();
 
-        // Create a new user with the provided data
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role,
-            'password' => Hash::make($password),
-        ]);
+        
+        DB::beginTransaction();
 
-        // Send an email with login details to the new user
+         // Send an email with login details to the new user
         try {
+
+            User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role' => $request->role,
+                'password' => Hash::make($password),
+            ]);
+
+       
             Mail::to($request->email)->send(new SendLoginDetails($request->name, $request->email, $password));
+            DB::commit();
+
             return back()->with('message', 'Mail sent successfully.');
         } catch (Exception $e) {
+            DB::rollBack();
+            Log::create([
+                'message' => 'Failed to send mail.',
+                'level' => 'danger',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'create_user',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),"error"=>$e])
+            ]);
             return back()->with('error', 'Failed to send mail. Please try again later.');
         }
     }
@@ -334,7 +378,7 @@ class AdminController extends Controller
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $reminder = Auth::user()->reminders()->findOrFail($decodedId);
+            $reminder = User::find(Auth::id())->reminders()->findOrFail($decodedId);
             $data = $this->getUserData('Reminder', 'View Reminder', $reminder);
             $user_id = Auth::id();
             if($user_id != $reminder->user_id){
@@ -346,11 +390,12 @@ class AdminController extends Controller
         }
     }
 
-    public function reminder_edit(string $encodedId) 
+    public function reminder_edit(string $encodedId, Request $request) 
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $reminder = Auth::user()->reminders()->findOrFail($decodedId);
+            $user = User::find(Auth::id());
+            $reminder = $user->reminders()->findOrFail($decodedId);
             try {
                 $data = $this->getUserData('Reminder', 'Edit Reminder', $reminder);
               } catch (Exception $e) {
@@ -358,6 +403,15 @@ class AdminController extends Controller
               }
             $user_id = Auth::id();
             if($user_id != $reminder->user_id){
+                Log::create([
+                    'message' => 'Unauthorized operation by ' . $user->email . ' while trying to edit reminders',
+                    'level' => 'warning',
+                    'type' => 'security',
+                    'ip_address' => $request->ip(),
+                    'context' => 'web',
+                    'source' => 'edit_reminder',
+                    'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
+                ]);
                 abort(403, 'You can only edit reminders you created.');
             }
             return view('admin.reminder.edit', $data);

@@ -36,6 +36,11 @@ class Orders extends Model
     {
         return $this->hasMany(Schedule::class, 'order_id', 'id');
     }
+    
+    public function followupReminders()
+    {
+        return $this->hasMany(Reminders::class, 'order_id', 'id');
+    }
 
     public function user(){
         return $this->belongsTo(User::class,"user_id");

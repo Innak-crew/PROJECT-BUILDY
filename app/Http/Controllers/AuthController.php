@@ -17,19 +17,6 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
-        $user = Auth::user();
-        
-        Log::create([
-            'message' => 'User ' . $user->email . ' (ID: ' . $user->id . ') logged out.',
-            'level' => 'info',
-            'context' => 'web',
-            'source' => 'logout_form',
-            'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')]),
-            'user_id' => $user->id,
-            'type' => 'logout',
-            'ip_address' => $request->ip()
-        ]);
-
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -52,22 +39,15 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            Log::create([
-                'message' => 'User ' . Auth::user()->email . ' logged in.',
-                'level' => 'info',
-                'type' => 'login',
-                'user_id' => Auth::user()->id,
-                'ip_address' => $request->ip(),
-                'context' => 'web',
-                'source' => 'login_form',
-                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
-            ]);
 
             // Redirect based on user role
-            if (Auth::user()->role == 'admin') {
+            $role = Auth::user()->role;
+            if ($role  == 'admin') {
                 return redirect()->intended(route('admin.index'));
-            } else {
+            } else if ($role == 'admin') {
                 return redirect()->intended(route('manager.index'));
+            }else if ($role == 'developer') {
+                return redirect()->intended(route('dev.logs'));
             }
         }
 

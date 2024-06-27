@@ -86,7 +86,8 @@ class ReportController extends Controller
                     'error_message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString(),])
+                    'trace' => $e->getTraceAsString(),
+                    'error'=>$e])
             ]);
     
             // Redirect back with error message
@@ -171,7 +172,9 @@ class ReportController extends Controller
                     'error_message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString(),])
+                    'trace' => $e->getTraceAsString(),
+                    'error'=>$e
+                    ])
             ]);
             return response()->json(['message' => 'An error occurred while fetching the orders', 'error' => $e->getMessage()], 500);
         }
@@ -238,7 +241,9 @@ class ReportController extends Controller
                     'error_message' => $e->getMessage(),
                     'file' => $e->getFile(),
                     'line' => $e->getLine(),
-                    'trace' => $e->getTraceAsString(),])
+                    'trace' => $e->getTraceAsString(),
+                    'error'=>$e
+                    ])
             ]);
     
             // Redirect back with error message

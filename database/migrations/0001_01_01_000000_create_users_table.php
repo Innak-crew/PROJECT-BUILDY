@@ -101,6 +101,7 @@ return new class extends Migration
         Schema::create('reminders', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('order_id')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
             $table->timestamp('reminder_time');

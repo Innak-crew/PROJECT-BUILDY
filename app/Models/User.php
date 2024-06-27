@@ -48,27 +48,27 @@ class User extends Authenticatable
 
     public function schedule()
     {
-        return $this->hasMany(Schedule::class); 
+        return $this->hasMany(Schedule::class,'user_id'); 
     }
 
     public function products()
     {
-        return $this->hasMany(Products::class); 
+        return $this->hasMany(Products::class,'user_id'); 
     }
 
     public function customers()
     {
-        return $this->hasMany(Customers::class); 
+        return $this->hasMany(Customers::class,'user_id'); 
     }
 
     public function reminders()
     {
-        return $this->hasMany(Reminders::class); 
+        return $this->hasMany(Reminders::class,'user_id'); 
     }
 
     public function getUser()
     {
-        return $this->belongsTo(Customers::class);
+        return $this->belongsTo(Customers::class,'user_id');
     }
 
 

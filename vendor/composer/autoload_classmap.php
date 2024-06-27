@@ -25,6 +25,7 @@ return array(
     'App\\Http\\Controllers\\ReportController' => $baseDir . '/app/Http/Controllers/ReportController.php',
     'App\\Http\\Controllers\\ScheduleController' => $baseDir . '/app/Http/Controllers/ScheduleController.php',
     'App\\Http\\Controllers\\reminderController' => $baseDir . '/app/Http/Controllers/reminderController.php',
+    'App\\Http\\Middleware\\DeveloperOnly' => $baseDir . '/app/Http/Middleware/DeveloperOnly.php',
     'App\\Http\\Middleware\\RoleAdminMiddleware' => $baseDir . '/app/Http/Middleware/RoleAdminMiddleware.php',
     'App\\Http\\Middleware\\RoleManagerMiddleware' => $baseDir . '/app/Http/Middleware/RoleManagerMiddleware.php',
     'App\\Mail\\SendLoginDetails' => $baseDir . '/app/Mail/SendLoginDetails.php',

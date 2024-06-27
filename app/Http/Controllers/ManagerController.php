@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customers;
 use App\Models\Designs;
+use App\Models\Log;
 use App\Models\Orders;
 use App\Models\QuantityUnits;
 use App\Models\Schedule;
@@ -24,7 +25,7 @@ class ManagerController extends Controller
     // Common method to get user data
     private function getUserData($sectionName, $title, $pageData = new stdClass())
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         $userName = $user ? $user->name : 'Guest';
         $userId = $user ? $user->id : 'Guest';
         $totalPages = 1;
@@ -101,7 +102,7 @@ class ManagerController extends Controller
    {
        $decodedId = base64_decode($encodedId); 
        try {
-           $reminder = Auth::user()->reminders()->findOrFail($decodedId);
+           $reminder = User::find(Auth::id())->reminders()->findOrFail($decodedId);
            $data = $this->getUserData('Reminder', 'View Reminder', $reminder);
            $user_id = Auth::id();
            if($user_id != $reminder->user_id){
@@ -113,11 +114,12 @@ class ManagerController extends Controller
        }
    }
 
-   public function reminder_edit(string $encodedId) 
+   public function reminder_edit(string $encodedId, Request $request) 
    {
        $decodedId = base64_decode($encodedId); 
        try {
-           $reminder = Auth::user()->reminders()->findOrFail($decodedId);
+            $user = User::find(Auth::id());
+            $reminder = $user->reminders()->findOrFail($decodedId);
            try {
                $data = $this->getUserData('Reminder', 'Edit Reminder', $reminder);
              } catch (Exception $e) {
@@ -125,6 +127,15 @@ class ManagerController extends Controller
              }
            $user_id = Auth::id();
            if($user_id != $reminder->user_id){
+            Log::create([
+                'message' => 'Unauthorized operation by ' . $user->email . ' while trying to view product.',
+                'level' => 'warning',
+                'type' => 'security',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'view_product',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent')])
+            ]);
                abort(403, 'You can only edit reminders you created.');
            }
            return view('manager.reminder.edit', $data);

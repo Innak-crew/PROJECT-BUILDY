@@ -7,7 +7,7 @@
     <title>Invoice</title>
     <style>
         body {
-            font-family: DejaVu Sans; sans-serif;
+            font-family: 'DejaVu Sans', sans-serif;
         }
         .container {
             width: 100%;
@@ -88,7 +88,8 @@
         .mt-0 {margin-top: 0 !important;}
         .mt-1 {margin-top: .25rem !important;}
         .px-4 {padding-right: 1.5rem !important;padding-left: 1.5rem !important;}
-        .dejaVu { font-family: DejaVu Sans; sans-serif; }
+        .dejaVu {font-family: 'DejaVu Sans', sans-serif;}
+
     </style>
 </head>
 <body>
@@ -132,6 +133,7 @@
                     <tr class="text-dark fw-bold">
                         <th>DESIGN</th>
                         <th class="text-end">DESCRIPTION</th>
+                        <th class="text-center">DIMENSION</th>
                         <th class="text-center">QUANTITY</th>
                     </tr>
                 </thead>
@@ -144,6 +146,9 @@
                         <td class="fw-semibold">
                         <b>{{ $item['category_name']  }}</b>
                             <p class="fs-2 pb-1 mb-0 fw-normal">{{ $item['design_name'] }}</p>
+                        </td>
+                        <td class="text-center">
+                            <p class="fs-3 pb-0 mb-0">{{ $item['dimension'] != null ? $item['dimension'] : 'N/A' }}</p>
                         </td>
                         <td class="text-center">
                             <p class="fs-3 pb-0 mb-0"><span class="dejaVu">{{ $item['quantity'] }}</span>({{ $item['unit'] }})</p>

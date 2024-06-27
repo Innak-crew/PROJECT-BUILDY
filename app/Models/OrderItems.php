@@ -21,6 +21,7 @@ class OrderItems extends Model
         'discount_amount',
         'discount_percentage',
         'sub_total',
+        'dimension',
         'total',
     ];
 

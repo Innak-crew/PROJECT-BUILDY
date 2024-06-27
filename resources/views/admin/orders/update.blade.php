@@ -178,17 +178,22 @@
                                                 <select class="Order-product form-control" id="design{{ $encodedId }}" name="alt_design[]" required></select>
                                             </div>
                                     
-                                            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                            <div class="col-12 col-md-6 col-lg-3 mb-3">
+                                                <label for="dimension{{ $encodedId }}">Dimension </label>
+                                                <input type="text" id="dimension{{ $encodedId }}" name="alt_dimension[]" value="{{$orderItem->dimension}}" class="form-control" placeholder="Enter dimension value"/>
+                                            </div>
+                                    
+                                            <div class="col-12 col-md-4 col-lg-3 mb-3">
                                                 <label for="order_item_quantity{{ $encodedId }}">Quantity *</label>
                                                 <input type="number" step="0.01" id="order_item_quantity{{ $encodedId }}" name="alt_order_item_quantity[]" value="{{$orderItem->quantity}}" class="form-control" placeholder="Enter item quantity value" required/>
                                             </div>
 
-                                            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                            <div class="col-12 col-md-4 col-lg-3 mb-3">
                                                 <label for="alt_rate_per{{ $encodedId }}">Rate Per *</label>
                                                 <input type="number" step="0.01" id="rate_per{{ $encodedId }}" name="alt_rate_per[]" value="{{$orderItem->rate_per}}" class="form-control" placeholder="Enter rate per value" required />
                                             </div>
 
-                                            <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                            <div class="col-12 col-md-4 col-lg-3 mb-3">
                                                 <label for="sub_total{{ $encodedId }}">Total *</label>
                                                 <input type="number" step="0.01" id="sub_total{{ $encodedId }}" name="alt_sub_total[]" class="form-control" value="{{$orderItem->sub_total}}" placeholder="Enter Total value" required />
                                             </div>
@@ -205,7 +210,7 @@
                                     <script>
                                         document.addEventListener("DOMContentLoaded", function() {
                                             refreshSearch('{{ $encodedId }}');
-                                            var initialData = { id: {{$orderItem->design_id}}, name: '{{$orderItem->design->name}}' };
+                                            var initialData = { id: <?= $orderItem->design_id ?>, name: '{{$orderItem->design->name}}' };
                                             initializeSelect2WithInitialValue("#design{{ $encodedId }}", initialData);
                                         });
                                     </script>
@@ -551,9 +556,9 @@ var roomID = 1;
 function follow_container() {
         roomID++;
         var objTo = document.getElementById("follow-container");
-        var divtest = document.createElement("div");
-        divtest.setAttribute("class", `row remove-follow-class${roomID}`);
-        divtest.innerHTML = `
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", `row remove-follow-class${roomID}`);
+        rowDiv.innerHTML = `
             <div class="col-12 col-md-5 col-lg-5 mb-4 my-auto">
                 <label for="note">Note *</label>
                 <input type="text" name="note[]" id="note${roomID}" class="form-control " placeholder="" required/>
@@ -574,7 +579,7 @@ function follow_container() {
 
             <hr>
         `;
-        objTo.appendChild(divtest);
+        objTo.appendChild(rowDiv);
     }
 
     function remove_follow_container(rid){
@@ -587,9 +592,9 @@ function follow_container() {
     function order_item_container() {
         room++;
         var objTo = document.getElementById("order-item-container");
-        var divtest = document.createElement("div");
-        divtest.setAttribute("class", `row removeclass${room}`);
-        divtest.innerHTML = `
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", `row removeClass${room}`);
+        rowDiv.innerHTML = `
             <div class="col-12 col-md-11 ">
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-4 mb-3">
@@ -604,15 +609,19 @@ function follow_container() {
                         <label for="design">Design *</label>
                         <select class="Order-product form-control" id="design${room}" name="design[]" required></select>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="dimension${room}">Dimension </label>
+                        <input type="text"  id="dimension${room}" name="dimension[]" value="" class="form-control" placeholder="Enter dimension value" />
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
                         <label for="order_item_quantity">Quantity *</label>
                         <input type="number" step="0.01" id="order_item_quantity${room}" name="order_item_quantity[]" class="form-control" placeholder="Enter item quantity value" required />
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
                         <label for="rate_per">Rate Per *</label>
                         <input type="number" step="0.01" id="rate_per${room}" name="rate_per[]" class="form-control" placeholder="Enter rate per value" required />
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
                         <label for="order_item">Total *</label>
                         <input type="number" step="0.01" id="sub_total${room}" name="sub_total[]" class="form-control" value="0" placeholder="Enter Total value" required />
                     </div>
@@ -626,13 +635,13 @@ function follow_container() {
 
         <hr class="mt-4 mt-md-0">
         `;
-        objTo.appendChild(divtest);
+        objTo.appendChild(rowDiv);
         refreshSearch(room);
     }
 
 
     function remove_order_item_container(rid){
-        document.querySelector(`.removeclass${rid}`).remove();
+        document.querySelector(`.removeClass${rid}`).remove();
     }
 
     var quantityData = <?= json_encode($pageData->QuantityUnits->map(function ($QuantityUnit) {
@@ -766,7 +775,7 @@ function follow_container() {
                 for (var i = 0; i < data.length; i++) {
                     var customer = data[i];
                     results.push(customer);
-                    if (customer.id === {{old('customer',0)}}) {
+                    if (customer.id == '<?= old('customer',0) ?>') {
                         console.log(`${customer.id} selected`)
                         $(`.customer-details`).select2('data', customer);
                     }
@@ -789,7 +798,7 @@ function follow_container() {
 
      $(document).ready(function() {
 
-        if ({{ old('customer', $pageData->order->customer_id) }}) {
+        if (<?= old('customer', $pageData->order->customer_id) ?>) {
             $.ajax({
                 url: `/api/get/{{ base64_encode($userId) }}/customer-by-id/{{base64_encode(old('customer',$pageData->order->customer_id))  }}`,
                 dataType: 'json',
@@ -849,9 +858,9 @@ function follow_container() {
     function payment_history_container() {
     phID++;
         var objTo = document.getElementById("payment-history");
-        var divtest = document.createElement("div");
-        divtest.setAttribute("class", `row remove-payment-history-class${phID}`);
-        divtest.innerHTML = `
+        var rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", `row remove-payment-history-class${phID}`);
+        rowDiv.innerHTML = `
             <div class="col-md-3 col-12">
                 <label for="payment_history">Paid Amount *</label>
                 <input type="number" step="0.01" name="paid_amount[]" id="paid_amount" value="" 
@@ -887,7 +896,7 @@ function follow_container() {
 
             <hr>
         `;
-        objTo.appendChild(divtest);
+        objTo.appendChild(rowDiv);
     }
 
 

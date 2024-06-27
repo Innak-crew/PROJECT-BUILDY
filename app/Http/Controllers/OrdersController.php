@@ -83,7 +83,7 @@ class OrdersController extends Controller
 
             // Create new order
             $order = Orders::create([
-                'user_id' => $request->manage_access && $request->manage_access == "only-for-me" ? $user_id : $request->manage_access,
+                'user_id' => $user_id,
                 'creator_id' => $user_id,
                 'name' => $request->name ?? 'Order for ' . $customer->name,
                 'location' => $request->location,
@@ -91,9 +91,16 @@ class OrdersController extends Controller
                 'customer_id' => $request->customer,
                 'start_date' => $request->order_starting_date,
                 'end_date' => $request->order_ending_date,
-                'is_set_approved' => Auth::check() && Auth::user()->role === "admin" ? 1:0,
-                'is_approved' => Auth::check() && Auth::user()->role === "admin" ? 1:0,
+                'is_set_approved' => Auth::check() && Auth::user()->role === "admin" ? 1 : 0,
+                'is_approved' => Auth::check() && Auth::user()->role === "admin" ? 1 : 0,
             ]);
+
+            if (isset($request->manage_access)) {
+                $order->update([
+                    'user_id' => $request->manage_access && $request->manage_access == "only-for-me" ? $user_id : $request->manage_access
+                ]);
+            }
+
 
             // Handle follow-ups
             if (isset($request->follow_date)) {
@@ -113,6 +120,7 @@ class OrdersController extends Controller
                     // Create reminder
                     $reminder = new Reminders();
                     $reminder->user_id = $user_id;
+                    $reminder->order_id = $order->id;
                     $reminder->title = 'Follow-up Reminder';
                     $reminder->description = 'Follow-up needed for order with customer ' . $customer->name . ". Additional note: " . $note;
                     $reminder->reminder_time = Carbon::parse($followDate)->format('Y-m-d 09:00:00');
@@ -151,6 +159,7 @@ class OrdersController extends Controller
                         'category_id' => $subCategory->id,
                         'design_id' => $design->id,
                         'quantity' => $request->order_item_quantity[$i],
+                        'dimension' => $request->dimension[$i],
                         'rate_per' => $rate_per,
                         'sub_total' => $sub_total,
                         'discount_percentage' => $discount_percentage,
@@ -214,12 +223,12 @@ class OrdersController extends Controller
             Log::error('Order creation failed:', ['error' => $e->getMessage()]);
             ModelsLog::create([
                 'message' => 'Order creation failed',
-                'level' => 'error',
-                'type' => 'order',
+                'level' => 'danger',
+                'type' => 'error',
                 'ip_address' => $request->ip(),
                 'context' => 'web',
                 'source' => 'order_create_form',
-                'extra_info' =>json_encode( ['user_agent' => $request->header('User-Agent'),'error_message' => $e->getMessage()])
+                'extra_info' =>json_encode( ['user_agent' => $request->header('User-Agent'),'error_message' => $e])
             ]);
             return back()->with('error', 'Failed to create order. Please try again later.');
         }
@@ -272,6 +281,9 @@ class OrdersController extends Controller
             
             'alt_category' => 'nullable|array',
             'alt_category.*' => 'nullable|string|max:255',
+            
+            'alt_dimension' => 'nullable|array',
+            'alt_dimension.*' => 'nullable|string|max:255',
             
             'alt_sub_category' => 'nullable|array',
             'alt_sub_category.*' => 'nullable|string|max:255',
@@ -333,13 +345,15 @@ class OrdersController extends Controller
             'sub_total' => 'nullable|array',
             'sub_total.*' => 'nullable|numeric|min:0',
             
+            'dimension' => 'nullable|array',
+            'dimension.*' => 'nullable|string|max:255',
+            
             'order_item_quantity' => 'nullable|array',
             'order_item_quantity.*' => 'nullable|integer|min:1',
 
             'manage_access' => 'nullable|string',
 
         ]);
-
 
         try {
 
@@ -354,7 +368,9 @@ class OrdersController extends Controller
             $order = Orders::findOrFail($decodeID);
 
             // Update order fields
-            $order->user_id = $request->manage_access && $request->manage_access == "only-for-me" ? $order->creator_id : $request->manage_access;
+            if(isset($request->manage_access)){
+                $order->user_id = $request->manage_access == "only-for-me" ? $order->creator_id : $request->manage_access;
+            }
             $order->location = $request->location;
             $order->type = $request->type;
             $order->start_date = $request->order_starting_date;
@@ -408,6 +424,7 @@ class OrdersController extends Controller
                                 $quantity = $request->alt_order_item_quantity[$index];
                                 $rate_per = $request->alt_rate_per[$index];
                                 $sub_total = $request->alt_sub_total[$index];
+                                $dimension = $request->alt_dimension[$index];
                                 $discount_percentage = $request->discount_percentage ?? 0;
                                 $discount_amount = $sub_total * ($discount_percentage / 100);
                                 $total = $sub_total - $discount_amount;
@@ -416,6 +433,7 @@ class OrdersController extends Controller
                                     'quantity' => $quantity,
                                     'rate_per' => $rate_per,
                                     'sub_total' => $sub_total,
+                                    'dimension' => $dimension,
                                     'discount_percentage' => $discount_percentage,
                                     'discount_amount' => $discount_amount,
                                     'total' => $total,
@@ -468,9 +486,8 @@ class OrdersController extends Controller
             if (isset($request->alt_followup_id)) {
                 foreach ($request->alt_followup_id as $index => $alreadyFollowUpId) {
                     $schedule = Schedule::find($alreadyFollowUpId);
-            
                     if ($schedule) {
-                        $reminder = Reminders::where('title', $schedule->title)
+                        $reminder = Reminders::where('order_id', $order->id)->where('title', $schedule->title)
                         ->where('description', $schedule->description)
                         ->first();
     
@@ -486,7 +503,7 @@ class OrdersController extends Controller
             
                             if ($schedule->description !== $newDescription) {
                                 $schedule->update(['description' => $newDescription]);
-                                $reminder = Reminders::where('title', $schedule->title)->where('description', $schedule->description)->first();
+                                $reminder = Reminders::where('order_id', $order->id)->where('title', $schedule->title)->where('description', $schedule->description)->first();
                                 if ($reminder) {
                                     $reminder->update(['description' => $newDescription]);
                                 }
@@ -494,7 +511,7 @@ class OrdersController extends Controller
             
                             if (Carbon::parse($schedule->start)->format('Y-m-d') !== $newFollowDate) {
                                 $schedule->update(['start' => "$newFollowDate 00:00:00"]);
-                                $reminder = Reminders::where('title', $schedule->title)->where('description', $schedule->description)->first();
+                                $reminder = Reminders::where('order_id', $order->id)->where('title', $schedule->title)->where('description', $schedule->description)->first();
                                 if ($reminder) {
                                     $reminder->update(['start' => "$newFollowDate 09:00:00"]);
                                 }
@@ -520,6 +537,7 @@ class OrdersController extends Controller
     
                     $reminder = new Reminders();
                     $reminder->user_id = Auth::id();
+                    $reminder->order_id  = $order->id;
                     $reminder->title = 'Follow-up Reminder';
                     $reminder->description = 'Follow-up needed for order with customer ' . $customer->name . ". Additional note: " . $note;
                     $reminder->reminder_time = "$followDate 09:00:00";
@@ -616,13 +634,16 @@ class OrdersController extends Controller
                 $orderItem->delete();
             }
             foreach ($order->followup()->get() as $followup) {
-                $reminder = Reminders::where('title', $followup->title)
-                                    ->where('description', $followup->description)
-                                    ->first();
-                if ($reminder) {
-                    $reminder->delete();
-                }
                 $followup->delete();
+            }
+            foreach ($order->followupReminders()->get() as $followup) {
+                $followup->delete();
+            }
+            foreach ($order->paymentHistory()->get() as $paymentHistory) {
+                $paymentHistory->delete();
+            }
+            foreach ($order->labours()->get() as $labour) {
+                $labour->delete();
             }
             $order->delete();
             DB::commit();
@@ -633,6 +654,14 @@ class OrdersController extends Controller
             return abort(404, 'Order not found'); 
         } catch (Exception $e) {
             DB::rollBack();
+            ModelsLog::create([
+                'message' => 'An error occurred while deleting the order.',
+                'level' => 'error',
+                'type' => 'order',
+                'context' => 'web',
+                'source' => 'order_delete_form',
+                'extra_info' => json_encode(['error_message' => $e->getMessage()])
+            ]);
             return back()->with('error', 'An error occurred while deleting the order.');
         }
     }

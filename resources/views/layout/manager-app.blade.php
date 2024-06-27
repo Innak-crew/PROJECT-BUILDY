@@ -258,20 +258,20 @@
         <!--  Header End -->
         <div class="container-fluid">
 
-        <!-- <div class="card bg-white-info shadow-none position-relative overflow-hidden">
+        <div class="card bg-white-info shadow-none position-relative overflow-hidden">
             <div class="card-body pb-4 ">
                 <div class="row ">
                     <div class="col order-md-1 order-2">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb">
-                                <li class="breadcrumb-item text-muted"><a href="#">{{$sectionName}}</a></li>
+                                <li class="breadcrumb-item text-muted"><a href="/">Dashboard</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">{{$title}}</li>
                             </ol>
                         </nav>
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
                 @yield('managerContent')
         </div>
       </div>
@@ -281,76 +281,3 @@
 
 @endsection
 
-
-@push('script')
-  @if (!$displayReminder->isEmpty())
-      <?php
-          $reminder = $displayReminder[0];
-          $reminderTime = strtotime($reminder->reminder_time);
-          $currentTime = time();
-          $timeDifference = $reminderTime > $currentTime ? $reminderTime - $currentTime : 0;
-      ?>
-      <script src="/libs/sweetalert2/dist/sweetalert2.min.js"></script>
-      <script>
-        document.addEventListener('DOMContentLoaded', (event) => {
-        if ({{ $timeDifference * 1000 }} >= 0) { 
-          setTimeout(() => {
-            Swal.fire({
-              title: '<span class="text-warning">Reminder Alert!</span>',
-              html: `
-                <h4>{{ htmlspecialchars($reminder->title, ENT_QUOTES, 'UTF-8') }}</h4>
-                <p>{{ nl2br(htmlspecialchars($reminder->description, ENT_QUOTES, 'UTF-8')) }}</p>
-              `,
-              showCancelButton: true,
-              confirmButtonColor: "#DD6B55",
-              confirmButtonText: "Mark as Completed",
-              cancelButtonText: "Snooze",
-              allowOutsideClick: false 
-            }).then((result) => {
-              if (result.isConfirmed) {
-                completeReminder('{{base64_encode($reminder->id)}}');
-              }
-            }).catch(error => {
-              console.error('Error displaying the reminder:', error);
-            });
-          }, {{ $timeDifference * 1000 }});
-        }
-      });
-
-       
-      function completeReminder(id) {
-            fetch('{{route('reminder.is_completed')}}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}' 
-                    },
-                    body: JSON.stringify({ id: id })
-                }).then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                      Swal.fire({
-                        title: 'Completed!',
-                        text: 'The reminder has been marked as completed.',
-                        icon: 'success',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'ok'
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          window.location.reload(); 
-                        }
-                      });
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            'There was an error marking the reminder as completed.',
-                            'error'
-                        );
-                    }
-                }).catch(error => {
-                    console.error('Error marking the reminder as completed:', error);
-                });
-          }
-      </script>   
-  @endif
-@endpush

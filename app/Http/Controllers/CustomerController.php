@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customers;
+use App\Models\Log;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,7 +17,7 @@ class CustomerController extends Controller
 {
     private function getUserData(string $sectionName, string $title, object $pageData = new stdClass()): array
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         $userName = $user ? $user->name : 'Guest';
         $userId = $user ? $user->id : 'Guest';
         $reminder = $user->reminders()
@@ -107,6 +108,15 @@ class CustomerController extends Controller
                     'message' => 'Failed to create customer. Please try again later.',
                 ], 500);
             }
+            Log::create([
+                'message' => 'Failed to create customer.',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'create_customer',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Failed to create customer. Please try again later.');
         }
     }
@@ -140,6 +150,15 @@ class CustomerController extends Controller
             $customer->save();
             return back()->with('message', 'Customer updated successfully.');
         } catch (Exception $e) {
+            Log::create([
+                'message' => 'Failed to update customer.',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'update_customer',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->with('error', 'Failed to update customer. Please try again later.');
         }
     }
@@ -173,7 +192,7 @@ class CustomerController extends Controller
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $customer = Auth::user()->customers()->findOrFail($decodedId);
+            $customer = User::find(Auth::id())->customers()->findOrFail($decodedId);
             $data = $this->getUserData('Customer', 'View Customer', $customer);
             return view('manager.customer.view', $data);
         } catch (ModelNotFoundException $e) {
@@ -185,7 +204,7 @@ class CustomerController extends Controller
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $customer = Auth::user()->customers()->findOrFail($decodedId);
+            $customer = User::find(Auth::id())->customers()->findOrFail($decodedId);
             $data = $this->getUserData('Customer', 'Edit Customer', $customer);
             return view('manager.customer.edit', $data);
         } catch (ModelNotFoundException $e) {
@@ -210,7 +229,7 @@ class CustomerController extends Controller
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $customer = Auth::user()->customers()->findOrFail($decodedId);
+            $customer = User::find(Auth::id())->customers()->findOrFail($decodedId);
             $data = $this->getUserData('Customer', 'View Customer', $customer);
             return view('admin.customer.view', $data);
         } catch (ModelNotFoundException $e) {
@@ -222,7 +241,7 @@ class CustomerController extends Controller
     {
         $decodedId = base64_decode($encodedId); 
         try {
-            $customer = Auth::user()->customers()->findOrFail($decodedId);
+            $customer = User::find(Auth::id())->customers()->findOrFail($decodedId);
             $data = $this->getUserData('Customer', 'Edit Customer', $customer);
             return view('admin.customer.edit', $data);
         } catch (ModelNotFoundException $e) {

@@ -46,8 +46,28 @@
     <script src="{{ asset('js/notify.js') }}"></script>
     @stack('script')
 
+    @use('Illuminate\Support\Facades\Auth;')
+  
+    @if (Auth::check())
+        @if (!$displayReminder->isEmpty())
     
+            <script src="/libs/sweetalert2/dist/sweetalert2.min.js"></script>
 
+            @php
+            $reminder = $displayReminder[0] ?? null;
+            if ($reminder) {
+                $reminderTime = strtotime($reminder->reminder_time);
+                $currentTime = time();
+                $timeDifference = $reminderTime > $currentTime ? $reminderTime - $currentTime : 0;
+                $timeInMilliseconds = $timeDifference * 1000;
+                $isTimeIn = $timeInMilliseconds >= 0;
+
+                echo "<script>document.addEventListener('DOMContentLoaded', (event) => {if ($isTimeIn) {setTimeout(() => {Swal.fire({title: '<span class=\'text-warning\'>Reminder Alert!</span>', html: `<h4>*" . htmlspecialchars($reminder->title, ENT_QUOTES, 'UTF-8') . "*</h4><p>" . htmlspecialchars($reminder->description, ENT_QUOTES, 'UTF-8') . "</p>`,showCancelButton: true, confirmButtonColor: '#DD6B55',confirmButtonText: 'Mark as Completed',cancelButtonText: 'Snooze',allowOutsideClick: false}).then((result) => {if (result.isConfirmed) {completeReminder('" . base64_encode($reminder->id) . "');}}).catch(error => {console.error('Error displaying the reminder:', error);});}, $timeInMilliseconds);}});function completeReminder(id) {fetch('/reminder/is_completed', {method: 'POST',headers: {'Content-Type': 'application/json','X-CSRF-TOKEN': '". csrf_token() ."'},body:JSON.stringify({ id: id })}).then(response => response.json()).then(data => {if (data.success) {Swal.fire({title: 'Completed!',text: 'The reminder has been marked as completed.',icon: 'success',confirmButtonColor: '#3085d6',confirmButtonText: 'OK'}).then((result) => {if(result.isConfirmed) {window.location.reload();}});} else { Swal.fire('Error!','There was an error marking the reminder as completed.','error');}}).catch(error => {console.error('Error marking the reminder as completed:', error);});}</script>";
+            }
+            @endphp
+
+        @endif
+    @endif
 
      <!-- Display Notify -->
      @php

@@ -642,6 +642,7 @@ class ComposerStaticInitda9b7a1dc1dd923105198c572cc7df8d
         'App\\Http\\Controllers\\ReportController' => __DIR__ . '/../..' . '/app/Http/Controllers/ReportController.php',
         'App\\Http\\Controllers\\ScheduleController' => __DIR__ . '/../..' . '/app/Http/Controllers/ScheduleController.php',
         'App\\Http\\Controllers\\reminderController' => __DIR__ . '/../..' . '/app/Http/Controllers/reminderController.php',
+        'App\\Http\\Middleware\\DeveloperOnly' => __DIR__ . '/../..' . '/app/Http/Middleware/DeveloperOnly.php',
         'App\\Http\\Middleware\\RoleAdminMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/RoleAdminMiddleware.php',
         'App\\Http\\Middleware\\RoleManagerMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/RoleManagerMiddleware.php',
         'App\\Mail\\SendLoginDetails' => __DIR__ . '/../..' . '/app/Mail/SendLoginDetails.php',

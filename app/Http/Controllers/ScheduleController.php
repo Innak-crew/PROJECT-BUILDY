@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use Illuminate\Http\Request;
 use App\Models\Schedule;
 use Illuminate\Support\Facades\Auth;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ScheduleController extends Controller
 {
     public function store(Request $request)
     {
-        
-
         $validator = Validator::make($request->all(), [
             'title' => 'required|string',
             'description' => 'required|string',
@@ -44,6 +43,16 @@ class ScheduleController extends Controller
             return back()->with('message', 'Schedule created successfully!');
         } catch (\Exception $e) {
             // Handle the exception
+            Log::create([
+                'message' => 'Error creating schedule',
+                'level' => 'danger',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'create_schedule',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),
+                'error'=>$e])
+            ]);
             return back()->with('error', 'Error creating schedule: ');
         }
     }
@@ -67,9 +76,7 @@ class ScheduleController extends Controller
             return back()->with('error', 'Schedule not found.');
         }
 
-        
         $userId = Auth::id();
-
         // Update the Schedule's attributes
     
         try {
@@ -89,6 +96,16 @@ class ScheduleController extends Controller
             return back()->with('message', 'Schedule Updated successfully!');
         } catch (\Exception $e) {
             // Handle the exception
+            Log::create([
+                'message' => 'Updating schedule',
+                'level' => 'danger',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'update_schedule',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),
+                'error'=>$e])
+            ]);
             return back()->with('error', 'Error Updating schedule: ');
         }
 

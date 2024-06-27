@@ -82,9 +82,9 @@
                         <label for="type">Order Type *</label>
                         <select class="form-select mr-sm-2" id="type" name="type" required>
                             <option value="" disabled selected>Choose...</option>
-                            <option value="Interior">Interior</option>
-                            <option value="Exterior">Exterior</option>
-                            <option value="Both">Both</option>
+                            <option value="Interior" @if(old('type') == 'Interior') Selected @endif>Interior</option>
+                            <option value="Exterior" @if(old('type') == 'Exterior') Selected @endif>Exterior</option>
+                            <option value="Both" @if(old('type') == 'Both') Selected @endif>Both</option>
                         </select>
                         @error('type')
                         <div class="invalid-feedback">
@@ -95,12 +95,12 @@
 
                     <div class="col-md-4 col-lg-3 col-12 mb-4">
                         <label class="control-label">Order Starting Date *</label>
-                        <input type="date" class="form-control" name="order_starting_date" required/>
+                        <input type="date" class="form-control" name="order_starting_date" value="{{old('order_starting_date')}}" required/>
                     </div>
 
                     <div class="col-md-4 col-lg-3 col-12 mb-4">
                         <label class="control-label">Order Ending Date </label>
-                        <input type="date" class="form-control" name="order_ending_date"/>
+                        <input type="date" class="form-control" name="order_ending_date" value="{{old('order_ending_date')}}"/>
                     </div>
 
                     <div class="col-md-4 col-lg-3 col-12 mb-4">
@@ -432,15 +432,19 @@ function follow_container() {
                         <label for="design">Design *</label>
                         <select class="Order-product form-control" id="design${room}" name="design[]" required></select>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="col-12 col-md-6 col-lg-3 mb-3">
+                        <label for="dimension${room}">Dimension </label>
+                        <input type="text"  id="dimension${room}" name="dimension[]" value="" class="form-control" placeholder="Enter dimension value" />
+                    </div>
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
                         <label for="order_item_quantity">Quantity *</label>
                         <input type="number" step="0.01" id="order_item_quantity${room}" name="order_item_quantity[]" class="form-control" placeholder="Enter item quantity value" required />
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
                         <label for="rate_per">Rate Per *</label>
                         <input type="number" step="0.01" id="rate_per${room}" name="rate_per[]" class="form-control" placeholder="Enter rate per value" required />
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                    <div class="col-12 col-md-4 col-lg-3 mb-3">
                         <label for="order_item">Total *</label>
                         <input type="number" step="0.01" id="sub_total${room}" name="sub_total[]" class="form-control" value="0" placeholder="Enter Total value" required />
                     </div>
@@ -613,14 +617,7 @@ function follow_container() {
         
     });
 
-    $(document).ready(function() {
-        const userId = '{{ base64_encode($userId) }}';
-        const oldCustomerId = '{{ base64_encode(old('customer',0))}}';
 
-        if (oldCustomerId !== 'MA==') { 
-            fetchOldCustomerData(userId, oldCustomerId);
-        }
-    });
 
 
     function fetchOldCustomerData(userId, customerId) {
@@ -727,6 +724,17 @@ function follow_container() {
     }
 </script>
 
+@php
+    $oldCustomer = old('customer') ?? '0';
+    echo "<script>$(document).ready(function() {
+        const userId = '" . base64_encode($userId) . "';
+        const oldCustomerId = '" . base64_encode($oldCustomer)  . "';
+        if (oldCustomerId !== 'MA==') {
+            fetchOldCustomerData(userId, oldCustomerId);
+        }
+    });</script>";
+@endphp
+
 
 <!-- Add new Customer -->
 <script>
@@ -794,6 +802,9 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(()=>{
+    $('.select2-container').css('width', '100%');
+});
 
 </script>
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Products;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -57,6 +58,15 @@ class ProductsController extends Controller
             return back()->with('message', 'Product Created successfully.');
     
         } catch (Exception $e) {
+            Log::create([
+                'message' => 'Image upload failed',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'product_upload',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()])->withInput();
         }
     }
@@ -113,11 +123,20 @@ class ProductsController extends Controller
             return back()->with('message', 'Product updated successfully.');
     
         } catch (Exception $e) {
+            Log::create([
+                'message' => 'Image upload failed',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'product_update',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->withErrors(['image' => 'Image upload failed: ' . $e->getMessage()])->withInput();
         }
     }
     
-    public function destroy(string $encodedId) {
+    public function destroy(string $encodedId, Request $request) {
         $decodedId = base64_decode($encodedId);
     
         try {
@@ -134,6 +153,15 @@ class ProductsController extends Controller
         } catch (ModelNotFoundException $e) {
             return abort(404, 'Product not found');
         } catch (Exception $e) {
+            Log::create([
+                'message' => 'Failed to delete product.',
+                'level' => 'warning',
+                'type' => 'error',
+                'ip_address' => $request->ip(),
+                'context' => 'web',
+                'source' => 'product_upload',
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error'=>$e])
+            ]);
             return back()->withErrors(['error' => 'Failed to delete product: ' . $e->getMessage()]);
         }
     }

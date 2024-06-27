@@ -76,6 +76,7 @@ return new class extends Migration
             $table->decimal('discount_percentage', 5, 2)->default(0.00);
             $table->decimal('total', 10, 2);
             $table->decimal('sub_total', 10, 2);
+            $table->string('dimension')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();

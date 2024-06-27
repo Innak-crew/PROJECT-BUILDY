@@ -5,6 +5,7 @@ use App\Http\Controllers\ApisController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DesignsController;
+use App\Http\Controllers\DeveloperController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\LabourController;
 use App\Http\Controllers\ManagerController;
@@ -24,8 +25,10 @@ Route::middleware('auth')->group(function () {
         $role = Auth::user()->role;
         if($role == "admin"){
             return Redirect("/admin");
-        }else{
+        }elseif($role == "manager"){
             return Redirect("/manager");
+        }elseif($role == "developer"){
+            return Redirect()->route('dev.logs');
         }
      })->name('index');
 
@@ -190,6 +193,16 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    Route::prefix('dev')->middleware(\App\Http\Middleware\DeveloperOnly::class)->group(function () {
+        Route::get('/',function () {return Redirect()->route('dev.logs');});
+        Route::controller(DeveloperController::class)->group(function () {
+            Route::get('/logs', "Logs")->name('dev.logs');
+            Route::get('/view/log/{id}', "viewLog")->name('dev.log.view');
+            Route::delete('/delete/log/{id}', "deleteLog")->name('dev.log.delete');
+            Route::get('/clear-cache', "clearCache");
+        });
+    });
 });
 
 // Routes for guest users

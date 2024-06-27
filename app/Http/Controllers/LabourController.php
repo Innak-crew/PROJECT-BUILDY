@@ -100,5 +100,4 @@ class LabourController extends Controller
         }
     }
     
-
 }
