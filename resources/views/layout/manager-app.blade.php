@@ -36,6 +36,34 @@
                   </a>
                 </li>
 
+                <li class="sidebar-item">
+                        <a class="sidebar-link has-arrow" href="#" aria-expanded="false">
+                            <span class="d-flex">
+                            <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-rocket"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 13a8 8 0 0 1 7 7a6 6 0 0 0 3 -5a9 9 0 0 0 6 -8a3 3 0 0 0 -3 -3a9 9 0 0 0 -8 6a6 6 0 0 0 -5 3" /><path d="M7 14a6 6 0 0 0 -3 6a6 6 0 0 0 6 -3" /><path d="M15 9m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" /></svg>
+                            </span>
+                            <span class="hide-menu">Orders</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse first-level">
+                            <li class="sidebar-item">
+                                <a href="{{route('manager.new.order')}}" class="sidebar-link ">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">Add new</span>
+                                </a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="{{route('manager.list.order')}}" class="sidebar-link">
+                                    <div class="round-16 d-flex align-items-center justify-content-center">
+                                        <i class="ti ti-circle"></i>
+                                    </div>
+                                    <span class="hide-menu">view all</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+
                 
 
                       <li class="sidebar-item">
@@ -161,6 +189,23 @@
               </ul>
           </nav>
 
+          <div class="fixed-profile p-3 mx-4 mb-2 bg-light-info rounded sidebar-ad mt-3">
+                <div class="hstack gap-3">
+                    <div class="john-img">
+                    <img src="/images/profile/user-1.jpg" class="rounded-circle" width="40" height="40" alt="" />
+                    </div>
+                    <div class="john-title">
+                    <h6 class="mb-0 fs-4 fw-semibold">{{Auth::user()->name}}</h6>
+                    <span class="fs-2">Manager</span>
+                    </div>
+                    <form action="{{route('logout')}}" class="ms-auto" method="post">
+                        @csrf
+                        <button class="border-0 bg-transparent text-primary " type="submit" class="btn btn-outline-primary" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout" >   
+                            <i class="ti ti-power fs-6"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
 
           
           <!-- End Sidebar navigation -->
@@ -232,10 +277,10 @@
                         <div class="d-flex align-items-center py-9 mx-7 border-bottom">
                           <img src="/images/profile/user-1.jpg" class="rounded-circle" width="80" height="80" alt="" />
                           <div class="ms-3">
-                            <h5 class="mb-1 fs-3">{{ $user->name}}</h5>
+                            <h5 class="mb-1 fs-3">{{Auth::user()->name}}</h5>
                             <span class="mb-1 d-block text-dark">Manager</span>
                             <p class="mb-0 d-flex text-dark align-items-center gap-2">
-                              <i class="ti ti-mail fs-4"></i> {{ $user->email}}
+                              <i class="ti ti-mail fs-4"></i> {{Auth::user()->email}}
                             </p>
                           </div>
                         </div>

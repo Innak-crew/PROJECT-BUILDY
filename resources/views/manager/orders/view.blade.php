@@ -1,5 +1,5 @@
-@extends('layout.admin-app')
-@section('adminContent')
+@extends('layout.manager-app')
+@section('managerContent')
 @use('Carbon\Carbon')
 @push('style')
 
@@ -95,13 +95,12 @@
                     <button class="btn btn-success gap-2" onclick="downloadInvoice('invocie')"><span class="th-download fs-3 fw-semibold px-2"></span>Invoice</button>
                     <button class="btn btn-info" onclick="downloadInvoice('vendor')"><span class="th-download fs-3 fw-semibold px-2"></span>Vendor Invoice</button>
                 @else
-                    <a class="btn btn-success" href="{{route('admin.order.is_approved',['encodedId' => base64_encode($pageData->order->id)])}}" >Set Approved</a>
-                    <!-- <span class="badge bg-light-info text-info" disable>Waiting For Approved</span> -->
+                    <span class="badge bg-light-info text-info" disable>Waiting For Approved</span>
                 @endif
             @else
-                <!-- <a class="btn btn-success" href="{{route('order.set_approved',['encodedId' => base64_encode($pageData->order->id)])}}" >Request Approval</a> -->
+                <a class="btn btn-success" href="{{route('order.set_approved',['encodedId' => base64_encode($pageData->order->id)])}}" >Request Approval</a>
             @endif
-            <a class="btn btn-danger" href="{{route('admin.edit.order',['encodedId' => base64_encode($pageData->order->id)])}}" ><svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>Edit</a>
+            <a class="btn btn-danger" href="{{route('manager.edit.order',['encodedId' => base64_encode($pageData->order->id)])}}" ><svg  xmlns="http://www.w3.org/2000/svg"  width="20"  height="20"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-edit"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" /><path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" /><path d="M16 5l3 3" /></svg>Edit</a>
         </div>
         <div class="col-lg-11 col-xl-10 mt-5  col-12">
             <div class="card">
@@ -439,7 +438,7 @@
                             data-bs-toggle="tooltip" 
                             data-bs-placement="top" 
                             title="Add Today" 
-                            onclick="window.location.href=`{{ route('admin.order.Labours', ['encodedOrderId' => base64_encode($pageData->order->id)]) }}`">
+                            onclick="window.location.href=`{{ route('manager.order.Labours', ['encodedOrderId' => base64_encode($pageData->order->id)]) }}`">
                         <span class="th-plus fs-5 fw-semibold"></span>
                     </button>
 
@@ -455,7 +454,7 @@
                         data-bs-toggle="tooltip" 
                         data-bs-placement="top" 
                         title="Add Today" 
-                        onclick="window.location.href=`{{ route('admin.order.Labours', ['encodedOrderId' => base64_encode($pageData->order->id)]) }}`">
+                        onclick="window.location.href=`{{ route('manager.order.Labours', ['encodedOrderId' => base64_encode($pageData->order->id)]) }}`">
                     <span class="th-plus fs-5 fw-semibold"></span>
                 </button>
 

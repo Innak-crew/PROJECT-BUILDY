@@ -85,7 +85,7 @@
                     status: "{{ $config['status'] }}",
                     title: "{{ $config['title'] }}",
                     autoclose: true,
-                    autotimeout: 5000,
+                    autotimeout: 10000,
                     effect: "slide",
                     speed: 300,
                     position: "right bottom"

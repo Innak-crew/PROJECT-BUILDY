@@ -9,6 +9,7 @@ use App\Models\Labour;
 use App\Models\Log;
 use App\Models\Orders;
 use App\Models\QuantityUnits;
+use App\Models\Reminders;
 use App\Models\User;
 use Carbon\Carbon;
 use DateTime;
@@ -257,6 +258,7 @@ class AdminController extends Controller
             }
 
             $pageData->labours = $labourData;
+            $pageData->follow_up = Reminders::where('order_id',$order->id)->orderBy('reminder_time')->get();
 
             $data = $this->getUserData('Orders', 'View Order', $pageData);
             return view('admin.orders.view', $data);

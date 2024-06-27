@@ -612,18 +612,18 @@ class OrdersController extends Controller
             DB::rollBack();
             ModelsLog::create([
                 'message' => 'Failed to update order.',
-                'level' => 'error',
-                'type' => 'order',
+                'level' => 'danger',
+                'type' => 'error',
                 'ip_address' => $request->ip(),
                 'context' => 'web',
                 'source' => 'order_update_form',
-                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error_message' => $e->getMessage()])
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error_message' => $e])
             ]);
             return back()->with('error', 'Failed to update order. Please try again later.');
         }
     }
     
-    public function destroy(string $encodedId) 
+    public function destroy(string $encodedId, Request $request) 
     {
         $decodedId = base64_decode($encodedId); 
         $order = Orders::findOrFail($decodedId);
@@ -656,11 +656,11 @@ class OrdersController extends Controller
             DB::rollBack();
             ModelsLog::create([
                 'message' => 'An error occurred while deleting the order.',
-                'level' => 'error',
-                'type' => 'order',
+                'level' => 'danger',
+                'type' => 'error',
                 'context' => 'web',
                 'source' => 'order_delete_form',
-                'extra_info' => json_encode(['error_message' => $e->getMessage()])
+                'extra_info' => json_encode(['user_agent' => $request->header('User-Agent'),'error_message' => $e])
             ]);
             return back()->with('error', 'An error occurred while deleting the order.');
         }

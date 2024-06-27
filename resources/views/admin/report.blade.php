@@ -113,8 +113,8 @@
 </form>
 
 <div class="row">
-    <div class="col-11 mx-auto">
-        <div id="reportTable">
+    <div class="col-12 col-md-10 mx-auto">
+        <div class="table-responsive rounded-2 py-5 mb-4" id="reportTable">
             
         </div>
     </div>
@@ -146,12 +146,11 @@ var loadingScreen = document.getElementById('report-loading-screen');
             success: function(response) {
                 $('#reportTable').empty();
                 // Generate new table content
-                var table = '<table class="table table-sm mb-0">';
+                var table = '<table class="table border text-nowrap customize-table mb-0 align-middle  table-sm mb-0">';
                 table += `
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Order ID</th>
                         <th scope="col">Creator Name</th>
                         <th scope="col">Customer Name</th>
                         <th scope="col">Order Type</th>
@@ -165,7 +164,6 @@ var loadingScreen = document.getElementById('report-loading-screen');
                 $.each(response, function(index, order) {
                     table += '<tr>';
                     table += '<td scope="row">' + (index + 1) + '</td>';
-                    table += '<td>' + order.order_id + '</td>';
                     table += '<td>' + order.ceartor_name + '</td>';
                     table += '<td>' + order.customer_name + '</td>';
                     table += '<td>' + order.type + '</td>';

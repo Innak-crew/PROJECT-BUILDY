@@ -7,6 +7,7 @@ use App\Models\Labour;
 use App\Models\Log;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LabourController extends Controller
@@ -84,7 +85,7 @@ class LabourController extends Controller
             }
     
             DB::commit();
-            return redirect()->route('admin.view.order',['encodedId' => $encodedOrderId])->with('message', 'Labor details saved successfully.');
+            return redirect()->route( Auth::user()->role .'.view.order',['encodedId' => $encodedOrderId])->with('message', 'Labor details saved successfully.');
         } catch (Exception $e) {
             DB::rollBack();
             Log::create([

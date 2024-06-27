@@ -116,6 +116,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/quantity-units/new', "QuantityUnitsAdd")->name('manager.quantity-units.add');
             Route::get('/quantity-units/{encodedId}/edit', "QuantityUnitsEdit")->name('manager.quantity-units.edit');
 
+            // Order
+            Route::get('/new/order', "newOrder")->name('manager.new.order');
+            Route::get('/list/order', "listOrder")->name('manager.list.order');
+            Route::get('/view/{encodedId}/order', "viewOrder")->name('manager.view.order');
+            Route::get('/edit/{encodedId}/order', "editOrder")->name('manager.edit.order');
+            Route::get('/labours/{encodedOrderId}/{date?}', "showLabours")->name('manager.order.Labours');
+
             // Report
             Route::get('/report', "Report")->name('manager.report');
             Route::get('/export', [ReportController::class, 'exportForManager'])->name('manager.download.report');
@@ -181,8 +188,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::controller(InvoiceController::class)->group(function () {
-        Route::get('/invoice/{encodeID}/download', "invoiceDownload")->name('admin.invoice.download');
-        Route::get('/vendor/invoice/{encodeID}/download', "vendorInvoiceDownload")->name('admin.vendor.invoice.download');
+        Route::get('/invoice/{encodeID}/download', "invoiceDownload")->name('invoice.download');
+        Route::get('/vendor/invoice/{encodeID}/download', "vendorInvoiceDownload")->name('vendor.invoice.download');
     });
     
     Route::prefix('/api')->group( function () {

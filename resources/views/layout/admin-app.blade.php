@@ -215,21 +215,21 @@
             </nav>
 
             <div class="fixed-profile p-3 mx-4 mb-2 bg-light-info rounded sidebar-ad mt-3">
-            <div class="hstack gap-3">
-                <div class="john-img">
-                <img src="/images/profile/user-1.jpg" class="rounded-circle" width="40" height="40" alt="" />
+                <div class="hstack gap-3">
+                    <div class="john-img">
+                    <img src="/images/profile/user-1.jpg" class="rounded-circle" width="40" height="40" alt="" />
+                    </div>
+                    <div class="john-title">
+                    <h6 class="mb-0 fs-4 fw-semibold">{{Auth::user()->name}}</h6>
+                    <span class="fs-2">Admin</span>
+                    </div>
+                    <form action="{{route('logout')}}" class="ms-auto" method="post">
+                        @csrf
+                        <button class="border-0 bg-transparent text-primary " type="submit" class="btn btn-outline-primary" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout" >   
+                            <i class="ti ti-power fs-6"></i>
+                        </button>
+                    </form>
                 </div>
-                <div class="john-title">
-                <h6 class="mb-0 fs-4 fw-semibold">{{$user->name}}</h6>
-                <span class="fs-2">Admin</span>
-                </div>
-                <form action="{{route('logout')}}" class="ms-auto" method="post">
-                    @csrf
-                    <button class="border-0 bg-transparent text-primary " type="submit" class="btn btn-outline-primary" aria-label="logout" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="logout" >   
-                        <i class="ti ti-power fs-6"></i>
-                    </button>
-                </form>
-            </div>
             </div>
         </div>
     </aside>
@@ -307,10 +307,10 @@
                                             <img src="/images/profile/user-1.jpg" class="rounded-circle" width="80"
                                                 height="80" alt="" />
                                             <div class="ms-3">
-                                                <h5 class="mb-1 fs-3">{{$user->name}}</h5>
+                                                <h5 class="mb-1 fs-3">{{Auth::user()->name}}</h5>
                                                 <span class="mb-1 d-block text-dark">Admin</span>
                                                 <p class="mb-0 d-flex text-dark align-items-center gap-2">
-                                                    <i class="ti ti-mail fs-4"></i>{{$user->email}}
+                                                    <i class="ti ti-mail fs-4"></i>{{Auth::user()->email}}
                                                 </p>
                                             </div>
                                         </div>

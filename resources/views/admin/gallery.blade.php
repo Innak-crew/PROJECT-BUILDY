@@ -66,23 +66,6 @@
   </div>
 </div>
 
-<!-- 
-
-for (let i = 0; i < length; i += 4) {
-}
-
-for (let i = 1; i < length; i += 4) {
-}
-
-for (let i = 2; i < length; i += 4) {
-}
-
-for (let i = 3; i < length; i += 4) {
-}
-
- -->
-
-
 <!-- Gallery -->
 <div class="row el-element-overlay">
 
@@ -97,7 +80,7 @@ for (let i = 3; i < length; i += 4) {
                 <div class="el-card-item">
                     <div class=" el-card-avatar el-overlay-1 w-100 overflow-hidden position-relative  text-center">
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
-                            <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
+                            <img data-src="{{ $pageData[$i]->image_url }}" class="w-100 lazyload" alt="{{ $pageData[$i]->name }}" loading="lazy" />
                             <div class="el-overlay w-100 overflow-hidden">
                                 <ul class="list-style-none el-info text-white  d-inline-block p-0 ">
                                 <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
@@ -121,7 +104,7 @@ for (let i = 3; i < length; i += 4) {
                 <div class="el-card-item">
                     <div class=" el-card-avatar el-overlay-1 w-100 overflow-hidden position-relative  text-center">
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
-                            <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
+                            <img data-src="{{ $pageData[$i]->image_url }}" class="w-100 lazyload" alt="{{ $pageData[$i]->name }}" loading="lazy" />
                             <div class="el-overlay w-100 overflow-hidden">
                                 <ul class="list-style-none el-info text-white  d-inline-block p-0 ">
                                 <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
@@ -145,7 +128,7 @@ for (let i = 3; i < length; i += 4) {
                 <div class="el-card-item">
                     <div class=" el-card-avatar el-overlay-1 w-100 overflow-hidden position-relative  text-center">
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
-                            <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" loading="lazy" />
+                            <img data-src="{{ $pageData[$i]->image_url }}" class="w-100 lazyload" alt="{{ $pageData[$i]->name }}" loading="lazy" />
                             <div class="el-overlay w-100 overflow-hidden">
                                 <ul class="list-style-none el-info text-white  d-inline-block p-0 ">
                                 <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
@@ -169,7 +152,7 @@ for (let i = 3; i < length; i += 4) {
                 <div class="el-card-item">
                     <div class=" el-card-avatar el-overlay-1 w-100 overflow-hidden position-relative  text-center">
                         <a class="image-popup-vertical-fit"  href="{{ $pageData[$i]->image_url }}">
-                            <img src="{{ $pageData[$i]->image_url }}" class="w-100" alt="Boat on Calm Water" />
+                            <img data-src="{{ $pageData[$i]->image_url }}" class="w-100 lazyload" alt="{{ $pageData[$i]->name }}" />
                             <div class="el-overlay w-100 overflow-hidden">
                                 <ul class="list-style-none el-info text-white d-inline-block p-0 ">
                                 <li class="el-item d-inline-block my-0 mx-1">{{ $pageData[$i]->name }}</li>
@@ -192,6 +175,49 @@ for (let i = 3; i < length; i += 4) {
 <script src="/libs/magnific-popup/dist/jquery.magnific-popup.min.js"></script>
 <script src="/js/plugins/meg.init.js"></script>
 
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let lazyImages = [].slice.call(document.querySelectorAll('img.lazyload'));
+
+        if ('IntersectionObserver' in window) {
+            let lazyImageObserver = new IntersectionObserver(function (entries, observer) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        let lazyImage = entry.target;
+                        lazyImage.src = lazyImage.dataset.src;
+                        lazyImage.classList.remove('lazyload');
+                        lazyImageObserver.unobserve(lazyImage);
+                    }
+                });
+            });
+
+            lazyImages.forEach(function (lazyImage) {
+                lazyImageObserver.observe(lazyImage);
+            });
+        } else {
+            // Fallback for browsers without IntersectionObserver support
+            let lazyLoad = function () {
+                lazyImages.forEach(function (lazyImage) {
+                    if (lazyImage.getBoundingClientRect().top < window.innerHeight && lazyImage.getBoundingClientRect().bottom > 0 && getComputedStyle(lazyImage).display !== 'none') {
+                        lazyImage.src = lazyImage.dataset.src;
+                        lazyImage.classList.remove('lazyload');
+                    }
+                });
+
+                if (lazyImages.length === 0) {
+                    document.removeEventListener('scroll', lazyLoad);
+                    window.removeEventListener('resize', lazyLoad);
+                    window.removeEventListener('orientationchange', lazyLoad);
+                }
+            };
+
+            document.addEventListener('scroll', lazyLoad);
+            window.addEventListener('resize', lazyLoad);
+            window.addEventListener('orientationchange', lazyLoad);
+        }
+    });
+</script>
 
 <script>
 

@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Customers;
 use App\Models\Designs;
+use App\Models\Labour;
 use App\Models\Log;
 use App\Models\Orders;
 use App\Models\QuantityUnits;
+use App\Models\Reminders;
 use App\Models\Schedule;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -53,8 +56,12 @@ class ManagerController extends Controller
             $pageData->QuantityUnits = QuantityUnits::all();
         }else if ($title == "Report" ){
             $pageData->orders = Orders::where('user_id',$userId);
-            $pageData->customers = Customers::where('user_id',$userId);
-        } 
+            $pageData->customers = Customers::where('user_id',$userId)->get();
+        }else if ($title == "New Order"){
+            $pageData->QuantityUnits = QuantityUnits::all();
+        }else if ($title == "List Orders"){
+            $pageData->Orders = Orders::where('user_id',$user->id)->with('orderItems')->get();
+        }
        
         // dd($pageData->reminders);
         return [
@@ -226,6 +233,100 @@ class ManagerController extends Controller
    {
        $data = $this->getUserData('General', 'Report');
        return view('manager.report', $data);
+   }
+
+   public function newOrder()
+   {
+       $data = $this->getUserData('Orders', 'New Order');
+       return view('manager.orders.store', $data);
+   }
+
+   public function listOrder()
+   {
+       $data = $this->getUserData('Orders', 'List Orders');
+       return view('manager.orders.list', $data);
+   }
+
+   public function viewOrder(string $encodedId) 
+   {
+       $decodedId = base64_decode($encodedId);
+
+       try {
+           $order = Orders::findOrFail($decodedId);
+
+            if ($order->user_id != Auth::id()) {
+                abort(403, 'You can only view orders you created or if an admin gave access.');
+            }
+
+           $pageData = new stdClass();
+           $pageData->order = $order;
+           $labourData=[];
+
+           $labours = Labour::where('order_id', $order->id)->orderBy('date')->get();
+           foreach ($labours as $labour) {
+               $date = Carbon::parse($labour->date)->format('Y-m-d');
+               if (!isset($labourData[$date])) {
+                   $labourData[$date] = [];
+               }
+               
+               $labourData[$date][] = [
+                   'labor_category_id' => $labour->labor_category_id,
+                   'labor_category_name' => $labour->category->name,
+                   'number_of_labors' => $labour->number_of_labors,
+                   'per_labor_amount' => $labour->per_labor_amount,
+                   'total_amount' => $labour->total_amount,
+                   'date' => Carbon::parse($labour->date)->format('jS F Y'),
+                   'edit_link' => route('manager.order.Labours',['encodedOrderId'=> $encodedId,"date"=>$date])
+               ];
+           }
+
+           $pageData->labours = $labourData;
+           $pageData->follow_up = Reminders::where('order_id',$order->id)->orderBy('reminder_time')->get();
+
+           $data = $this->getUserData('Orders', 'View Order', $pageData);
+           return view('manager.orders.view', $data);
+       } catch (ModelNotFoundException $e) {
+           return abort(404, 'Order not found'); 
+       }
+   }
+
+   public function editOrder(string $encodedId) 
+   {
+       $decodedId = base64_decode($encodedId);
+
+       try {
+           $pageData = new stdClass();
+           $pageData->order = Orders::findOrFail($decodedId);
+           if ($pageData->order->user_id != Auth::id()) {
+                abort(403, 'You can only edit orders you created or if an admin gave access.');
+           }
+           $pageData->QuantityUnits = QuantityUnits::all();
+           $data = $this->getUserData('Orders', 'Edit Order', $pageData);
+           return view('manager.orders.update', $data);
+       } catch (ModelNotFoundException $e) {
+           return abort(404, 'Order not found'); 
+       }
+   }
+
+   public function showLabours($encodedOrderId, $date = null)
+   {
+       // Decode the order ID
+       $decodedOrderId = base64_decode($encodedOrderId);
+
+       try {
+           $pageData = new stdClass();
+           $pageData->order = Orders::findOrFail($decodedOrderId);
+           if ($pageData->order->user_id != Auth::id()) {
+                abort(403, 'You can only add or update labors for a orders you created or if an admin gave access.');
+            }
+           $date = $date ?? Carbon::today()->toDateString();
+           $pageData->date = $date;
+           $pageData->labours = Labour::where('order_id', $decodedOrderId)->where('date', $date)->get();
+           $data = $this->getUserData('Orders', 'Show Labours', $pageData);
+           return view('manager.orders.workers', $data);
+       } catch (ModelNotFoundException $e) {
+           return abort(404, 'Order not found'); 
+       }
    }
 
 

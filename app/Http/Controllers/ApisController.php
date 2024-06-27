@@ -24,9 +24,7 @@ class ApisController extends Controller
             // Fetch customer by ID
             if ($name == "customer-by-id") {
                 $customerId = base64_decode($searchTerm);
-                $customer = Customers::where('id', $customerId)
-                    ->where('user_id', $decodedUserId)
-                    ->first();
+                $customer = Customers::where('id', $customerId)->first();
                 if ($customer) {
                     return response()->json([
                         'id' => $customer->id,
@@ -95,8 +93,7 @@ class ApisController extends Controller
             // Fetch design by ID
             else if ($name == "design-by-id") {
                 $designId = base64_decode($searchTerm);
-                $design = Designs::where('id', $designId)
-                    ->first();
+                $design = Designs::where('id', $designId)->first();
                 if ($design) {
                     return response()->json([
                         'id' => $design->id,
