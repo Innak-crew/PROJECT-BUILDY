@@ -38,14 +38,13 @@
 
 
 
-
     <div class="card-body p-4">
         <div class="row">
         @if (session('message'))
             <div class="alert alert-success">
                 {{ session('message') }}
             </div>
-        @endif
+        @endif 
 
             <form action="{{ route('order.store') }}" method="post" enctype="multipart/form-data">
                 @csrf
@@ -79,7 +78,7 @@
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 col-lg-3 col-12 mb-4">
                         <label for="type">Order Type *</label>
                         <select class="form-select mr-sm-2" id="type" name="type" required>
                             <option value="" disabled selected>Choose...</option>
@@ -94,14 +93,31 @@
                         @enderror
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 col-lg-3 col-12 mb-4">
                         <label class="control-label">Order Starting Date *</label>
                         <input type="date" class="form-control" name="order_starting_date" required/>
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 col-lg-3 col-12 mb-4">
                         <label class="control-label">Order Ending Date </label>
                         <input type="date" class="form-control" name="order_ending_date"/>
+                    </div>
+
+                    <div class="col-md-4 col-lg-3 col-12 mb-4">
+                        <label for="manage_access">Order Manage Access *</label>
+                        <select class="form-select mr-sm-2 @error('manage_access') is-invalid @enderror" id="manage_access" name="manage_access" required>
+                            <option value="only-for-me"  @if(old('manage_access') == "only-for-me") selected @endif>Only For me</option>
+                            @if ($pageData->managers->count() != 0)
+                                @foreach ($pageData->managers as $manager)
+                                    <option value="{{$manager->id}}" @if(old('manage_access') == $manager->id) selected @endif>{{$manager->name}}</option>   
+                                @endforeach
+                            @endif
+                         </select>
+                        @error('manage_access')
+                            <div class="invalid-feedback">
+                                <p class="error">{{ $message }}</p>
+                            </div>
+                        @enderror
                     </div>
 
                     <div class="row my-1">

@@ -17,6 +17,7 @@ class Orders extends Model
         'location',
         'type',
         'user_id',
+        'creator_id',
         'customer_id',
         'status',
         'start_date',
@@ -38,6 +39,10 @@ class Orders extends Model
 
     public function user(){
         return $this->belongsTo(User::class,"user_id");
+    }
+
+    public function creator(){
+        return $this->belongsTo(User::class,"creator_id");
     }
 
     public function Customer(){

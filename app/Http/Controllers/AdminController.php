@@ -77,6 +77,7 @@ class AdminController extends Controller
             $pageData->QuantityUnits = QuantityUnits::all();
         }else if ($title == "New Order"){
             $pageData->QuantityUnits = QuantityUnits::all();
+            $pageData->managers = User::where('role','manager')->get();
         }else if ($title == "List Product"){
             $pageData->Products = $user->products()->get();
         }else if ($title == "List Orders"){
@@ -91,7 +92,7 @@ class AdminController extends Controller
             $pageData->orders = Orders::all();
             $pageData->users = User::all();
             $pageData->customers = Customers::all();
-        }
+        } 
        
        
         return [
@@ -245,6 +246,7 @@ class AdminController extends Controller
             $pageData = new stdClass();
             $pageData->QuantityUnits = QuantityUnits::all();
             $pageData->order = Orders::findOrFail($decodedId);
+            $pageData->managers = User::where('role','manager')->get();
             $data = $this->getUserData('Orders', 'Edit Order', $pageData);
             return view('admin.orders.update', $data);
         } catch (ModelNotFoundException $e) {

@@ -34,7 +34,7 @@ class OrderDetailsSheet implements FromView, WithTitle,  ShouldAutoSize, WithSty
             'created_date' => $this->order->created_at->format('Y-m-d'),
             'invoice_number' => $this->order->invoice->invoice_number,
             'due_date' => $this->order->invoice->due_date,
-            'createdby_name' => $this->order->user->name,
+            'createdby_name' => $this->order->creator->name,
             'customer_name' => $this->order->customer->name,
             'customer_phone' => $this->order->customer->phone,
             'customer_email' => $this->order->customer->email,

@@ -53,6 +53,7 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->enum('type', ['Interior', 'Exterior', 'Both'])->default('Interior');
             $table->unsignedBigInteger('user_id')->index();
+            $table->unsignedBigInteger('creator_id')->index()->nullable();
             $table->unsignedBigInteger('customer_id')->index();
             $table->enum('status', ['ongoing', 'follow-up', 'completed', 'cancelled'])->default('ongoing');
             $table->timestamp('start_date');

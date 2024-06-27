@@ -101,6 +101,23 @@ Route::middleware('auth')->group(function () {
             Route::get('/reminder/{encodedId}/view', "reminder_view")->name('manager.reminder.view');
             Route::get('/reminder/{encodedId}/edit', "reminder_edit")->name('manager.reminder.edit');
 
+            // Design
+            Route::get('/gallery', "Gallery")->name('manager.gallery');
+            Route::get('/new/design', "newDesign")->name('manager.new.design');
+            Route::get('/list/design', "listDesign")->name('manager.list.design');
+            Route::get('/view/{encodedId}/design', "viewDesign")->name('manager.view.design');
+            Route::get('/edit/{encodedId}/design', "editDesign")->name('manager.edit.design');
+
+            // Quantity Units
+            Route::get('/quantity-units', "QuantityUnits")->name('manager.quantity-units');
+            Route::get('/quantity-units/new', "QuantityUnitsAdd")->name('manager.quantity-units.add');
+            Route::get('/quantity-units/{encodedId}/edit', "QuantityUnitsEdit")->name('manager.quantity-units.edit');
+
+            // Report
+            Route::get('/report', "Report")->name('manager.report');
+            Route::get('/export', [ReportController::class, 'exportForManager'])->name('manager.download.report');
+            Route::get('/getReportByFilter', [ReportController::class, 'getReportByFilterForManager'])->name('getReportByFilterForManager');
+
         });
 
         Route::controller(CustomerController::class)->group(function(){

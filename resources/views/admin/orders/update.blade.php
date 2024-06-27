@@ -91,12 +91,13 @@
                         <input type="date" class="form-control" name="order_starting_date" value="{{old('order_starting_date', \Carbon\Carbon::parse($pageData->order->start_date)->format('Y-m-d'))}}" required/>
                     </div>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-4 col-12 mb-4">
                         <label class="control-label">Order Ending Date </label>
                         <input type="date" class="form-control" name="order_ending_date" value="{{old('order_ending_date', $pageData->order->end_date != null ? \Carbon\Carbon::parse($pageData->order->end_date)->format('Y-m-d') : null)}}"/>
                     </div>
 
-                    <div class="col-md-6 mb-4">
+
+                    <div class="col-md-4 col-12 mb-4">
                         <label for="estimated_cost">Order Status *</label>
                         <select class="form-select mr-sm-2" id="status" name="status" required>
                             <option value=""  selected disabled>Select--</option>
@@ -109,6 +110,23 @@
                         <div class="invalid-feedback">
                             <p class="error">{{ $message }}</p>
                         </div>
+                        @enderror
+                    </div>
+
+                    <div class="col-md-4 col-12 mb-4">
+                        <label for="manage_access">Order Manage Access *</label>
+                        <select class="form-select mr-sm-2 @error('manage_access') is-invalid @enderror" id="manage_access" name="manage_access" required>
+                            <option value="only-for-me"  @if(old('manage_access',$pageData->order->user_id) == "only-for-me") selected @endif>Only For me</option>
+                            @if ($pageData->managers->count() != 0)
+                                @foreach ($pageData->managers as $manager)
+                                    <option value="{{$manager->id}}" @if(old('manage_access',$pageData->order->user_id) == $manager->id) selected @endif>{{$manager->name}}</option>   
+                                @endforeach
+                            @endif
+                         </select>
+                        @error('manage_access')
+                            <div class="invalid-feedback">
+                                <p class="error">{{ $message }}</p>
+                            </div>
                         @enderror
                     </div>
 

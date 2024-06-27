@@ -263,20 +263,20 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <div class="d-flex align-items-center justify-content-between">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-center">
-                            <li class="nav-item dropdown">
+                            <!-- <li class="nav-item dropdown">
                                 <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="ti ti-bell-ringing"></i>
                                         @if (!$displayReminder->isEmpty())
                                         <div class="notification bg-primary rounded-circle"></div>
                                         @endif
-                                    <!-- <div class="notification bg-primary rounded-circle"></div> -->
+                                     <div class="notification bg-primary rounded-circle"></div> 
                                 </a>
                                 <div class="dropdown-menu content-dd dropdown-menu-end dropdown-menu-animate-up"
                                     aria-labelledby="drop2">
                                     <div class="d-flex align-items-center justify-content-between py-3 px-7">
                                         <h5 class="mb-0 fs-5 fw-semibold">Notifications</h5>
-                                        <!-- <span class="badge bg-primary rounded-4 px-3 py-1 lh-sm">5 new</span> -->
+                                       <span class="badge bg-primary rounded-4 px-3 py-1 lh-sm">5 new</span>
                                     </div>
                                     <div class="message-body" data-simplebar>
 
@@ -285,7 +285,7 @@
                                         <button class="btn btn-outline-primary w-100"> See All Notifications </button>
                                     </div>
                                 </div>
-                            </li>
+                            </li> -->
 
                             <li class="nav-item dropdown">
                                 <a class="nav-link pe-0" href="javascript:void(0)" id="drop1" data-bs-toggle="dropdown"

@@ -61,7 +61,7 @@
             <p class="mb-0 fw-normal fs-4">{{ $pageData->Orders[$i]->name }}</p>
           </td>
           <td>
-            <p class="mb-0 fw-normal fs-4">@if ($pageData->Orders[$i]->user_id == $userId) You @else {{ $pageData->Orders[$i]->user()->first()->name }}@endif </p>
+            <p class="mb-0 fw-normal fs-4">@if ($pageData->Orders[$i]->creator_id == $userId) You @if ( $pageData->Orders[$i]->creator_id != $pageData->Orders[$i]->user_id ) granted access to {{ $pageData->Orders[$i]->user()->first()->name }}. @endif @else {{ $pageData->Orders[$i]->user()->first()->name }}@endif </p>
           </td>
           <td>
             <p class="mb-0 fw-normal fs-4">

@@ -68,9 +68,9 @@ class OrdersController extends Controller
             
             'payment_method' => 'nullable|array',
             'payment_method.*' => 'nullable|string',
+            'manage_access' => 'nullable|string',
         ]);
 
-        // dd($request->all());
 
 
         try {
@@ -83,7 +83,8 @@ class OrdersController extends Controller
 
             // Create new order
             $order = Orders::create([
-                'user_id' => $user_id,
+                'user_id' => $request->manage_access && $request->manage_access == "only-for-me" ? $user_id : $request->manage_access,
+                'creator_id' => $user_id,
                 'name' => $request->name ?? 'Order for ' . $customer->name,
                 'location' => $request->location,
                 'type' => $request->type,
@@ -226,11 +227,6 @@ class OrdersController extends Controller
 
     public function update(Request $request, string $encodedId){
 
-        // $decodeID = base64_decode($encodedId);
-
-        // $order = Orders::findOrFail($decodeID);
-
-        
 
          $request->validate([
             'name' => 'nullable|string',
@@ -340,9 +336,9 @@ class OrdersController extends Controller
             'order_item_quantity' => 'nullable|array',
             'order_item_quantity.*' => 'nullable|integer|min:1',
 
-        ]);
+            'manage_access' => 'nullable|string',
 
-        // dd($request->all());
+        ]);
 
 
         try {
@@ -358,13 +354,12 @@ class OrdersController extends Controller
             $order = Orders::findOrFail($decodeID);
 
             // Update order fields
+            $order->user_id = $request->manage_access && $request->manage_access == "only-for-me" ? $order->creator_id : $request->manage_access;
             $order->location = $request->location;
             $order->type = $request->type;
             $order->start_date = $request->order_starting_date;
             $order->status = $request->status;
             $order->end_date = $request->order_ending_date ?? null;
-            $order->deposit_received = $request->deposit_received ?? null;
-            $order->estimated_cost = $request->estimated_cost;
             $order->save();
 
             // Update customer-related details if customer changes
